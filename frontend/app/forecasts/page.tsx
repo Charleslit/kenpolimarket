@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import CountyMap from '@/components/maps/CountyMap';
+import LeafletCountyMap from '@/components/maps/LeafletCountyMap';
 import ForecastChart from '@/components/charts/ForecastChart';
 import ForecastWithUncertainty from '@/components/charts/ForecastWithUncertainty';
 import NationalDashboard from '@/components/dashboard/NationalDashboard';
@@ -328,7 +328,7 @@ export default function ForecastsPage() {
                   <span className="mr-2">🗺️</span>
                   Interactive County Map
                 </h2>
-                <CountyMap
+                <LeafletCountyMap
                   counties={filteredCounties}
                   selectedCounty={selectedCounty}
                   onCountyClick={handleCountyClick}
