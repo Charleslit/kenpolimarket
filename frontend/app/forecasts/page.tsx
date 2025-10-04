@@ -163,21 +163,24 @@ export default function ForecastsPage() {
 
       {/* Modern Header with Gradient */}
       <header className="bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-700 shadow-xl mt-2">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
-              <h1 className="text-4xl font-extrabold text-white flex items-center">
-                <span className="mr-3">🇰🇪</span>
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white flex items-center flex-wrap">
+                <span className="mr-2 sm:mr-3">🇰🇪</span>
                 KenPoliMarket
-                <span className="ml-3 px-3 py-1 bg-white bg-opacity-20 rounded-full text-sm font-medium">
+                <span className="ml-2 sm:ml-3 px-2 sm:px-3 py-1 bg-white bg-opacity-20 rounded-full text-xs sm:text-sm font-medium">
                   2027
                 </span>
               </h1>
-              <p className="mt-2 text-blue-100 text-sm">
+              <p className="mt-2 text-blue-100 text-xs sm:text-sm">
                 Privacy-first political forecasting powered by Bayesian AI • {counties.length} Counties • {elections.length} Elections
               </p>
+              <p className="mt-1 text-blue-200 text-xs italic">
+                Forecast by Ongoro based on official IEBC data from 2022
+              </p>
             </div>
-            <div className="hidden md:flex items-center space-x-4">
+            <div className="hidden lg:flex items-center space-x-4">
               <ShareButton
                 title={`KenPoliMarket - ${selectedCounty ? selectedCounty.name : 'National'} Forecast`}
                 text={`Check out the ${selectedCounty ? selectedCounty.name : 'national'} election forecast on KenPoliMarket`}

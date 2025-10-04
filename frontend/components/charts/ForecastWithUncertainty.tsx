@@ -211,14 +211,14 @@ const ForecastWithUncertainty: React.FC<ForecastWithUncertaintyProps> = ({
         {forecasts.map((forecast, index) => (
           <div
             key={forecast.id}
-            className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow"
+            className="bg-white border border-gray-200 rounded-lg p-4 sm:p-6 shadow-sm hover:shadow-md transition-shadow"
           >
             <div className="flex items-start justify-between mb-4">
               <div>
-                <h4 className="text-lg font-semibold text-gray-900">
+                <h4 className="text-base sm:text-lg font-semibold text-gray-900">
                   {forecast.candidate.name}
                 </h4>
-                <p className="text-sm text-gray-600">{forecast.candidate.party}</p>
+                <p className="text-xs sm:text-sm text-gray-600">{forecast.candidate.party}</p>
               </div>
               <div
                 className="w-3 h-3 rounded-full"
@@ -228,8 +228,8 @@ const ForecastWithUncertainty: React.FC<ForecastWithUncertaintyProps> = ({
 
             <div className="space-y-3">
               <div>
-                <p className="text-sm text-gray-600">Predicted Vote Share</p>
-                <p className="text-3xl font-bold text-gray-900">
+                <p className="text-xs sm:text-sm text-gray-600">Predicted Vote Share</p>
+                <p className="text-2xl sm:text-3xl font-bold text-gray-900">
                   {parseFloat(forecast.predicted_vote_share.toString()).toFixed(1)}%
                 </p>
               </div>
@@ -237,17 +237,17 @@ const ForecastWithUncertainty: React.FC<ForecastWithUncertaintyProps> = ({
               <div className="bg-gray-50 rounded p-3">
                 <p className="text-xs text-gray-600 mb-1">90% Credible Interval</p>
                 <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium text-gray-700">
+                  <span className="text-xs sm:text-sm font-medium text-gray-700">
                     {parseFloat(forecast.lower_bound_90.toString()).toFixed(1)}%
                   </span>
                   <span className="text-xs text-gray-500">to</span>
-                  <span className="text-sm font-medium text-gray-700">
+                  <span className="text-xs sm:text-sm font-medium text-gray-700">
                     {parseFloat(forecast.upper_bound_90.toString()).toFixed(1)}%
                   </span>
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-2 text-sm">
+              <div className="grid grid-cols-2 gap-2 text-xs sm:text-sm">
                 <div>
                   <p className="text-gray-600">Predicted Votes</p>
                   <p className="font-semibold text-gray-900">
@@ -404,10 +404,13 @@ const ForecastWithUncertainty: React.FC<ForecastWithUncertaintyProps> = ({
 
       {/* Model Information */}
       <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
-        <p className="text-xs text-gray-600">
+        <p className="text-xs sm:text-sm text-gray-600">
           <span className="font-semibold">Model:</span> SimpleBayesianForecast v1.0 |{' '}
           <span className="font-semibold">Method:</span> Monte Carlo sampling (2000 samples) |{' '}
-          <span className="font-semibold">Based on:</span> 2022 & 2017 historical data
+          <span className="font-semibold">Based on:</span> Official IEBC data from 2022
+        </p>
+        <p className="text-xs text-gray-500 mt-2 italic">
+          Forecast by Ongoro based on official IEBC data from 2022
         </p>
       </div>
     </div>

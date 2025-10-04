@@ -113,18 +113,18 @@ export default function NationalDashboard() {
       </div>
 
       {/* Hero Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Total Votes */}
-        <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl p-6 text-white shadow-lg">
+        <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl p-4 sm:p-6 text-white shadow-lg">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-blue-100 text-sm font-medium">Total Predicted Votes</p>
-              <p className="text-3xl font-bold mt-2">
+              <p className="text-blue-100 text-xs sm:text-sm font-medium">Total Predicted Votes</p>
+              <p className="text-2xl sm:text-3xl font-bold mt-2">
                 {(summary.total_predicted_votes / 1000000).toFixed(1)}M
               </p>
             </div>
-            <div className="bg-blue-400 bg-opacity-30 rounded-full p-3">
-              <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="bg-blue-400 bg-opacity-30 rounded-full p-2 sm:p-3">
+              <svg className="w-6 h-6 sm:w-8 sm:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
               </svg>
             </div>
@@ -132,15 +132,15 @@ export default function NationalDashboard() {
         </div>
 
         {/* Leading Candidate */}
-        <div className="bg-gradient-to-br from-green-500 to-green-600 rounded-xl p-6 text-white shadow-lg">
+        <div className="bg-gradient-to-br from-green-500 to-green-600 rounded-xl p-4 sm:p-6 text-white shadow-lg">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-green-100 text-sm font-medium">Leading Candidate</p>
-              <p className="text-2xl font-bold mt-2">{winner.candidate_name.split(' ').slice(-1)[0]}</p>
-              <p className="text-green-100 text-sm mt-1">{winner.predicted_vote_share.toFixed(1)}%</p>
+              <p className="text-green-100 text-xs sm:text-sm font-medium">Leading Candidate</p>
+              <p className="text-xl sm:text-2xl font-bold mt-2">{winner.candidate_name.split(' ').slice(-1)[0]}</p>
+              <p className="text-green-100 text-xs sm:text-sm mt-1">{winner.predicted_vote_share.toFixed(1)}%</p>
             </div>
-            <div className="bg-green-400 bg-opacity-30 rounded-full p-3">
-              <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="bg-green-400 bg-opacity-30 rounded-full p-2 sm:p-3">
+              <svg className="w-6 h-6 sm:w-8 sm:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
@@ -148,15 +148,15 @@ export default function NationalDashboard() {
         </div>
 
         {/* Margin */}
-        <div className="bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl p-6 text-white shadow-lg">
+        <div className="bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl p-4 sm:p-6 text-white shadow-lg">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-purple-100 text-sm font-medium">Victory Margin</p>
-              <p className="text-3xl font-bold mt-2">{margin.toFixed(1)}%</p>
-              <p className="text-purple-100 text-sm mt-1">vs {runnerUp.candidate_name.split(' ').slice(-1)[0]}</p>
+              <p className="text-purple-100 text-xs sm:text-sm font-medium">Victory Margin</p>
+              <p className="text-2xl sm:text-3xl font-bold mt-2">{margin.toFixed(1)}%</p>
+              <p className="text-purple-100 text-xs sm:text-sm mt-1">vs {runnerUp.candidate_name.split(' ').slice(-1)[0]}</p>
             </div>
-            <div className="bg-purple-400 bg-opacity-30 rounded-full p-3">
-              <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="bg-purple-400 bg-opacity-30 rounded-full p-2 sm:p-3">
+              <svg className="w-6 h-6 sm:w-8 sm:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
               </svg>
             </div>
@@ -164,15 +164,15 @@ export default function NationalDashboard() {
         </div>
 
         {/* Runoff Status */}
-        <div className={`bg-gradient-to-br ${needsRunoff ? 'from-orange-500 to-orange-600' : 'from-teal-500 to-teal-600'} rounded-xl p-6 text-white shadow-lg`}>
+        <div className={`bg-gradient-to-br ${needsRunoff ? 'from-orange-500 to-orange-600' : 'from-teal-500 to-teal-600'} rounded-xl p-4 sm:p-6 text-white shadow-lg`}>
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-white text-opacity-90 text-sm font-medium">Runoff Status</p>
-              <p className="text-2xl font-bold mt-2">{needsRunoff ? 'Likely' : 'Unlikely'}</p>
-              <p className="text-white text-opacity-90 text-sm mt-1">{needsRunoff ? 'No 50%+ winner' : 'Clear majority'}</p>
+              <p className="text-white text-opacity-90 text-xs sm:text-sm font-medium">Runoff Status</p>
+              <p className="text-xl sm:text-2xl font-bold mt-2">{needsRunoff ? 'Likely' : 'Unlikely'}</p>
+              <p className="text-white text-opacity-90 text-xs sm:text-sm mt-1">{needsRunoff ? 'No 50%+ winner' : 'Clear majority'}</p>
             </div>
-            <div className={`${needsRunoff ? 'bg-orange-400' : 'bg-teal-400'} bg-opacity-30 rounded-full p-3`}>
-              <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className={`${needsRunoff ? 'bg-orange-400' : 'bg-teal-400'} bg-opacity-30 rounded-full p-2 sm:p-3`}>
+              <svg className="w-6 h-6 sm:w-8 sm:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
@@ -181,17 +181,17 @@ export default function NationalDashboard() {
       </div>
 
       {/* Charts Row */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
         {/* Bar Chart */}
-        <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Vote Share by Candidate</h3>
+        <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-4 sm:p-6">
+          <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-4">Vote Share by Candidate</h3>
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={barChartData}>
               <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-              <XAxis dataKey="name" tick={{ fontSize: 12 }} />
-              <YAxis tick={{ fontSize: 12 }} />
+              <XAxis dataKey="name" tick={{ fontSize: 10 }} />
+              <YAxis tick={{ fontSize: 10 }} />
               <Tooltip
-                contentStyle={{ backgroundColor: '#fff', border: '1px solid #e5e7eb', borderRadius: '8px' }}
+                contentStyle={{ backgroundColor: '#fff', border: '1px solid #e5e7eb', borderRadius: '8px', fontSize: '12px' }}
                 formatter={(value: number) => [`${value.toFixed(1)}%`, 'Vote Share']}
               />
               <Bar dataKey="share" radius={[8, 8, 0, 0]}>
@@ -204,8 +204,8 @@ export default function NationalDashboard() {
         </div>
 
         {/* Pie Chart */}
-        <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Vote Distribution</h3>
+        <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-4 sm:p-6">
+          <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-4">Vote Distribution</h3>
           <ResponsiveContainer width="100%" height={300}>
             <PieChart>
               <Pie
@@ -222,43 +222,48 @@ export default function NationalDashboard() {
                   <Cell key={`cell-${index}`} fill={PARTY_COLORS[entry.party] || '#94a3b8'} />
                 ))}
               </Pie>
-              <Tooltip formatter={(value: number) => `${value.toFixed(2)}%`} />
+              <Tooltip
+                contentStyle={{ fontSize: '12px' }}
+                formatter={(value: number) => `${value.toFixed(2)}%`}
+              />
             </PieChart>
           </ResponsiveContainer>
         </div>
       </div>
 
       {/* Candidate Cards */}
-      <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Detailed Breakdown</h3>
+      <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-4 sm:p-6">
+        <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-4">Detailed Breakdown</h3>
         <div className="space-y-3">
           {sortedCandidates.map((candidate, index) => (
             <div
               key={candidate.candidate_name}
-              className="flex items-center justify-between p-4 rounded-lg border border-gray-200 hover:border-gray-300 transition-colors"
+              className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-3 sm:p-4 rounded-lg border border-gray-200 hover:border-gray-300 transition-colors"
             >
-              <div className="flex items-center space-x-4">
-                <div className="flex items-center justify-center w-10 h-10 rounded-full bg-gray-100 font-bold text-gray-700">
+              <div className="flex items-center space-x-3 sm:space-x-4">
+                <div className="flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-gray-100 font-bold text-sm sm:text-base text-gray-700">
                   {index + 1}
                 </div>
                 <div>
-                  <p className="font-semibold text-gray-900">{candidate.candidate_name}</p>
-                  <p className="text-sm text-gray-500">{candidate.party}</p>
+                  <p className="font-semibold text-sm sm:text-base text-gray-900">{candidate.candidate_name}</p>
+                  <p className="text-xs sm:text-sm text-gray-500">{candidate.party}</p>
                 </div>
               </div>
-              <div className="text-right">
-                <p className="text-2xl font-bold text-gray-900">{candidate.predicted_vote_share.toFixed(1)}%</p>
-                <p className="text-sm text-gray-500">{(candidate.predicted_votes / 1000000).toFixed(2)}M votes</p>
-              </div>
-              <div className="w-32">
-                <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
-                  <div
-                    className="h-full rounded-full transition-all duration-500"
-                    style={{
-                      width: `${candidate.predicted_vote_share}%`,
-                      backgroundColor: PARTY_COLORS[candidate.party] || '#94a3b8',
-                    }}
-                  />
+              <div className="flex items-center justify-between sm:justify-end gap-4">
+                <div className="text-left sm:text-right">
+                  <p className="text-xl sm:text-2xl font-bold text-gray-900">{candidate.predicted_vote_share.toFixed(1)}%</p>
+                  <p className="text-xs sm:text-sm text-gray-500">{(candidate.predicted_votes / 1000000).toFixed(2)}M votes</p>
+                </div>
+                <div className="w-24 sm:w-32">
+                  <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
+                    <div
+                      className="h-full rounded-full transition-all duration-500"
+                      style={{
+                        width: `${candidate.predicted_vote_share}%`,
+                        backgroundColor: PARTY_COLORS[candidate.party] || '#94a3b8',
+                      }}
+                    />
+                  </div>
                 </div>
               </div>
             </div>
@@ -268,7 +273,7 @@ export default function NationalDashboard() {
 
       {/* Model Info */}
       <div className="bg-gray-50 rounded-xl border border-gray-200 p-4">
-        <div className="flex items-center justify-between text-sm text-gray-600">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-4 text-xs sm:text-sm text-gray-600">
           <div>
             <span className="font-medium">Model:</span> {summary.model_name} {summary.model_version}
           </div>
@@ -278,6 +283,11 @@ export default function NationalDashboard() {
           <div>
             <span className="font-medium">Election:</span> {summary.election_year}
           </div>
+        </div>
+        <div className="mt-3 pt-3 border-t border-gray-300">
+          <p className="text-xs text-gray-500 italic text-center">
+            Forecast by Ongoro based on official IEBC data from 2022
+          </p>
         </div>
       </div>
     </div>

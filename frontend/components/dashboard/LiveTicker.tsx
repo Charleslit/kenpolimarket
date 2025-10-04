@@ -22,7 +22,7 @@ export default function LiveTicker() {
     {
       id: '2',
       type: 'insight',
-      message: 'Ruto leads in 25 counties, Raila in 18 counties',
+      message: 'Ruto leads in 25 counties, Matiang\'i gaining in 18 counties',
       timestamp: new Date(Date.now() - 1000 * 60 * 30),
       icon: '📊',
     },
@@ -43,7 +43,7 @@ export default function LiveTicker() {
     {
       id: '5',
       type: 'insight',
-      message: 'fred matiangi gaining ground in Central region',
+      message: 'Fred Matiang\'i gaining ground in Central region',
       timestamp: new Date(Date.now() - 1000 * 60 * 90),
       icon: '🎯',
     },
@@ -76,13 +76,13 @@ export default function LiveTicker() {
 
   return (
     <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
-      <div className="px-6 py-4 bg-gradient-to-r from-blue-500 to-blue-600 border-b border-blue-700">
-        <div className="flex items-center justify-between">
-          <h3 className="text-lg font-semibold text-white flex items-center">
+      <div className="px-4 sm:px-6 py-4 bg-gradient-to-r from-blue-500 to-blue-600 border-b border-blue-700">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+          <h3 className="text-base sm:text-lg font-semibold text-white flex items-center">
             <span className="animate-pulse mr-2">🔴</span>
             Live Updates
           </h3>
-          <span className="text-blue-100 text-sm">Last updated: {formatTimestamp(items[0].timestamp)}</span>
+          <span className="text-blue-100 text-xs sm:text-sm">Last updated: {formatTimestamp(items[0].timestamp)}</span>
         </div>
       </div>
 
@@ -91,16 +91,16 @@ export default function LiveTicker() {
           {items.map((item, index) => (
             <div
               key={item.id}
-              className={`p-4 hover:bg-gray-50 transition-colors ${
+              className={`p-3 sm:p-4 hover:bg-gray-50 transition-colors ${
                 index === 0 ? 'animate-fadeIn' : ''
               }`}
             >
-              <div className="flex items-start space-x-3">
+              <div className="flex items-start space-x-2 sm:space-x-3">
                 <div className="flex-shrink-0">
-                  <span className="text-2xl">{item.icon}</span>
+                  <span className="text-xl sm:text-2xl">{item.icon}</span>
                 </div>
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center justify-between mb-1">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 sm:gap-0 mb-1">
                     <span
                       className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${getTypeColor(
                         item.type
@@ -110,7 +110,7 @@ export default function LiveTicker() {
                     </span>
                     <span className="text-xs text-gray-500">{formatTimestamp(item.timestamp)}</span>
                   </div>
-                  <p className="text-sm text-gray-900">{item.message}</p>
+                  <p className="text-xs sm:text-sm text-gray-900">{item.message}</p>
                 </div>
               </div>
             </div>
@@ -118,8 +118,8 @@ export default function LiveTicker() {
         </div>
       </div>
 
-      <div className="px-6 py-3 bg-gray-50 border-t border-gray-200">
-        <button className="text-sm text-blue-600 hover:text-blue-700 font-medium">
+      <div className="px-4 sm:px-6 py-3 bg-gray-50 border-t border-gray-200">
+        <button className="text-xs sm:text-sm text-blue-600 hover:text-blue-700 font-medium">
           View all updates →
         </button>
       </div>
