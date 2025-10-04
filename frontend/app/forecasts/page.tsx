@@ -8,6 +8,11 @@ import NationalDashboard from '@/components/dashboard/NationalDashboard';
 import RegionalBreakdown from '@/components/dashboard/RegionalBreakdown';
 import CandidateComparison from '@/components/dashboard/CandidateComparison';
 import LiveTicker from '@/components/dashboard/LiveTicker';
+import Breadcrumbs from '@/components/layout/Breadcrumbs';
+import CountySearch from '@/components/ui/CountySearch';
+import ShareButton from '@/components/ui/ShareButton';
+import ErrorMessage, { EmptyState } from '@/components/ui/ErrorMessage';
+import { DashboardSkeleton, ChartSkeleton } from '@/components/ui/LoadingSkeleton';
 
 // API Base URL - update this to match your backend
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8001/api';
@@ -120,10 +125,10 @@ export default function ForecastsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading forecasts...</p>
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <Breadcrumbs items={[{ label: 'Forecasts' }]} />
+          <DashboardSkeleton />
         </div>
       </div>
     );
@@ -131,13 +136,14 @@ export default function ForecastsPage() {
 
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="bg-red-50 border border-red-200 rounded-lg p-6 max-w-md">
-          <h2 className="text-red-800 font-semibold mb-2">Error Loading Data</h2>
-          <p className="text-red-600">{error}</p>
-          <p className="text-sm text-red-500 mt-2">
-            Make sure the backend API is running on {API_BASE_URL}
-          </p>
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <Breadcrumbs items={[{ label: 'Forecasts' }]} />
+          <ErrorMessage
+            title="Failed to Load Forecasts"
+            message={`${error}. Make sure the backend API is running on ${API_BASE_URL}`}
+            onRetry={() => window.location.reload()}
+          />
         </div>
       </div>
     );
@@ -145,8 +151,18 @@ export default function ForecastsPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-gray-50">
+      {/* Breadcrumbs */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4">
+        <Breadcrumbs
+          items={[
+            { label: 'Forecasts', href: '/forecasts' },
+            ...(selectedCounty ? [{ label: selectedCounty.name }] : [])
+          ]}
+        />
+      </div>
+
       {/* Modern Header with Gradient */}
-      <header className="bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-700 shadow-xl">
+      <header className="bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-700 shadow-xl mt-2">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="flex items-center justify-between">
             <div>
@@ -162,6 +178,10 @@ export default function ForecastsPage() {
               </p>
             </div>
             <div className="hidden md:flex items-center space-x-4">
+              <ShareButton
+                title={`KenPoliMarket - ${selectedCounty ? selectedCounty.name : 'National'} Forecast`}
+                text={`Check out the ${selectedCounty ? selectedCounty.name : 'national'} election forecast on KenPoliMarket`}
+              />
               <a
                 href="/admin"
                 className="px-4 py-2 bg-white bg-opacity-20 hover:bg-opacity-30 text-white rounded-lg transition-colors font-medium border border-white border-opacity-30"
@@ -286,39 +306,15 @@ export default function ForecastsPage() {
 
             {/* County Search */}
             <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-6">
-              <label htmlFor="county-search" className="block text-sm font-medium text-gray-700 mb-3">
+              <label className="block text-sm font-medium text-gray-700 mb-3">
                 Search Counties
               </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <svg className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                  </svg>
-                </div>
-                <input
-                  type="text"
-                  id="county-search"
-                  className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                  placeholder="Search by county name or code..."
-                  value={countySearchQuery}
-                  onChange={(e) => setCountySearchQuery(e.target.value)}
-                />
-                {countySearchQuery && (
-                  <button
-                    onClick={() => setCountySearchQuery('')}
-                    className="absolute inset-y-0 right-0 pr-3 flex items-center"
-                  >
-                    <svg className="h-5 w-5 text-gray-400 hover:text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                  </button>
-                )}
-              </div>
-              {countySearchQuery && (
-                <p className="mt-2 text-sm text-gray-600">
-                  Found {filteredCounties.length} {filteredCounties.length === 1 ? 'county' : 'counties'}
-                </p>
-              )}
+              <CountySearch
+                counties={counties}
+                onSelect={(county) => setSelectedCounty(county)}
+                selectedCounty={selectedCounty}
+                placeholder="Search by county name, code, or region..."
+              />
             </div>
 
             {/* Two Column Layout */}

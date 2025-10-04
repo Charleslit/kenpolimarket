@@ -18,10 +18,12 @@ export default function Home() {
               View Forecasts
             </a>
             <a
-              href="/api/docs"
+              href={`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8001/api'}/docs`}
+              target="_blank"
+              rel="noopener noreferrer"
               className="border border-blue-600 text-blue-600 px-6 py-3 rounded-lg hover:bg-blue-50 transition"
             >
-              API Docs
+              API Docs ↗
             </a>
           </div>
         </div>
@@ -82,12 +84,20 @@ export default function Home() {
         <p className="text-gray-600 mb-8">
           Access real-time forecasts, historical data, and interactive visualizations
         </p>
-        <a
-          href="/dashboard"
-          className="bg-green-600 text-white px-8 py-4 rounded-lg text-lg hover:bg-green-700 transition inline-block"
-        >
-          Launch Dashboard
-        </a>
+        <div className="flex gap-4 justify-center">
+          <a
+            href="/forecasts"
+            className="bg-green-600 text-white px-8 py-4 rounded-lg text-lg hover:bg-green-700 transition inline-block"
+          >
+            View Forecasts
+          </a>
+          <a
+            href="/admin"
+            className="bg-purple-600 text-white px-8 py-4 rounded-lg text-lg hover:bg-purple-700 transition inline-block"
+          >
+            Admin Tools
+          </a>
+        </div>
       </section>
 
       {/* Footer */}
@@ -97,9 +107,15 @@ export default function Home() {
             Built with ❤️ for transparent, data-driven political analysis in Kenya
           </p>
           <div className="flex gap-6 justify-center text-sm text-gray-400">
-            <a href="/privacy" className="hover:text-white">Privacy Policy</a>
-            <a href="/terms" className="hover:text-white">Terms of Service</a>
-            <a href="/api/docs" className="hover:text-white">API Documentation</a>
+            <a href="/about" className="hover:text-white">About</a>
+            <a
+              href={`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8001/api'}/docs`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-white"
+            >
+              API Documentation
+            </a>
             <a href="mailto:info@kenpolimarket.com" className="hover:text-white">Contact</a>
           </div>
         </div>
