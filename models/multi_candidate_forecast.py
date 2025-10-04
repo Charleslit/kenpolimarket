@@ -263,7 +263,7 @@ def main():
         {'name': 'Raila Odinga', 'party': 'Azimio'},
         {'name': 'Kalonzo Musyoka', 'party': 'Wiper'},
         {'name': 'Musalia Mudavadi', 'party': 'ANC'},
-        {'name': 'fred matiangi', 'party': 'Independent'},
+        {'name': 'fred matiangi', 'party': 'Jubilee'},
         # Add more candidates here as needed
     ]
     

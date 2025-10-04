@@ -27,6 +27,7 @@ const PARTY_COLORS: Record<string, string> = {
   'Wiper': '#4ECDC4',
   'ANC': '#95E1D3',
   'Independent': '#9B59B6',
+  'Jubilee': '#DC143C',  // Crimson red
   'NARC-Kenya': '#E74C3C',
   'Roots Party': '#2ECC71',
 };

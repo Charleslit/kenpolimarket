@@ -47,6 +47,7 @@ const PARTY_COLORS: Record<string, string> = {
   'UDA': '#FFD700',
   'Azimio': '#FF6B35',
   'Independent': '#4A90E2',
+  'Jubilee': '#DC143C',  // Crimson red
   'Wiper': '#2ECC71',
   'ANC': '#9B59B6',
 };
