@@ -1,0 +1,37 @@
+fastapi==0.109.0
+uvicorn[standard]==0.27.0
+pydantic==2.5.3
+pydantic-settings==2.1.0
+sqlalchemy==2.0.25
+psycopg2-binary==2.9.9
+alembic==1.13.1
+redis==5.0.1
+celery==5.3.6
+
+# Data & ML (Python 3.13 compatible versions)
+pandas>=2.2.0
+numpy>=1.26.0
+# pymc==5.10.4  # Install separately if needed
+# numpyro==0.13.2  # Install separately if needed
+# jax==0.4.23  # Install separately if needed
+# xgboost==2.0.3  # Install separately if needed
+# lightgbm==4.3.0  # Install separately if needed
+# scikit-learn==1.4.0  # Install separately if needed
+# prophet==1.1.5  # Install separately if needed
+
+# API & Auth
+python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4
+python-multipart==0.0.6
+httpx==0.26.0
+
+# Utilities
+python-dotenv==1.0.0
+loguru==0.7.2
+tenacity==8.2.3
+pydantic-settings==2.1.0
+
+# Monitoring
+prometheus-client==0.19.0
+sentry-sdk==1.40.0
+

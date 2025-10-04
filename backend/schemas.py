@@ -1,0 +1,232 @@
+"""
+Pydantic schemas for API request/response validation
+"""
+
+from pydantic import BaseModel, Field, ConfigDict, field_serializer
+from typing import Optional, List
+from datetime import datetime
+from decimal import Decimal
+from uuid import UUID
+
+
+# ============================================================================
+# County Schemas
+# ============================================================================
+
+class CountyDemographicsSchema(BaseModel):
+    """County demographics response"""
+    model_config = ConfigDict(from_attributes=True)
+    
+    id: int
+    census_year: int
+    total_population: Optional[int] = None
+    urban_population: Optional[int] = None
+    rural_population: Optional[int] = None
+    median_age: Optional[Decimal] = None
+    literacy_rate: Optional[Decimal] = None
+    employment_rate: Optional[Decimal] = None
+
+
+class CountyEthnicityAggregateSchema(BaseModel):
+    """County ethnicity aggregate response (PRIVACY-PRESERVING)"""
+    model_config = ConfigDict(from_attributes=True)
+    
+    id: int
+    census_year: int
+    ethnicity_group: str
+    population_count: int = Field(..., ge=10, description="Minimum 10 for privacy")
+    percentage: Optional[Decimal] = None
+    source: Optional[str] = None
+
+
+class CountyBaseSchema(BaseModel):
+    """Base county information"""
+    model_config = ConfigDict(from_attributes=True)
+    
+    id: int
+    code: str
+    name: str
+    population_2019: Optional[int] = None
+    registered_voters_2022: Optional[int] = None
+
+
+class CountyDetailSchema(CountyBaseSchema):
+    """Detailed county information with relationships"""
+    demographics: List[CountyDemographicsSchema] = []
+    ethnicity_aggregates: List[CountyEthnicityAggregateSchema] = []
+
+
+class CountyListSchema(CountyBaseSchema):
+    """County list item (lightweight)"""
+    pass
+
+
+# ============================================================================
+# Election Schemas
+# ============================================================================
+
+class CandidateSchema(BaseModel):
+    """Candidate response"""
+    model_config = ConfigDict(from_attributes=True)
+    
+    id: int
+    name: str
+    party: Optional[str] = None
+    position: Optional[str] = None
+
+
+class ElectionBaseSchema(BaseModel):
+    """Base election information"""
+    model_config = ConfigDict(from_attributes=True)
+    
+    id: int
+    year: int
+    election_type: str
+    election_date: Optional[datetime] = None
+    description: Optional[str] = None
+
+
+class ElectionDetailSchema(ElectionBaseSchema):
+    """Detailed election with candidates"""
+    candidates: List[CandidateSchema] = []
+
+
+class ElectionResultCountySchema(BaseModel):
+    """County-level election result"""
+    model_config = ConfigDict(from_attributes=True)
+    
+    id: int
+    election_id: int
+    county_id: int
+    candidate_id: int
+    votes: int
+    rejected_votes: Optional[int] = 0
+    total_votes_cast: Optional[int] = None
+    registered_voters: Optional[int] = None
+    turnout_percentage: Optional[Decimal] = None
+    
+    # Nested relationships
+    county: Optional[CountyBaseSchema] = None
+    candidate: Optional[CandidateSchema] = None
+
+
+class ElectionResultsResponseSchema(BaseModel):
+    """Election results response with aggregated data"""
+    election: ElectionBaseSchema
+    results: List[ElectionResultCountySchema]
+    summary: dict
+
+
+# ============================================================================
+# Forecast Schemas
+# ============================================================================
+
+class ElectionBaseSchema(BaseModel):
+    """Base election information"""
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    year: int
+    election_type: str
+    description: Optional[str] = None
+
+
+class ForecastRunSchema(BaseModel):
+    """Forecast run metadata"""
+    model_config = ConfigDict(from_attributes=True)
+
+    id: UUID  # Pydantic will automatically serialize UUID to string
+    election_id: int
+    model_name: str
+    model_version: str
+    run_timestamp: datetime
+    data_cutoff_date: Optional[datetime] = None
+    status: Optional[str] = None
+
+    # Nested relationships
+    election: Optional[ElectionBaseSchema] = None
+
+
+class CandidateBaseSchema(BaseModel):
+    """Base candidate information"""
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    name: str
+    party: str
+    position: Optional[str] = None
+
+
+class ForecastCountySchema(BaseModel):
+    """County-level forecast with uncertainty"""
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    forecast_run_id: UUID  # Pydantic will automatically serialize UUID to string
+    county_id: int
+    candidate_id: int
+    predicted_vote_share: Optional[Decimal] = None
+    lower_bound_90: Optional[Decimal] = None
+    upper_bound_90: Optional[Decimal] = None
+    predicted_votes: Optional[int] = None
+    predicted_turnout: Optional[Decimal] = None
+
+    # Nested relationships
+    county: Optional[CountyBaseSchema] = None
+    candidate: Optional[CandidateBaseSchema] = None
+
+
+class ForecastRunDetailSchema(BaseModel):
+    """Detailed forecast run with county forecasts"""
+    model_config = ConfigDict(from_attributes=True)
+
+    id: str  # UUID
+    election_id: int
+    model_name: str
+    model_version: str
+    run_timestamp: datetime
+    data_cutoff_date: Optional[datetime] = None
+    status: Optional[str] = None
+
+    # Nested relationships
+    election: Optional[ElectionBaseSchema] = None
+    county_forecasts: Optional[List[ForecastCountySchema]] = None
+
+
+class ForecastListResponseSchema(BaseModel):
+    """List of forecasts response"""
+    forecast_run: ForecastRunSchema
+    forecasts: List[ForecastCountySchema]
+
+
+# ============================================================================
+# API Response Schemas
+# ============================================================================
+
+class HealthCheckSchema(BaseModel):
+    """Health check response"""
+    status: str
+    database: str
+    redis: Optional[str] = None
+    timestamp: datetime
+
+
+class ErrorResponseSchema(BaseModel):
+    """Error response"""
+    detail: str
+    error_code: Optional[str] = None
+
+
+class PaginationSchema(BaseModel):
+    """Pagination metadata"""
+    total: int
+    page: int
+    page_size: int
+    total_pages: int
+
+
+class PaginatedResponseSchema(BaseModel):
+    """Generic paginated response"""
+    data: List[dict]
+    pagination: PaginationSchema
+

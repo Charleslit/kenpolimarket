@@ -1,0 +1,90 @@
+# Render Blueprint for KenPoliMarket
+# This file allows one-click deployment to Render
+
+services:
+  # Backend API
+  - type: web
+    name: kenpolimarket-backend
+    runtime: python
+    plan: starter  # Change to 'free' for free tier
+    region: oregon  # Change to your preferred region
+    buildCommand: pip install -r backend/requirements.txt
+    startCommand: cd backend && uvicorn main:app --host 0.0.0.0 --port $PORT --workers 4
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11
+      - key: ENVIRONMENT
+        value: production
+      - key: DATABASE_URL
+        fromDatabase:
+          name: kenpolimarket-db
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          type: redis
+          name: kenpolimarket-redis
+          property: connectionString
+      - key: API_SECRET_KEY
+        generateValue: true
+        
+  # Celery Worker (Optional - for background tasks)
+  - type: worker
+    name: kenpolimarket-celery-worker
+    runtime: python
+    plan: starter
+    region: oregon
+    buildCommand: pip install -r backend/requirements.txt
+    startCommand: cd backend && celery -A tasks.celery_app worker --loglevel=info
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11
+      - key: ENVIRONMENT
+        value: production
+      - key: DATABASE_URL
+        fromDatabase:
+          name: kenpolimarket-db
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          type: redis
+          name: kenpolimarket-redis
+          property: connectionString
+          
+  # Celery Beat (Optional - for scheduled tasks)
+  - type: worker
+    name: kenpolimarket-celery-beat
+    runtime: python
+    plan: starter
+    region: oregon
+    buildCommand: pip install -r backend/requirements.txt
+    startCommand: cd backend && celery -A tasks.celery_app beat --loglevel=info
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11
+      - key: ENVIRONMENT
+        value: production
+      - key: DATABASE_URL
+        fromDatabase:
+          name: kenpolimarket-db
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          type: redis
+          name: kenpolimarket-redis
+          property: connectionString
+
+databases:
+  # PostgreSQL Database
+  - name: kenpolimarket-db
+    plan: starter  # Change to 'free' for free tier (90 days)
+    region: oregon
+    databaseName: kenpolimarket
+    user: kenpolimarket
+    postgresMajorVersion: 15
+
+  # Redis Cache
+  - name: kenpolimarket-redis
+    plan: starter  # Change to 'free' for free tier
+    region: oregon
+    maxmemoryPolicy: allkeys-lru
+

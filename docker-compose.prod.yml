@@ -1,0 +1,145 @@
+version: '3.9'
+
+services:
+  postgres:
+    image: postgis/postgis:15-3.3
+    container_name: kenpolimarket-postgres-prod
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-kenpolimarket}
+      POSTGRES_USER: ${POSTGRES_USER:-kenpolimarket}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-changeme}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/init:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-kenpolimarket}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    networks:
+      - kenpolimarket-network
+
+  redis:
+    image: redis:7-alpine
+    container_name: kenpolimarket-redis-prod
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    networks:
+      - kenpolimarket-network
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: kenpolimarket-backend-prod
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-kenpolimarket}:${POSTGRES_PASSWORD:-changeme}@postgres:5432/${POSTGRES_DB:-kenpolimarket}
+      REDIS_URL: redis://redis:6379/0
+      ENVIRONMENT: production
+    ports:
+      - "${BACKEND_PORT:-8000}:8000"
+    volumes:
+      - ./data:/data
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    command: uvicorn main:app --host 0.0.0.0 --port 8000 --workers 4
+    restart: unless-stopped
+    networks:
+      - kenpolimarket-network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: kenpolimarket-frontend-prod
+    environment:
+      NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:8000/api}
+      NODE_ENV: production
+    ports:
+      - "${FRONTEND_PORT:-3000}:3000"
+    depends_on:
+      - backend
+    restart: unless-stopped
+    networks:
+      - kenpolimarket-network
+
+  celery-worker:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: kenpolimarket-celery-prod
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-kenpolimarket}:${POSTGRES_PASSWORD:-changeme}@postgres:5432/${POSTGRES_DB:-kenpolimarket}
+      REDIS_URL: redis://redis:6379/0
+      ENVIRONMENT: production
+    volumes:
+      - ./data:/data
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    command: celery -A tasks.celery_app worker --loglevel=info
+    restart: unless-stopped
+    networks:
+      - kenpolimarket-network
+
+  celery-beat:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: kenpolimarket-celery-beat-prod
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-kenpolimarket}:${POSTGRES_PASSWORD:-changeme}@postgres:5432/${POSTGRES_DB:-kenpolimarket}
+      REDIS_URL: redis://redis:6379/0
+      ENVIRONMENT: production
+    volumes:
+      - ./data:/data
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    command: celery -A tasks.celery_app beat --loglevel=info
+    restart: unless-stopped
+    networks:
+      - kenpolimarket-network
+
+  nginx:
+    image: nginx:alpine
+    container_name: kenpolimarket-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/ssl:/etc/nginx/ssl:ro
+    depends_on:
+      - frontend
+      - backend
+    restart: unless-stopped
+    networks:
+      - kenpolimarket-network
+
+volumes:
+  postgres_data:
+  redis_data:
+
+networks:
+  kenpolimarket-network:
+    driver: bridge
+

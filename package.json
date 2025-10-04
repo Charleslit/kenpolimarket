@@ -1,0 +1,51 @@
+{
+  "name": "kenpolimarket",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Kenya's Premier Political Forecasting & Analysis Platform",
+  "keywords": [
+    "kenya",
+    "politics",
+    "forecasting",
+    "prediction-markets",
+    "elections",
+    "data-analysis"
+  ],
+  "author": "KenPoliMarket Team",
+  "license": "MIT",
+  "workspaces": [
+    "frontend",
+    "plugins/*"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm:dev:*\"",
+    "dev:frontend": "cd frontend && npm run dev",
+    "dev:backend": "cd backend && uvicorn main:app --reload --port 8000",
+    "build": "npm run build:frontend",
+    "build:frontend": "cd frontend && npm run build",
+    "test": "npm run test:frontend && npm run test:backend",
+    "test:frontend": "cd frontend && npm test",
+    "test:backend": "cd backend && pytest",
+    "test:e2e": "cd frontend && npm run test:e2e",
+    "lint": "npm run lint:frontend && npm run lint:backend",
+    "lint:frontend": "cd frontend && npm run lint",
+    "lint:backend": "cd backend && ruff check .",
+    "format": "npm run format:frontend && npm run format:backend",
+    "format:frontend": "cd frontend && npm run format",
+    "format:backend": "cd backend && ruff format .",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down",
+    "db:migrate": "cd backend && alembic upgrade head",
+    "db:seed": "cd backend && python scripts/seed.py",
+    "etl:iebc": "cd etl && python scripts/ingest_iebc.py",
+    "etl:knbs": "cd etl && python scripts/ingest_knbs.py"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  }
+}
+
