@@ -207,7 +207,7 @@ export default function ForecastsPage() {
       {/* Navigation Tabs */}
       <div className="bg-white border-b border-gray-200 shadow-sm sticky top-0 z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <nav className="flex space-x-8" aria-label="Tabs">
+          <nav className="flex space-x-8 overflow-x-auto" aria-label="Tabs">
             <button
               onClick={() => setViewMode('national')}
               className={`${
