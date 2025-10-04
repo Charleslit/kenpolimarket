@@ -280,7 +280,7 @@ const ForecastWithUncertainty: React.FC<ForecastWithUncertaintyProps> = ({
                 cx="50%"
                 cy="50%"
                 labelLine={false}
-                label={({ name, value }) => `${name.split(' ').slice(-1)[0]}: ${value.toFixed(1)}%`}
+                label={({ name, value }) => name ? `${name.split(' ').slice(-1)[0]}: ${value?.toFixed(1)}%` : ''}
                 outerRadius={100}
                 fill="#8884d8"
                 dataKey="value"
