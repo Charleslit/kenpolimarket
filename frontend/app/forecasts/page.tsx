@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import LeafletCountyMap from '@/components/maps/LeafletCountyMap';
+import dynamic from 'next/dynamic';
 import ForecastChart from '@/components/charts/ForecastChart';
 import ForecastWithUncertainty from '@/components/charts/ForecastWithUncertainty';
 import NationalDashboard from '@/components/dashboard/NationalDashboard';
@@ -16,6 +16,22 @@ import { DashboardSkeleton, ChartSkeleton } from '@/components/ui/LoadingSkeleto
 
 // API Base URL - update this to match your backend
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8001/api';
+
+// Dynamically import LeafletCountyMap to avoid SSR issues with Leaflet
+const LeafletCountyMap = dynamic(
+  () => import('@/components/maps/LeafletCountyMap'),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="h-[500px] flex items-center justify-center bg-gray-50 rounded-lg border border-gray-200">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading map...</p>
+        </div>
+      </div>
+    )
+  }
+);
 
 interface County {
   code: string;

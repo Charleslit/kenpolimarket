@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import "leaflet/dist/leaflet.css";
@@ -34,7 +34,11 @@ export const metadata: Metadata = {
     title: "KenPoliMarket - Kenya Political Forecasting",
     description: "Data-driven forecasting for Kenya's 2027 elections",
   },
-  viewport: "width=device-width, initial-scale=1",
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
   themeColor: "#2563eb",
 };
 
