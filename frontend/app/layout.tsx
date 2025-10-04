@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Navigation from "@/components/layout/Navigation";
+import MobileBottomNav from "@/components/layout/MobileBottomNav";
+import KeyboardShortcutsHelp from "@/components/ui/KeyboardShortcutsHelp";
+import { ToastProvider } from "@/components/ui/Toast";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -41,11 +44,22 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <link rel="manifest" href="/manifest.json" />
+        <meta name="mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+        <meta name="apple-mobile-web-app-title" content="KenPoliMarket" />
+      </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased pb-16 md:pb-0`}
       >
-        <Navigation />
-        {children}
+        <ToastProvider>
+          <Navigation />
+          {children}
+          <MobileBottomNav />
+          <KeyboardShortcutsHelp />
+        </ToastProvider>
       </body>
     </html>
   );
