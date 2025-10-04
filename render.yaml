@@ -2,6 +2,13 @@
 # This file allows one-click deployment to Render
 
 services:
+  # Redis Cache
+  - type: redis
+    name: kenpolimarket-redis
+    plan: free  # Free tier (25MB), or 'starter' for $10/month
+    region: oregon
+    ipAllowList: []  # Allow all IPs
+
   # Backend API
   - type: web
     name: kenpolimarket-backend
@@ -30,15 +37,9 @@ services:
 databases:
   # PostgreSQL Database
   - name: kenpolimarket-db
-    plan: free  # Free tier (expires after 90 days), or 'basic' for $7/month
+    plan: free  # Free tier (expires after 90 days), or 'starter' for $7/month
     region: oregon
     databaseName: kenpolimarket
     user: kenpolimarket
     postgresMajorVersion: 16
-
-  # Redis Cache
-  - name: kenpolimarket-redis
-    plan: free  # Free tier (25MB), or 'basic' for $10/month
-    region: oregon
-    ipAllowList: []  # Allow all IPs
 
