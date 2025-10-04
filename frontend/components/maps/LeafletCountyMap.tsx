@@ -184,11 +184,21 @@ export default function LeafletCountyMap({
     );
   }
 
+  // Kenya's geographic bounds (approximate)
+  const kenyaBounds: L.LatLngBoundsExpression = [
+    [-4.8, 33.9],  // Southwest coordinates (southern border, western border)
+    [5.5, 41.9]    // Northeast coordinates (northern border, eastern border)
+  ];
+
   return (
     <div className="relative">
       <MapContainer
         center={[0.0236, 37.9062]} // Kenya center coordinates
         zoom={6}
+        minZoom={6}  // Prevent zooming out too far
+        maxZoom={10} // Prevent zooming in too close
+        maxBounds={kenyaBounds} // Restrict panning to Kenya
+        maxBoundsViscosity={1.0} // Make bounds completely solid (no dragging outside)
         style={{ height: '500px', width: '100%' }}
         className="rounded-lg border border-gray-200"
       >
@@ -196,7 +206,7 @@ export default function LeafletCountyMap({
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-        
+
         {geoJsonData && (
           <GeoJSON
             data={geoJsonData}
@@ -204,7 +214,7 @@ export default function LeafletCountyMap({
             onEachFeature={onEachFeature}
           />
         )}
-        
+
         <MapUpdater selectedCounty={selectedCounty} />
       </MapContainer>
 
@@ -238,10 +248,10 @@ export default function LeafletCountyMap({
       {/* Info Box */}
       <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
         <p className="text-sm text-blue-800">
-          <strong>📍 Interactive County Map</strong>
+          <strong>📍 Interactive County Map of Kenya</strong>
         </p>
         <p className="text-xs text-blue-600 mt-1">
-          Click on any county to view detailed forecast data. Hover for quick info. Colors represent voter turnout percentage.
+          Click on any county to view detailed forecast data. Hover for quick info. Colors represent voter turnout percentage. Map is locked to Kenya's boundaries.
         </p>
       </div>
     </div>
