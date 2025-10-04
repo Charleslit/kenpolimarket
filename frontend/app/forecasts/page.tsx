@@ -174,10 +174,10 @@ export default function ForecastsPage() {
                 </span>
               </h1>
               <p className="mt-2 text-blue-100 text-xs sm:text-sm">
-                Privacy-first political forecasting powered by Bayesian AI • {counties.length} Counties • {elections.length} Elections
+                Forecast by Ongoro • Powered by Bayesian AI • Based on official IEBC data from 2022
               </p>
-              <p className="mt-1 text-blue-200 text-xs italic">
-                Forecast by Ongoro based on official IEBC data from 2022
+              <p className="mt-1 text-blue-200 text-xs">
+                {counties.length} Counties • {elections.length} Elections • Privacy-first & Data Protection Act 2019 Compliant
               </p>
             </div>
             <div className="hidden lg:flex items-center space-x-4">
