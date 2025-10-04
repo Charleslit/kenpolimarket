@@ -209,34 +209,34 @@ export default function RegionalBreakdown() {
       </div>
 
       {/* Regional Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {regionalStats.map(stat => (
           <div
             key={stat.region}
-            className="bg-white rounded-xl shadow-lg border border-gray-200 p-5 hover:shadow-xl transition-shadow cursor-pointer"
+            className="bg-white rounded-xl shadow-lg border border-gray-200 p-4 sm:p-5 hover:shadow-xl transition-shadow cursor-pointer"
             onClick={() => setSelectedRegion(stat.region)}
           >
             <div className="flex items-center justify-between mb-3">
-              <h3 className="font-semibold text-gray-900">{stat.region}</h3>
+              <h3 className="text-sm sm:text-base font-semibold text-gray-900">{stat.region}</h3>
               <div
                 className="w-4 h-4 rounded-full"
                 style={{ backgroundColor: PARTY_COLORS[stat.leadingParty] || '#94a3b8' }}
               />
             </div>
             <div className="space-y-2">
-              <div className="flex justify-between text-sm">
+              <div className="flex justify-between text-xs sm:text-sm">
                 <span className="text-gray-600">Leading Party:</span>
                 <span className="font-medium text-gray-900">{stat.leadingParty}</span>
               </div>
-              <div className="flex justify-between text-sm">
+              <div className="flex justify-between text-xs sm:text-sm">
                 <span className="text-gray-600">Counties Won:</span>
                 <span className="font-medium text-gray-900">{stat.wins}/{stat.counties}</span>
               </div>
-              <div className="flex justify-between text-sm">
+              <div className="flex justify-between text-xs sm:text-sm">
                 <span className="text-gray-600">Total Votes:</span>
                 <span className="font-medium text-gray-900">{(stat.totalVotes / 1000000).toFixed(1)}M</span>
               </div>
-              <div className="flex justify-between text-sm">
+              <div className="flex justify-between text-xs sm:text-sm">
                 <span className="text-gray-600">Avg Turnout:</span>
                 <span className="font-medium text-gray-900">{stat.avgTurnout.toFixed(1)}%</span>
               </div>
@@ -290,22 +290,22 @@ export default function RegionalBreakdown() {
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   County
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Leading Candidate
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-3 sm:px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Party
                 </th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-3 sm:px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Vote Share
                 </th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="hidden sm:table-cell px-3 sm:px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Total Votes
                 </th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-3 sm:px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Turnout
                 </th>
               </tr>
@@ -313,30 +313,30 @@ export default function RegionalBreakdown() {
             <tbody className="bg-white divide-y divide-gray-200">
               {sortedForecasts.map((forecast) => (
                 <tr key={forecast.county_code} className="hover:bg-gray-50 transition-colors">
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="px-3 sm:px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center">
-                      <div className="text-sm font-medium text-gray-900">{forecast.county_name}</div>
+                      <div className="text-xs sm:text-sm font-medium text-gray-900">{forecast.county_name}</div>
                     </div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-900">{forecast.leading_candidate}</div>
+                  <td className="px-3 sm:px-6 py-4 whitespace-nowrap">
+                    <div className="text-xs sm:text-sm text-gray-900">{forecast.leading_candidate}</div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="px-3 sm:px-6 py-4 whitespace-nowrap">
                     <span
-                      className="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full text-white"
+                      className="px-2 sm:px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full text-white"
                       style={{ backgroundColor: PARTY_COLORS[forecast.leading_party] || '#94a3b8' }}
                     >
                       {forecast.leading_party}
                     </span>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right">
-                    <div className="text-sm font-semibold text-gray-900">{forecast.leading_share.toFixed(1)}%</div>
+                  <td className="px-3 sm:px-6 py-4 whitespace-nowrap text-right">
+                    <div className="text-xs sm:text-sm font-semibold text-gray-900">{forecast.leading_share.toFixed(1)}%</div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right">
-                    <div className="text-sm text-gray-900">{forecast.total_votes.toLocaleString()}</div>
+                  <td className="hidden sm:table-cell px-3 sm:px-6 py-4 whitespace-nowrap text-right">
+                    <div className="text-xs sm:text-sm text-gray-900">{forecast.total_votes.toLocaleString()}</div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right">
-                    <div className="text-sm text-gray-900">{forecast.turnout.toFixed(1)}%</div>
+                  <td className="px-3 sm:px-6 py-4 whitespace-nowrap text-right">
+                    <div className="text-xs sm:text-sm text-gray-900">{forecast.turnout.toFixed(1)}%</div>
                   </td>
                 </tr>
               ))}
