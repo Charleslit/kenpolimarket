@@ -86,5 +86,5 @@ databases:
   - name: kenpolimarket-redis
     plan: starter  # Change to 'free' for free tier
     region: oregon
-    maxmemoryPolicy: allkeys-lru
+    ipAllowList: []  # Allow all IPs
 
