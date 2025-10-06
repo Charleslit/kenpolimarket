@@ -98,7 +98,7 @@ export default function InteractiveMap({
     try {
       if (level === 'national') {
         // Fetch all counties
-        const response = await fetch(`${API_BASE_URL}/api/counties/`);
+        const response = await fetch(`${API_BASE_URL}/counties/`);
         const counties = await response.json();
         
         const countyMarkers: MapMarker[] = counties.map((county: any) => ({
@@ -116,11 +116,11 @@ export default function InteractiveMap({
         
       } else if (level === 'county' && countyId) {
         // Fetch constituencies in county
-        const response = await fetch(`${API_BASE_URL}/api/constituencies/?county_id=${countyId}`);
+        const response = await fetch(`${API_BASE_URL}/constituencies/?county_id=${countyId}`);
         const constituencies = await response.json();
 
         // For now, cluster constituencies around county center
-        const countyResponse = await fetch(`${API_BASE_URL}/api/counties/${countyId}`);
+        const countyResponse = await fetch(`${API_BASE_URL}/counties/${countyId}`);
         const county = await countyResponse.json();
         const countyCoords = KENYA_COUNTIES_COORDS[county.name] || [-0.0236, 37.9062];
 
@@ -139,7 +139,7 @@ export default function InteractiveMap({
         
       } else if (level === 'constituency' && constituencyId) {
         // Fetch wards in constituency
-        const response = await fetch(`${API_BASE_URL}/api/wards/?constituency_id=${constituencyId}`);
+        const response = await fetch(`${API_BASE_URL}/wards/?constituency_id=${constituencyId}`);
         const wards = await response.json();
         
         // Cluster wards around constituency center (using county coords for now)
@@ -158,7 +158,7 @@ export default function InteractiveMap({
       } else if (level === 'ward' && wardId) {
         // Fetch polling stations in ward
         const yearParam = selectedYear !== 'all' ? `&year=${selectedYear}` : '';
-        const response = await fetch(`${API_BASE_URL}/api/polling-stations/?ward_id=${wardId}&limit=100${yearParam}`);
+        const response = await fetch(`${API_BASE_URL}/polling-stations/?ward_id=${wardId}&limit=100${yearParam}`);
         const stations = await response.json();
         
         const stationMarkers: MapMarker[] = stations.map((station: any, index: number) => ({

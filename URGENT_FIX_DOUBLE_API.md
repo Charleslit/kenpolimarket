@@ -23,7 +23,7 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8001/a
 
 Then on line 101:
 ```typescript
-fetch(`${API_BASE_URL}/api/counties/`)
+fetch(`${API_BASE_URL}/counties/`)
 ```
 
 This creates: `BASE_URL` + `/api/counties/` = **DOUBLE /api/**
@@ -75,7 +75,7 @@ Your code has:
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8001/api';
 
 // Then later:
-fetch(`${API_BASE_URL}/api/counties/`)
+fetch(`${API_BASE_URL}/counties/`)
 ```
 
 **With wrong env var** (`https://...onrender.com/api`):
@@ -134,7 +134,7 @@ NEXT_PUBLIC_API_URL=https://kenpolimarket-backend.onrender.com
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8001';
 
 // Then in fetch calls:
-fetch(`${API_BASE_URL}/api/counties/`)
+fetch(`${API_BASE_URL}/counties/`)
 ```
 
 This creates: `https://kenpolimarket-backend.onrender.com` + `/api/counties/` = ✅ Correct!

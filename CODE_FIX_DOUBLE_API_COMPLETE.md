@@ -13,7 +13,7 @@ NEXT_PUBLIC_API_URL=https://kenpolimarket-backend.onrender.com/api
 
 But the frontend code was adding `/api` again in fetch calls:
 ```typescript
-fetch(`${API_BASE_URL}/api/counties/`)
+fetch(`${API_BASE_URL}/counties/`)
 ```
 
 This created: `https://kenpolimarket-backend.onrender.com/api/api/counties/` ❌

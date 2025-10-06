@@ -41,8 +41,8 @@ export default function VoterRegistrationPage() {
     setLoading(true);
     try {
       const [statsRes, countyRes] = await Promise.all([
-        fetch(`${API_BASE_URL}/api/polling-stations/stats`),
-        fetch(`${API_BASE_URL}/api/polling-stations/by-county`)
+        fetch(`${API_BASE_URL}/polling-stations/stats`),
+        fetch(`${API_BASE_URL}/polling-stations/by-county`)
       ]);
 
       if (statsRes.ok) {
