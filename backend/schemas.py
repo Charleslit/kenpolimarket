@@ -62,17 +62,82 @@ class CountyListSchema(CountyBaseSchema):
 
 
 # ============================================================================
+# Constituency & Ward Schemas
+# ============================================================================
+
+class ConstituencyBaseSchema(BaseModel):
+    """Base constituency information"""
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    code: str
+    name: str
+    county_id: int
+    registered_voters: Optional[int] = None
+
+
+class ConstituencyDetailSchema(ConstituencyBaseSchema):
+    """Detailed constituency with county info"""
+    county: Optional[CountyBaseSchema] = None
+
+
+class WardBaseSchema(BaseModel):
+    """Base ward information"""
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    code: str
+    name: str
+    constituency_id: int
+    population_2019: Optional[int] = None
+
+
+class WardDetailSchema(WardBaseSchema):
+    """Detailed ward with constituency info"""
+    constituency: Optional[ConstituencyBaseSchema] = None
+
+
+# ============================================================================
 # Election Schemas
 # ============================================================================
 
 class CandidateSchema(BaseModel):
     """Candidate response"""
     model_config = ConfigDict(from_attributes=True)
-    
+
     id: int
     name: str
     party: Optional[str] = None
     position: Optional[str] = None
+    county_id: Optional[int] = None
+    constituency_id: Optional[int] = None
+    ward_id: Optional[int] = None
+
+    # Nested relationships (optional)
+    county: Optional[CountyBaseSchema] = None
+    constituency: Optional[ConstituencyBaseSchema] = None
+    ward: Optional[WardBaseSchema] = None
+
+
+class CandidateCreateSchema(BaseModel):
+    """Schema for creating a candidate"""
+    name: str = Field(..., min_length=1, max_length=200)
+    party: str = Field(..., min_length=1, max_length=200)
+    position: str = Field(..., description="Position: President, Governor, MP, MCA, Senator")
+    election_id: Optional[int] = None
+    county_id: Optional[int] = Field(None, description="Required for Governor candidates")
+    constituency_id: Optional[int] = Field(None, description="Required for MP candidates")
+    ward_id: Optional[int] = Field(None, description="Required for MCA candidates")
+
+
+class CandidateUpdateSchema(BaseModel):
+    """Schema for updating a candidate"""
+    name: Optional[str] = Field(None, min_length=1, max_length=200)
+    party: Optional[str] = Field(None, min_length=1, max_length=200)
+    position: Optional[str] = None
+    county_id: Optional[int] = None
+    constituency_id: Optional[int] = None
+    ward_id: Optional[int] = None
 
 
 class ElectionBaseSchema(BaseModel):

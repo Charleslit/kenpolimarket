@@ -6,6 +6,8 @@ import Navigation from "@/components/layout/Navigation";
 import MobileBottomNav from "@/components/layout/MobileBottomNav";
 import KeyboardShortcutsHelp from "@/components/ui/KeyboardShortcutsHelp";
 import { ToastProvider } from "@/components/ui/Toast";
+import PWAInstallPrompt, { OfflineIndicator } from "@/components/common/PWAInstallPrompt";
+import PWAInitializer from "@/components/common/PWAInitializer";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -59,11 +61,14 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased pb-16 md:pb-0`}
       >
+        <PWAInitializer />
         <ToastProvider>
+          <OfflineIndicator />
           <Navigation />
           {children}
           <MobileBottomNav />
           <KeyboardShortcutsHelp />
+          <PWAInstallPrompt />
         </ToastProvider>
       </body>
     </html>

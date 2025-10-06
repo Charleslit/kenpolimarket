@@ -10,7 +10,7 @@ from pydantic import BaseModel, Field
 from datetime import datetime
 
 from database import get_db
-from models import Candidate
+from models import Candidate, County, Constituency, Ward
 
 router = APIRouter(prefix="/candidates", tags=["candidates"])
 
@@ -18,10 +18,13 @@ router = APIRouter(prefix="/candidates", tags=["candidates"])
 # Pydantic schemas
 class CandidateCreate(BaseModel):
     """Schema for creating a new candidate"""
-    name: str = Field(..., min_length=1, max_length=100, description="Candidate full name")
-    party: str = Field(..., min_length=1, max_length=50, description="Political party")
-    position: str = Field(default="President", description="Position running for")
-    
+    name: str = Field(..., min_length=1, max_length=200, description="Candidate full name")
+    party: str = Field(..., min_length=1, max_length=200, description="Political party")
+    position: str = Field(default="President", description="Position: President, Governor, MP, MCA, Senator")
+    county_id: Optional[int] = Field(None, description="County ID (required for Governor)")
+    constituency_id: Optional[int] = Field(None, description="Constituency ID (required for MP)")
+    ward_id: Optional[int] = Field(None, description="Ward ID (required for MCA)")
+
     class Config:
         json_schema_extra = {
             "example": {
@@ -34,10 +37,13 @@ class CandidateCreate(BaseModel):
 
 class CandidateUpdate(BaseModel):
     """Schema for updating a candidate"""
-    name: Optional[str] = Field(None, min_length=1, max_length=100)
-    party: Optional[str] = Field(None, min_length=1, max_length=50)
+    name: Optional[str] = Field(None, min_length=1, max_length=200)
+    party: Optional[str] = Field(None, min_length=1, max_length=200)
     position: Optional[str] = None
-    
+    county_id: Optional[int] = None
+    constituency_id: Optional[int] = None
+    ward_id: Optional[int] = None
+
     class Config:
         json_schema_extra = {
             "example": {
@@ -53,7 +59,10 @@ class CandidateResponse(BaseModel):
     name: str
     party: str
     position: str
-    
+    county_id: Optional[int] = None
+    constituency_id: Optional[int] = None
+    ward_id: Optional[int] = None
+
     class Config:
         from_attributes = True
 
@@ -112,36 +121,85 @@ async def create_candidate(
 ):
     """
     Create a new candidate
-    
+
     Args:
         candidate_data: Candidate information
-        
+
     Returns:
         Created candidate
     """
+    # Validate position-specific requirements
+    position_lower = candidate_data.position.lower()
+
+    if position_lower == 'governor':
+        if not candidate_data.county_id:
+            raise HTTPException(
+                status_code=400,
+                detail="County ID is required for Governor candidates"
+            )
+        # Verify county exists
+        county = db.query(County).filter(County.id == candidate_data.county_id).first()
+        if not county:
+            raise HTTPException(
+                status_code=404,
+                detail=f"County with ID {candidate_data.county_id} not found"
+            )
+
+    elif position_lower == 'mp':
+        if not candidate_data.constituency_id:
+            raise HTTPException(
+                status_code=400,
+                detail="Constituency ID is required for MP candidates"
+            )
+        # Verify constituency exists
+        constituency = db.query(Constituency).filter(Constituency.id == candidate_data.constituency_id).first()
+        if not constituency:
+            raise HTTPException(
+                status_code=404,
+                detail=f"Constituency with ID {candidate_data.constituency_id} not found"
+            )
+
+    elif position_lower == 'mca':
+        if not candidate_data.ward_id:
+            raise HTTPException(
+                status_code=400,
+                detail="Ward ID is required for MCA candidates"
+            )
+        # Verify ward exists
+        ward = db.query(Ward).filter(Ward.id == candidate_data.ward_id).first()
+        if not ward:
+            raise HTTPException(
+                status_code=404,
+                detail=f"Ward with ID {candidate_data.ward_id} not found"
+            )
+
     # Check if candidate already exists
     existing = db.query(Candidate).filter(
         Candidate.name == candidate_data.name,
-        Candidate.party == candidate_data.party
+        Candidate.party == candidate_data.party,
+        Candidate.position == candidate_data.position
     ).first()
-    
+
     if existing:
         raise HTTPException(
             status_code=400,
-            detail=f"Candidate '{candidate_data.name}' from '{candidate_data.party}' already exists"
+            detail=f"Candidate '{candidate_data.name}' from '{candidate_data.party}' for position '{candidate_data.position}' already exists"
         )
-    
+
     # Create new candidate
     new_candidate = Candidate(
         name=candidate_data.name,
         party=candidate_data.party,
-        position=candidate_data.position
+        position=candidate_data.position,
+        county_id=candidate_data.county_id,
+        constituency_id=candidate_data.constituency_id,
+        ward_id=candidate_data.ward_id
     )
-    
+
     db.add(new_candidate)
     db.commit()
     db.refresh(new_candidate)
-    
+
     return new_candidate
 
 
@@ -153,19 +211,19 @@ async def update_candidate(
 ):
     """
     Update an existing candidate
-    
+
     Args:
         candidate_id: Candidate ID
         candidate_data: Updated candidate information
-        
+
     Returns:
         Updated candidate
     """
     candidate = db.query(Candidate).filter(Candidate.id == candidate_id).first()
-    
+
     if not candidate:
         raise HTTPException(status_code=404, detail=f"Candidate with ID {candidate_id} not found")
-    
+
     # Update fields if provided
     if candidate_data.name is not None:
         candidate.name = candidate_data.name
@@ -173,10 +231,44 @@ async def update_candidate(
         candidate.party = candidate_data.party
     if candidate_data.position is not None:
         candidate.position = candidate_data.position
-    
+
+    # Update geographic fields
+    if candidate_data.county_id is not None:
+        if candidate_data.county_id > 0:
+            # Verify county exists
+            county = db.query(County).filter(County.id == candidate_data.county_id).first()
+            if not county:
+                raise HTTPException(
+                    status_code=404,
+                    detail=f"County with ID {candidate_data.county_id} not found"
+                )
+        candidate.county_id = candidate_data.county_id if candidate_data.county_id > 0 else None
+
+    if candidate_data.constituency_id is not None:
+        if candidate_data.constituency_id > 0:
+            # Verify constituency exists
+            constituency = db.query(Constituency).filter(Constituency.id == candidate_data.constituency_id).first()
+            if not constituency:
+                raise HTTPException(
+                    status_code=404,
+                    detail=f"Constituency with ID {candidate_data.constituency_id} not found"
+                )
+        candidate.constituency_id = candidate_data.constituency_id if candidate_data.constituency_id > 0 else None
+
+    if candidate_data.ward_id is not None:
+        if candidate_data.ward_id > 0:
+            # Verify ward exists
+            ward = db.query(Ward).filter(Ward.id == candidate_data.ward_id).first()
+            if not ward:
+                raise HTTPException(
+                    status_code=404,
+                    detail=f"Ward with ID {candidate_data.ward_id} not found"
+                )
+        candidate.ward_id = candidate_data.ward_id if candidate_data.ward_id > 0 else None
+
     db.commit()
     db.refresh(candidate)
-    
+
     return candidate
 
 

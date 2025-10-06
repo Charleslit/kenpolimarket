@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import ExportButton from '../common/ExportButton';
+import { exportReportToPDF, exportObjectsToCSV, exportElementAsImage } from '@/utils/exportUtils';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8001/api';
 
@@ -16,6 +18,14 @@ interface RegionalAdjustment {
   candidate_shares: Record<string, number>;
 }
 
+interface RegionalBreakdown {
+  region: string;
+  total_votes: number;
+  original_results: Record<string, { votes: number; share: number }>;
+  adjusted_results: Record<string, { votes: number; share: number }>;
+  changes: Record<string, number>;
+}
+
 interface ScenarioResult {
   scenario_name: string;
   description: string;
@@ -28,8 +38,11 @@ interface ScenarioResult {
     original_share: number;
   }>;
   regional_changes: any[];
+  regional_breakdown: RegionalBreakdown[];
   winner: string;
   margin: number;
+  total_votes_original: number;
+  total_votes_adjusted: number;
 }
 
 const REGIONS = [
@@ -178,7 +191,7 @@ export default function ScenarioCalculator() {
     setResult(null);
     setScenarioName('');
     setScenarioDescription('');
-    
+
     // Reset shares to equal
     if (candidates.length > 0) {
       const initialShares: Record<string, number> = {};
@@ -188,6 +201,92 @@ export default function ScenarioCalculator() {
       });
       setCurrentShares(initialShares);
     }
+  };
+
+  // Export Functions
+  const handleExportPDF = () => {
+    if (!result) return;
+
+    const sections = [
+      {
+        heading: 'Scenario Overview',
+        content: `Name: ${result.scenario_name}\nDescription: ${result.description || 'N/A'}\nWinner: ${result.winner}\nMargin: ${result.margin.toFixed(1)}%`
+      },
+      {
+        heading: 'National Results',
+        table: {
+          headers: ['Candidate', 'Original %', 'New %', 'Change', 'Votes'],
+          data: Object.entries(result.national_results).map(([name, data]) => [
+            name,
+            data.original_share.toFixed(1) + '%',
+            data.share.toFixed(1) + '%',
+            (data.change >= 0 ? '+' : '') + data.change.toFixed(1) + '%',
+            data.votes.toLocaleString()
+          ])
+        }
+      },
+      {
+        heading: 'Regional Adjustments Applied',
+        table: {
+          headers: ['Region', 'Adjustments'],
+          data: adjustments.map(adj => [
+            adj.region,
+            Object.entries(adj.candidate_shares)
+              .map(([name, share]) => `${name.split(' ').slice(-1)[0]}: ${share.toFixed(1)}%`)
+              .join(', ')
+          ])
+        }
+      }
+    ];
+
+    if (result.regional_breakdown && result.regional_breakdown.length > 0) {
+      sections.push({
+        heading: 'Regional Impact Analysis',
+        table: {
+          headers: ['Region', 'Total Votes', 'Key Changes'],
+          data: result.regional_breakdown.map(region => [
+            region.region,
+            (region.total_votes / 1000000).toFixed(2) + 'M',
+            Object.entries(region.changes)
+              .map(([name, change]) => `${name.split(' ').slice(-1)[0]}: ${change >= 0 ? '+' : ''}${change.toFixed(1)}%`)
+              .join(', ')
+          ])
+        }
+      });
+    }
+
+    exportReportToPDF(
+      `Scenario: ${result.scenario_name}`,
+      sections,
+      `KenPoliMarket_Scenario_${result.scenario_name.replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.pdf`
+    );
+  };
+
+  const handleExportCSV = () => {
+    if (!result) return;
+
+    const csvData = Object.entries(result.national_results).map(([name, data]) => ({
+      Candidate: name,
+      Party: candidates.find(c => c.name === name)?.party || 'N/A',
+      'Original Votes': data.original_votes,
+      'Original Share (%)': data.original_share.toFixed(2),
+      'New Votes': data.votes,
+      'New Share (%)': data.share.toFixed(2),
+      'Change (%)': data.change.toFixed(2),
+      'Vote Difference': data.votes - data.original_votes
+    }));
+
+    exportObjectsToCSV(
+      csvData,
+      `KenPoliMarket_Scenario_${result.scenario_name.replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.csv`
+    );
+  };
+
+  const handleExportImage = async () => {
+    await exportElementAsImage(
+      'scenario-results',
+      `KenPoliMarket_Scenario_${result?.scenario_name.replace(/\s+/g, '_')}_${new Date().toISOString().split('T')[0]}.png`
+    );
   };
 
   if (loading) {
@@ -381,7 +480,17 @@ export default function ScenarioCalculator() {
         {/* Right Column: Results */}
         <div className="space-y-6">
           {result ? (
-            <>
+            <div id="scenario-results">
+              {/* Export Button */}
+              <div className="flex justify-end mb-4">
+                <ExportButton
+                  variant="compact"
+                  onExportPDF={handleExportPDF}
+                  onExportCSV={handleExportCSV}
+                  onExportImage={handleExportImage}
+                />
+              </div>
+
               {/* Results Header */}
               <div className="bg-gradient-to-r from-green-500 to-green-600 rounded-xl shadow-lg p-6 text-white">
                 <h3 className="text-xl font-bold mb-2">{result.scenario_name}</h3>
@@ -442,7 +551,45 @@ export default function ScenarioCalculator() {
                   ))}
                 </div>
               </div>
-            </>
+
+              {/* Regional Breakdown */}
+              {result.regional_breakdown && result.regional_breakdown.length > 0 && (
+                <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-6">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-4">Regional Impact Analysis</h3>
+                  <div className="space-y-4">
+                    {result.regional_breakdown.map((region) => (
+                      <div key={region.region} className="border border-gray-200 rounded-lg p-4">
+                        <div className="flex items-center justify-between mb-3">
+                          <h4 className="font-semibold text-gray-900">{region.region}</h4>
+                          <span className="text-xs text-gray-500">
+                            {(region.total_votes / 1000000).toFixed(2)}M votes
+                          </span>
+                        </div>
+                        <div className="space-y-2">
+                          {Object.entries(region.changes).map(([candidate, change]) => (
+                            <div key={candidate} className="flex items-center justify-between text-sm">
+                              <span className="text-gray-700">{candidate.split(' ').slice(-1)[0]}</span>
+                              <div className="flex items-center space-x-3">
+                                <span className="text-gray-500">
+                                  {region.original_results[candidate]?.share.toFixed(1)}%
+                                </span>
+                                <span className="text-gray-400">→</span>
+                                <span className="font-semibold">
+                                  {region.adjusted_results[candidate]?.share.toFixed(1)}%
+                                </span>
+                                <span className={`font-bold min-w-[60px] text-right ${change >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                                  {change >= 0 ? '+' : ''}{change.toFixed(1)}%
+                                </span>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
           ) : (
             <div className="bg-gray-50 rounded-xl border-2 border-dashed border-gray-300 p-12 text-center">
               <div className="text-gray-400 text-6xl mb-4">📊</div>

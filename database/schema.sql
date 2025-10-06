@@ -62,7 +62,10 @@ CREATE TABLE candidates (
     election_id INTEGER REFERENCES elections(id) ON DELETE CASCADE,
     name VARCHAR(200) NOT NULL,
     party VARCHAR(100),
-    position VARCHAR(100),  -- 'president', 'governor', 'mp'
+    position VARCHAR(100),  -- 'president', 'governor', 'mp', 'mca', 'senator'
+    county_id INTEGER REFERENCES counties(id) ON DELETE SET NULL,  -- For Governor candidates
+    constituency_id INTEGER REFERENCES constituencies(id) ON DELETE SET NULL,  -- For MP candidates
+    ward_id INTEGER REFERENCES wards(id) ON DELETE SET NULL,  -- For MCA candidates
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -262,6 +265,10 @@ CREATE TABLE data_ingestion_log (
 CREATE INDEX idx_counties_code ON counties(code);
 CREATE INDEX idx_constituencies_county ON constituencies(county_id);
 CREATE INDEX idx_wards_constituency ON wards(constituency_id);
+CREATE INDEX idx_candidates_county ON candidates(county_id);
+CREATE INDEX idx_candidates_constituency ON candidates(constituency_id);
+CREATE INDEX idx_candidates_ward ON candidates(ward_id);
+CREATE INDEX idx_candidates_position ON candidates(position);
 CREATE INDEX idx_election_results_county_election ON election_results_county(election_id, county_id);
 CREATE INDEX idx_election_results_constituency_election ON election_results_constituency(election_id, constituency_id);
 CREATE INDEX idx_forecast_county_run ON forecast_county(forecast_run_id);

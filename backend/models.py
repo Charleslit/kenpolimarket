@@ -75,11 +75,34 @@ class Constituency(Base):
 
     # Relationships
     county = relationship("County", back_populates="constituencies")
+    wards = relationship("Ward", back_populates="constituency", cascade="all, delete-orphan")
     election_results = relationship("ElectionResultConstituency", back_populates="constituency")
     forecasts = relationship("ForecastConstituency", back_populates="constituency")
+    candidates = relationship("Candidate", back_populates="constituency")
 
     def __repr__(self):
         return f"<Constituency(code='{self.code}', name='{self.name}')>"
+
+
+class Ward(Base):
+    """Ward model - electoral wards (smallest administrative unit)"""
+    __tablename__ = "wards"
+
+    id = Column(Integer, primary_key=True, index=True)
+    constituency_id = Column(Integer, ForeignKey('constituencies.id', ondelete='CASCADE'))
+    code = Column(String(20), unique=True, nullable=False)
+    name = Column(String(100), nullable=False)
+    geometry = Column(Geometry('MULTIPOLYGON', srid=4326))
+    population_2019 = Column(Integer)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    # Relationships
+    constituency = relationship("Constituency", back_populates="wards")
+    candidates = relationship("Candidate", back_populates="ward")
+
+    def __repr__(self):
+        return f"<Ward(code='{self.code}', name='{self.name}')>"
 
 
 class Election(Base):
@@ -106,21 +129,30 @@ class Election(Base):
 class Candidate(Base):
     """Candidate model - election candidates"""
     __tablename__ = "candidates"
-    
+
     id = Column(Integer, primary_key=True, index=True)
     election_id = Column(Integer, ForeignKey('elections.id', ondelete='CASCADE'))
     name = Column(String(200), nullable=False)
     party = Column(String(200))
-    position = Column(String(100))
+    position = Column(String(100))  # 'president', 'governor', 'mp', 'mca', 'senator'
+
+    # Position-specific geographic fields
+    county_id = Column(Integer, ForeignKey('counties.id', ondelete='SET NULL'), nullable=True)  # For Governor
+    constituency_id = Column(Integer, ForeignKey('constituencies.id', ondelete='SET NULL'), nullable=True)  # For MP
+    ward_id = Column(Integer, ForeignKey('wards.id', ondelete='SET NULL'), nullable=True)  # For MCA
+
     created_at = Column(DateTime, default=datetime.utcnow)
-    
+
     # Relationships
     election = relationship("Election", back_populates="candidates")
+    county = relationship("County", foreign_keys=[county_id])
+    constituency = relationship("Constituency", foreign_keys=[constituency_id], back_populates="candidates")
+    ward = relationship("Ward", foreign_keys=[ward_id], back_populates="candidates")
     results_county = relationship("ElectionResultCounty", back_populates="candidate")
     results_constituency = relationship("ElectionResultConstituency", back_populates="candidate")
-    
+
     def __repr__(self):
-        return f"<Candidate(name='{self.name}', party='{self.party}')>"
+        return f"<Candidate(name='{self.name}', party='{self.party}', position='{self.position}')>"
 
 
 class ElectionResultCounty(Base):
