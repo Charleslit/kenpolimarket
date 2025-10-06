@@ -1,9 +1,10 @@
 """
 Polling Stations API Router
 Handles polling station data, registration centers, and CSV imports
+Supports multi-year voter registration data
 """
 
-from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, BackgroundTasks
+from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, BackgroundTasks, Query
 from sqlalchemy.orm import Session
 from sqlalchemy import func, text
 from typing import List, Optional
@@ -169,23 +170,56 @@ async def list_polling_stations(
     return [dict(row._mapping) for row in result]
 
 @router.get("/stats", response_model=PollingStationStats)
-async def get_polling_station_stats(db: Session = Depends(get_db)):
-    """Get aggregated polling station statistics"""
-    query = text("""
-        SELECT 
-            COUNT(DISTINCT ps.id) as total_polling_stations,
-            COALESCE(SUM(ps.registered_voters_2022), 0) as total_registered_voters,
-            COUNT(DISTINCT ps.registration_center_id) as total_registration_centers,
-            COALESCE(AVG(ps.registered_voters_2022), 0) as avg_voters_per_station,
-            COALESCE(MAX(ps.registered_voters_2022), 0) as max_voters_per_station,
-            COALESCE(MIN(ps.registered_voters_2022), 0) as min_voters_per_station,
-            COUNT(DISTINCT ps.county_id) as counties_count,
-            COUNT(DISTINCT ps.constituency_id) as constituencies_count,
-            COUNT(DISTINCT ps.ward_id) as wards_count
-        FROM polling_stations ps
+async def get_polling_station_stats(
+    year: Optional[int] = Query(2022, description="Election year (2013, 2017, 2022, 2027)"),
+    db: Session = Depends(get_db)
+):
+    """Get aggregated polling station statistics for a specific year"""
+
+    # Check if voter_registration_history table exists
+    check_table = text("""
+        SELECT EXISTS (
+            SELECT FROM information_schema.tables
+            WHERE table_name = 'voter_registration_history'
+        )
     """)
-    
-    result = db.execute(query).fetchone()
+    table_exists = db.execute(check_table).scalar()
+
+    if table_exists and year != 2022:
+        # Use voter_registration_history for non-2022 years
+        query = text("""
+            SELECT
+                COUNT(DISTINCT vrh.polling_station_id) as total_polling_stations,
+                COALESCE(SUM(vrh.registered_voters), 0) as total_registered_voters,
+                COUNT(DISTINCT ps.registration_center_id) as total_registration_centers,
+                COALESCE(AVG(vrh.registered_voters), 0) as avg_voters_per_station,
+                COALESCE(MAX(vrh.registered_voters), 0) as max_voters_per_station,
+                COALESCE(MIN(vrh.registered_voters), 0) as min_voters_per_station,
+                COUNT(DISTINCT ps.county_id) as counties_count,
+                COUNT(DISTINCT ps.constituency_id) as constituencies_count,
+                COUNT(DISTINCT ps.ward_id) as wards_count
+            FROM voter_registration_history vrh
+            JOIN polling_stations ps ON vrh.polling_station_id = ps.id
+            WHERE vrh.election_year = :year
+        """)
+        result = db.execute(query, {'year': year}).fetchone()
+    else:
+        # Use polling_stations table for 2022 or if history table doesn't exist
+        query = text("""
+            SELECT
+                COUNT(DISTINCT ps.id) as total_polling_stations,
+                COALESCE(SUM(ps.registered_voters_2022), 0) as total_registered_voters,
+                COUNT(DISTINCT ps.registration_center_id) as total_registration_centers,
+                COALESCE(AVG(ps.registered_voters_2022), 0) as avg_voters_per_station,
+                COALESCE(MAX(ps.registered_voters_2022), 0) as max_voters_per_station,
+                COALESCE(MIN(ps.registered_voters_2022), 0) as min_voters_per_station,
+                COUNT(DISTINCT ps.county_id) as counties_count,
+                COUNT(DISTINCT ps.constituency_id) as constituencies_count,
+                COUNT(DISTINCT ps.ward_id) as wards_count
+            FROM polling_stations ps
+        """)
+        result = db.execute(query).fetchone()
+
     return dict(result._mapping)
 
 @router.get("/by-county")

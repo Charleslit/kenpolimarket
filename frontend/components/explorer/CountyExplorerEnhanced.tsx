@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { MapPin, ChevronRight, Home, Map as MapIcon } from 'lucide-react';
 import ExportButton from '../common/ExportButton';
 import InteractiveMap from './InteractiveMap';
+import YearSelector from '../common/YearSelector';
 import { exportTableToPDF, exportObjectsToCSV } from '@/utils/exportUtils';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8001/api';
@@ -58,6 +59,9 @@ export default function CountyExplorerEnhanced() {
 
   // Map view toggle
   const [showMap, setShowMap] = useState(true);
+
+  // Year selection
+  const [selectedYear, setSelectedYear] = useState<number | 'all'>(2022);
 
   useEffect(() => {
     fetchCounties();
@@ -265,6 +269,24 @@ export default function CountyExplorerEnhanced() {
         </p>
       </div>
 
+      {/* Year Selector */}
+      <YearSelector
+        selectedYear={selectedYear}
+        onYearChange={(year) => {
+          setSelectedYear(year);
+          // Refresh data when year changes
+          if (currentLevel === 'national') {
+            fetchCounties();
+          } else if (currentLevel === 'county' && selectedCounty) {
+            fetchConstituencies(selectedCounty.id);
+          } else if (currentLevel === 'constituency' && selectedConstituency) {
+            fetchWards(selectedConstituency.id);
+          }
+        }}
+        availableYears={[2013, 2017, 2022, 2027]}
+        showAllOption={true}
+      />
+
       {/* Breadcrumb Navigation */}
       <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-4">
         <nav className="flex items-center space-x-2 text-sm">
@@ -328,6 +350,7 @@ export default function CountyExplorerEnhanced() {
             countyId={selectedCounty?.id}
             constituencyId={selectedConstituency?.id}
             wardId={selectedWard?.id}
+            selectedYear={selectedYear}
             onMarkerClick={(marker) => {
               if (marker.type === 'county') {
                 handleCountyClick(marker.data);

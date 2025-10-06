@@ -266,7 +266,7 @@ export default function ForecastsPage() {
               } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors flex items-center`}
             >
               <span className="mr-2">📍</span>
-              County Explorer
+              County Forecasts
             </button>
           </nav>
         </div>
@@ -298,9 +298,23 @@ export default function ForecastsPage() {
           <CandidateComparison />
         )}
 
-        {/* County Explorer (Original View) */}
+        {/* County Forecasts View */}
         {viewMode === 'county' && (
           <div className="space-y-6">
+            {/* Header */}
+            <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl shadow-lg p-6 text-white">
+              <h2 className="text-2xl font-bold mb-2">County Forecasts</h2>
+              <p className="text-blue-100">
+                Explore election predictions and historical data by county
+              </p>
+              <p className="text-sm text-blue-200 mt-2">
+                💡 Looking for voter registration data and polling stations? Visit the{' '}
+                <a href="/explorer" className="underline hover:text-white font-semibold">
+                  Geographic Explorer →
+                </a>
+              </p>
+            </div>
+
             {/* Election Selector */}
             <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-6">
               <label htmlFor="election-select" className="block text-sm font-medium text-gray-700 mb-3">

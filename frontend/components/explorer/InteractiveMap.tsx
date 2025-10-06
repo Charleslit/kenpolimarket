@@ -19,6 +19,7 @@ interface InteractiveMapProps {
   countyId?: number;
   constituencyId?: number;
   wardId?: number;
+  selectedYear?: number | 'all';
   onMarkerClick?: (marker: MapMarker) => void;
 }
 
@@ -78,6 +79,7 @@ export default function InteractiveMap({
   countyId,
   constituencyId,
   wardId,
+  selectedYear = 2022,
   onMarkerClick
 }: InteractiveMapProps) {
   const mapRef = useRef<HTMLDivElement>(null);
@@ -89,7 +91,7 @@ export default function InteractiveMap({
 
   useEffect(() => {
     fetchMarkers();
-  }, [level, countyId, constituencyId, wardId]);
+  }, [level, countyId, constituencyId, wardId, selectedYear]);
 
   const fetchMarkers = async () => {
     setLoading(true);
@@ -155,7 +157,8 @@ export default function InteractiveMap({
         
       } else if (level === 'ward' && wardId) {
         // Fetch polling stations in ward
-        const response = await fetch(`${API_BASE_URL}/api/polling-stations/?ward_id=${wardId}&limit=100`);
+        const yearParam = selectedYear !== 'all' ? `&year=${selectedYear}` : '';
+        const response = await fetch(`${API_BASE_URL}/api/polling-stations/?ward_id=${wardId}&limit=100${yearParam}`);
         const stations = await response.json();
         
         const stationMarkers: MapMarker[] = stations.map((station: any, index: number) => ({
