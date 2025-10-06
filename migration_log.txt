@@ -1,0 +1,35 @@
+2025-10-06 13:35:00.757218: ============================================================
+2025-10-06 13:35:00.757414: 🔌 Connecting to Render database...
+2025-10-06 13:35:20.787307: ❌ Error: could not translate host name "dpg-d3ginq7fte5s73c6j060-a.oregon-postgres.render.com" to address: Temporary failure in name resolution
+
+2025-10-06 13:35:20.795946: Traceback (most recent call last):
+  File "/home/charles/Documents/augment-projects/kenpolimarket/simple_migrate.py", line 21, in <module>
+    conn = psycopg2.connect(
+        host='dpg-d3ginq7fte5s73c6j060-a.oregon-postgres.render.com',
+    ...<5 lines>...
+        connect_timeout=30
+    )
+  File "/usr/lib/python3/dist-packages/psycopg2/__init__.py", line 122, in connect
+    conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+psycopg2.OperationalError: could not translate host name "dpg-d3ginq7fte5s73c6j060-a.oregon-postgres.render.com" to address: Temporary failure in name resolution
+
+
+2025-10-06 13:36:25.674840: ============================================================
+2025-10-06 13:36:25.675023: 🔌 Connecting to Render database (using IP)...
+2025-10-06 13:36:27.517419: ✅ Connected successfully!
+2025-10-06 13:36:27.517603: 
+2025-10-06 13:36:27.517708: 📊 Checking if voter_registration_history table exists...
+2025-10-06 13:36:28.062365: 📊 Creating voter_registration_history table...
+2025-10-06 13:44:56.216520: ============================================================
+2025-10-06 13:44:56.216755: 🔌 Connecting to Render database...
+2025-10-06 13:44:57.670353: ✅ Connected successfully!
+2025-10-06 13:44:57.670664: 
+2025-10-06 13:44:57.670923: 📊 Checking if voter_registration_history table exists...
+2025-10-06 13:44:58.284219: ✅ Table already exists!
+2025-10-06 13:44:58.597144:    Current records: 0
+2025-10-06 13:44:58.597320: 
+2025-10-06 13:44:58.597398: 📊 Migrating existing 2022 data from polling_stations...
+2025-10-06 13:45:11.057814: ✅ Migrated 43,412 records for 2022!
+2025-10-06 13:45:11.058043: 
+2025-10-06 13:45:11.058633: 🎉 Migration complete!
+2025-10-06 13:45:11.058735: ============================================================
