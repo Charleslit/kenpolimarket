@@ -11,6 +11,8 @@ export default function Navigation() {
   const navItems = [
     { name: 'Home', href: '/', icon: '🏠' },
     { name: 'Forecasts', href: '/forecasts', icon: '📊' },
+    { name: 'Explorer', href: '/explorer', icon: '🗺️' },
+    { name: 'Voter Data', href: '/voter-registration', icon: '🗳️' },
     { name: 'Admin Tools', href: '/admin', icon: '🧮' },
     { name: 'About', href: '/about', icon: 'ℹ️' },
   ];

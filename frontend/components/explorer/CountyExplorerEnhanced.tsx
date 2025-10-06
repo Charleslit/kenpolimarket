@@ -1,8 +1,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { MapPin, ChevronRight, Home } from 'lucide-react';
+import { MapPin, ChevronRight, Home, Map as MapIcon } from 'lucide-react';
 import ExportButton from '../common/ExportButton';
+import InteractiveMap from './InteractiveMap';
 import { exportTableToPDF, exportObjectsToCSV } from '@/utils/exportUtils';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8001/api';
@@ -54,6 +55,9 @@ export default function CountyExplorerEnhanced() {
 
   // Search and filter
   const [searchTerm, setSearchTerm] = useState('');
+
+  // Map view toggle
+  const [showMap, setShowMap] = useState(true);
 
   useEffect(() => {
     fetchCounties();
@@ -283,7 +287,7 @@ export default function CountyExplorerEnhanced() {
         </nav>
       </div>
 
-      {/* Search Bar and Export */}
+      {/* Search Bar, Map Toggle, and Export */}
       <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-4">
         <div className="flex items-center gap-4">
           <input
@@ -293,6 +297,17 @@ export default function CountyExplorerEnhanced() {
             onChange={(e) => setSearchTerm(e.target.value)}
             className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           />
+          <button
+            onClick={() => setShowMap(!showMap)}
+            className={`px-4 py-2 rounded-lg flex items-center gap-2 transition-colors ${
+              showMap
+                ? 'bg-blue-600 text-white hover:bg-blue-700'
+                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+            }`}
+          >
+            <MapIcon className="w-4 h-4" />
+            {showMap ? 'Hide Map' : 'Show Map'}
+          </button>
           <ExportButton
             variant="compact"
             onExportPDF={handleExportPDF}
@@ -300,6 +315,31 @@ export default function CountyExplorerEnhanced() {
           />
         </div>
       </div>
+
+      {/* Interactive Map */}
+      {showMap && (
+        <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-6">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+            <MapIcon className="w-5 h-5 text-blue-600" />
+            Interactive Map
+          </h3>
+          <InteractiveMap
+            level={currentLevel}
+            countyId={selectedCounty?.id}
+            constituencyId={selectedConstituency?.id}
+            wardId={selectedWard?.id}
+            onMarkerClick={(marker) => {
+              if (marker.type === 'county') {
+                handleCountyClick(marker.data);
+              } else if (marker.type === 'constituency') {
+                handleConstituencyClick(marker.data);
+              } else if (marker.type === 'ward') {
+                handleWardClick(marker.data);
+              }
+            }}
+          />
+        </div>
+      )}
 
       {/* Content Area */}
       <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">

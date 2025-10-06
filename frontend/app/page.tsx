@@ -10,12 +10,24 @@ export default function Home() {
           <p className="text-xl text-gray-600 mb-8">
             Kenya's Premier Political Forecasting & Analysis Platform
           </p>
-          <div className="flex gap-4 justify-center">
+          <div className="flex flex-wrap gap-4 justify-center">
             <a
               href="/forecasts"
               className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition"
             >
-              View Forecasts
+              📊 View Forecasts
+            </a>
+            <a
+              href="/explorer"
+              className="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition"
+            >
+              🗺️ Geographic Explorer
+            </a>
+            <a
+              href="/voter-registration"
+              className="bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 transition"
+            >
+              🗳️ Voter Data
             </a>
             <a
               href={`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8001/api'}/docs`}
@@ -49,8 +61,8 @@ export default function Home() {
             icon="🔍"
           />
           <FeatureCard
-            title="County-Level Granularity"
-            description="Forecasts for all 47 counties, 290 constituencies, with interactive maps."
+            title="Interactive Maps"
+            description="Drill down from counties to constituencies, wards, and 43K+ polling stations with interactive maps."
             icon="🗺️"
           />
           <FeatureCard
@@ -70,10 +82,10 @@ export default function Home() {
       <section className="bg-white py-16">
         <div className="container mx-auto px-4">
           <div className="grid md:grid-cols-4 gap-8 text-center">
-            <StatCard number="47" label="Counties Covered" />
-            <StatCard number="290" label="Constituencies" />
-            <StatCard number="90%" label="Confidence Intervals" />
-            <StatCard number="100%" label="Privacy Compliant" />
+            <StatCard number="47" label="Counties" />
+            <StatCard number="248" label="Constituencies" />
+            <StatCard number="737" label="Wards" />
+            <StatCard number="43K+" label="Polling Stations" />
           </div>
         </div>
       </section>
@@ -84,18 +96,24 @@ export default function Home() {
         <p className="text-gray-600 mb-8">
           Access real-time forecasts, historical data, and interactive visualizations
         </p>
-        <div className="flex gap-4 justify-center">
+        <div className="flex flex-wrap gap-4 justify-center">
           <a
             href="/forecasts"
             className="bg-green-600 text-white px-8 py-4 rounded-lg text-lg hover:bg-green-700 transition inline-block"
           >
-            View Forecasts
+            📊 View Forecasts
           </a>
           <a
-            href="/admin"
+            href="/explorer"
+            className="bg-blue-600 text-white px-8 py-4 rounded-lg text-lg hover:bg-blue-700 transition inline-block"
+          >
+            🗺️ Explore Map
+          </a>
+          <a
+            href="/voter-registration"
             className="bg-purple-600 text-white px-8 py-4 rounded-lg text-lg hover:bg-purple-700 transition inline-block"
           >
-            Admin Tools
+            🗳️ Voter Data
           </a>
         </div>
       </section>

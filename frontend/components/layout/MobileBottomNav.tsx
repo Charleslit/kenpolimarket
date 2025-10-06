@@ -9,8 +9,8 @@ export default function MobileBottomNav() {
   const navItems = [
     { name: 'Home', href: '/', icon: '🏠' },
     { name: 'Forecasts', href: '/forecasts', icon: '📊' },
-    { name: 'Admin', href: '/admin', icon: '🧮' },
-    { name: 'About', href: '/about', icon: 'ℹ️' },
+    { name: 'Explorer', href: '/explorer', icon: '🗺️' },
+    { name: 'Voters', href: '/voter-registration', icon: '🗳️' },
   ];
 
   const isActive = (href: string) => {
