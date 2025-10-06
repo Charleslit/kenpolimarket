@@ -12,7 +12,7 @@ import os
 from config import settings
 from database import engine
 from models import Base
-from routers import forecasts, elections, counties, surveys, markets, candidates, scenarios, constituencies, wards
+from routers import forecasts, elections, counties, surveys, markets, candidates, scenarios, constituencies, wards, polling_stations
 from middleware import privacy_middleware, rate_limit_middleware
 
 # Note: Database tables are already created via init script
@@ -68,6 +68,7 @@ app.include_router(surveys.router, prefix="/api")
 app.include_router(markets.router, prefix="/api")
 app.include_router(candidates.router, prefix="/api")
 app.include_router(scenarios.router, prefix="/api")
+app.include_router(polling_stations.router)
 
 
 @app.get("/")
