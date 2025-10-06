@@ -116,21 +116,21 @@ export default function InteractiveMap({
         // Fetch constituencies in county
         const response = await fetch(`${API_BASE_URL}/api/constituencies/?county_id=${countyId}`);
         const constituencies = await response.json();
-        
+
         // For now, cluster constituencies around county center
         const countyResponse = await fetch(`${API_BASE_URL}/api/counties/${countyId}`);
         const county = await countyResponse.json();
         const countyCoords = KENYA_COUNTIES_COORDS[county.name] || [-0.0236, 37.9062];
-        
-        const constMarkers: MapMarker[] = constituencies.map((const: any, index: number) => ({
-          id: const.id,
-          name: const.name,
+
+        const constMarkers: MapMarker[] = constituencies.map((constituency: any, index: number) => ({
+          id: constituency.id,
+          name: constituency.name,
           lat: countyCoords[0] + (Math.random() - 0.5) * 0.5,
           lng: countyCoords[1] + (Math.random() - 0.5) * 0.5,
           type: 'constituency' as const,
-          data: const
+          data: constituency
         }));
-        
+
         setMarkers(constMarkers);
         setCenter(countyCoords);
         setZoom(9);
