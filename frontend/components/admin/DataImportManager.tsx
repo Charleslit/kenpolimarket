@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { Upload, Database, FileText, AlertCircle, CheckCircle } from 'lucide-react';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8001/api';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8001';
 
 interface ImportProgress {
   status: string;

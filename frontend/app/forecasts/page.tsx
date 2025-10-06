@@ -15,7 +15,7 @@ import ErrorMessage, { EmptyState } from '@/components/ui/ErrorMessage';
 import { DashboardSkeleton, ChartSkeleton } from '@/components/ui/LoadingSkeleton';
 
 // API Base URL - update this to match your backend
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8001/api';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8001';
 
 // Dynamically import LeafletCountyMap to avoid SSR issues with Leaflet
 const LeafletCountyMap = dynamic(

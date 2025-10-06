@@ -5,7 +5,7 @@ import { TrendingUp, TrendingDown, Minus } from 'lucide-react';
 import ExportButton from '../common/ExportButton';
 import { exportTableToPDF, exportObjectsToCSV, exportElementAsImage } from '@/utils/exportUtils';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8001/api';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8001';
 
 interface Election {
   id: number;

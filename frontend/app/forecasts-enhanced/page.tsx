@@ -14,7 +14,7 @@ import { useSwipeGesture, usePullToRefresh } from '@/hooks/useSwipeGesture';
 import { useOfflineStorage, useNetworkStatus } from '@/utils/offlineStorage';
 import { useToast } from '@/components/ui/Toast';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8001/api';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8001';
 
 interface County {
   code: string;

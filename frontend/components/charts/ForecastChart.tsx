@@ -14,7 +14,7 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8001/api';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8001';
 
 interface Candidate {
   id: number;

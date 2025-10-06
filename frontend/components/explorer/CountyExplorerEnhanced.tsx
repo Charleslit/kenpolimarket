@@ -7,7 +7,7 @@ import InteractiveMap from './InteractiveMap';
 import YearSelector from '../common/YearSelector';
 import { exportTableToPDF, exportObjectsToCSV } from '@/utils/exportUtils';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8001/api';
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8001';
 
 interface County {
   id: number;
