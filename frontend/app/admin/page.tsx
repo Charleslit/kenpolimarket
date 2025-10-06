@@ -3,13 +3,14 @@
 import { useState, useEffect } from 'react';
 import CandidateManager from '@/components/admin/CandidateManager';
 import ElectionDataManager from '@/components/admin/ElectionDataManager';
+import DataImportManager from '@/components/admin/DataImportManager';
 import ScenarioCalculator from '@/components/scenarios/ScenarioCalculator';
 
 // Temporary password protection - will be replaced with proper auth later
 const ADMIN_PASSWORD = process.env.NEXT_PUBLIC_ADMIN_PASSWORD || 'ken2027';
 
 export default function AdminPage() {
-  const [activeTab, setActiveTab] = useState<'data' | 'candidates' | 'scenarios'>('data');
+  const [activeTab, setActiveTab] = useState<'data' | 'candidates' | 'scenarios' | 'import'>('data');
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -200,6 +201,17 @@ export default function AdminPage() {
               <span className="mr-2">👥</span>
               Candidate Management
             </button>
+            <button
+              onClick={() => setActiveTab('import')}
+              className={`${
+                activeTab === 'import'
+                  ? 'border-blue-500 text-blue-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors flex items-center`}
+            >
+              <span className="mr-2">📥</span>
+              Data Import
+            </button>
           </nav>
         </div>
       </div>
@@ -209,6 +221,7 @@ export default function AdminPage() {
         {activeTab === 'data' && <ElectionDataManager />}
         {activeTab === 'scenarios' && <ScenarioCalculator />}
         {activeTab === 'candidates' && <CandidateManager />}
+        {activeTab === 'import' && <DataImportManager />}
       </main>
     </div>
   );
