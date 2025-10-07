@@ -114,14 +114,22 @@ def main():
     # Build lookup caches
     print("\n🔍 Building lookup caches...")
     
-    # Counties
+    # Counties - map both "001" and "1" formats
     cur.execute("SELECT id, code FROM counties")
-    county_map = {code: id for id, code in cur.fetchall()}
+    county_map = {}
+    for id, code in cur.fetchall():
+        county_map[code] = id
+        # Also map with leading zeros (e.g., "1" -> "001")
+        county_map[code.zfill(3)] = id
     print(f"   Counties: {len(county_map)}")
     
-    # Constituencies
+    # Constituencies - map both "001" and "1" formats
     cur.execute("SELECT id, code FROM constituencies")
-    const_map = {code: id for id, code in cur.fetchall()}
+    const_map = {}
+    for id, code in cur.fetchall():
+        const_map[code] = id
+        # Also map with leading zeros (e.g., "1" -> "001")
+        const_map[code.zfill(3)] = id
     print(f"   Constituencies: {len(const_map)}")
     
     # Wards - build map with both formats

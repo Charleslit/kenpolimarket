@@ -1,11 +1,11 @@
 {
-  "name": "KenPoliMarket - Kenya Political Forecasting",
-  "short_name": "KenPoliMarket",
-  "description": "Data-driven political forecasting for Kenya's 2027 elections",
+  "name": "Blockcert Afrika - Data & Analytics Platform",
+  "short_name": "Blockcert Afrika",
+  "description": "Kenya's premier data and analytics platform across political, economic, and social sectors",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
-  "theme_color": "#2563eb",
+  "theme_color": "#1a1a1a",
   "orientation": "portrait-primary",
   "icons": [
     {
@@ -21,7 +21,7 @@
       "purpose": "any maskable"
     }
   ],
-  "categories": ["news", "politics", "education"],
+  "categories": ["news", "politics", "education", "business", "finance"],
   "screenshots": [
     {
       "src": "/screenshot-mobile.png",
@@ -38,6 +38,13 @@
   ],
   "shortcuts": [
     {
+      "name": "Political Analysis",
+      "short_name": "Political",
+      "description": "Electoral forecasting and analysis",
+      "url": "/political",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+    },
+    {
       "name": "View Forecasts",
       "short_name": "Forecasts",
       "description": "View election forecasts",
@@ -45,10 +52,10 @@
       "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
     },
     {
-      "name": "Admin Tools",
-      "short_name": "Admin",
-      "description": "Access admin tools",
-      "url": "/admin",
+      "name": "Geographic Explorer",
+      "short_name": "Explorer",
+      "description": "Interactive maps and data",
+      "url": "/explorer",
       "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
     }
   ]

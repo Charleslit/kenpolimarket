@@ -1,17 +1,19 @@
 {
-  "name": "kenpolimarket",
+  "name": "blockcert-afrika",
   "version": "0.1.0",
   "private": true,
-  "description": "Kenya's Premier Political Forecasting & Analysis Platform",
+  "description": "Kenya's Premier Data & Analytics Platform - Political, Economic, and Social Insights",
   "keywords": [
     "kenya",
+    "data-analytics",
     "politics",
     "forecasting",
-    "prediction-markets",
+    "budget-analysis",
+    "health-analytics",
     "elections",
-    "data-analysis"
+    "data-visualization"
   ],
-  "author": "KenPoliMarket Team",
+  "author": "Blockcert Afrika",
   "license": "MIT",
   "workspaces": [
     "frontend",

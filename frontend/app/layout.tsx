@@ -20,28 +20,28 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "KenPoliMarket - Kenya Political Forecasting Platform",
-  description: "Data-driven political forecasting for Kenya's 2027 elections. Probabilistic predictions for all 47 counties using Bayesian AI and official IEBC data.",
-  keywords: ["Kenya elections", "political forecasting", "2027 elections", "IEBC data", "county predictions", "Bayesian AI", "election analysis", "Kenya politics"],
-  authors: [{ name: "KenPoliMarket Team" }],
+  title: "Blockcert Afrika - Kenya's Premier Data & Analytics Platform",
+  description: "Transforming complex data into actionable insights across political, economic, and social sectors. Advanced analytics, forecasting, and visualization for Kenya.",
+  keywords: ["Kenya data analytics", "political forecasting", "budget analysis", "health analytics", "2027 elections", "IEBC data", "Bayesian AI", "data visualization", "Kenya insights"],
+  authors: [{ name: "Blockcert Afrika" }],
   openGraph: {
-    title: "KenPoliMarket - Kenya Political Forecasting",
-    description: "Data-driven forecasting for Kenya's 2027 elections with county-level predictions",
+    title: "Blockcert Afrika - Data & Analytics Platform",
+    description: "Kenya's premier data and analytics platform delivering precision insights across multiple sectors",
     type: "website",
     locale: "en_KE",
-    siteName: "KenPoliMarket",
+    siteName: "Blockcert Afrika",
   },
   twitter: {
     card: "summary_large_image",
-    title: "KenPoliMarket - Kenya Political Forecasting",
-    description: "Data-driven forecasting for Kenya's 2027 elections",
+    title: "Blockcert Afrika - Data & Analytics",
+    description: "Transforming complex data into actionable insights for Kenya",
   },
 };
 
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  themeColor: "#2563eb",
+  themeColor: "#1a1a1a",
 };
 
 export default function RootLayout({
@@ -56,7 +56,7 @@ export default function RootLayout({
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-        <meta name="apple-mobile-web-app-title" content="KenPoliMarket" />
+        <meta name="apple-mobile-web-app-title" content="Blockcert Afrika" />
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased pb-16 md:pb-0`}
