@@ -95,15 +95,39 @@ class Ward(Base):
     name = Column(String(100), nullable=False)
     geometry = Column(Geometry('MULTIPOLYGON', srid=4326))
     population_2019 = Column(Integer)
+    registered_voters_2022 = Column(Integer)
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     # Relationships
     constituency = relationship("Constituency", back_populates="wards")
     candidates = relationship("Candidate", back_populates="ward")
+    polling_stations = relationship("PollingStation", back_populates="ward", cascade="all, delete-orphan")
 
     def __repr__(self):
         return f"<Ward(code='{self.code}', name='{self.name}')>"
+
+
+class PollingStation(Base):
+    """Polling station model - lowest level electoral unit"""
+    __tablename__ = "polling_stations"
+
+    id = Column(Integer, primary_key=True, index=True)
+    ward_id = Column(Integer, ForeignKey('wards.id', ondelete='CASCADE'))
+    code = Column(String(50), unique=True, nullable=False, index=True)
+    name = Column(String(200), nullable=False)
+    registration_center_code = Column(String(50))
+    registration_center_name = Column(String(200))
+    registered_voters_2022 = Column(Integer, default=0)
+    geometry = Column(Geometry('POINT', srid=4326))
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    # Relationships
+    ward = relationship("Ward", back_populates="polling_stations")
+
+    def __repr__(self):
+        return f"<PollingStation(code='{self.code}', name='{self.name}')>"
 
 
 class Election(Base):

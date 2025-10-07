@@ -73,7 +73,7 @@ class ConstituencyBaseSchema(BaseModel):
     code: str
     name: str
     county_id: int
-    registered_voters: Optional[int] = None
+    registered_voters_2022: Optional[int] = None
 
 
 class ConstituencyDetailSchema(ConstituencyBaseSchema):
@@ -90,11 +90,30 @@ class WardBaseSchema(BaseModel):
     name: str
     constituency_id: int
     population_2019: Optional[int] = None
+    registered_voters_2022: Optional[int] = None
 
 
 class WardDetailSchema(WardBaseSchema):
     """Detailed ward with constituency info"""
     constituency: Optional[ConstituencyBaseSchema] = None
+
+
+class PollingStationBaseSchema(BaseModel):
+    """Base polling station information"""
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    code: str
+    name: str
+    ward_id: int
+    registration_center_code: Optional[str] = None
+    registration_center_name: Optional[str] = None
+    registered_voters_2022: Optional[int] = None
+
+
+class PollingStationDetailSchema(PollingStationBaseSchema):
+    """Detailed polling station with ward info"""
+    ward: Optional[WardBaseSchema] = None
 
 
 # ============================================================================

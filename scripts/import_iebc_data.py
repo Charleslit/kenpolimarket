@@ -13,7 +13,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent / 'backend'))
 
 try:
     from database import SessionLocal, engine
-    from models import County, Constituency, Ward, Base
+    from models import County, Constituency, Ward, PollingStation, Base
     from sqlalchemy import text
 except ImportError as e:
     print(f"❌ Error: Could not import database modules: {e}")
@@ -55,6 +55,41 @@ def parse_iebc_line(line):
         ward_code = parts[4 + offset].strip()
         ward_name = parts[5 + offset].strip()
 
+        # Extract polling station code and name
+        # Sometimes the reg center name and PS code are concatenated without spaces
+        # Format: "REG_CENTER_NAME003011005403301     PS_NAME        352"
+        ps_code = None
+        ps_name = None
+        reg_center_code = parts[6 + offset].strip() if len(parts) > 6 + offset else None
+        reg_center_name = parts[7 + offset].strip() if len(parts) > 7 + offset else None
+
+        if len(parts) > 8 + offset:
+            # The 8th column might have reg_center_name+ps_code concatenated
+            combined = parts[8 + offset].strip()
+
+            # Try to extract a 15-digit code from the end of the string
+            # PS codes are typically 15 digits: CCCSSSSWWWRRRPP
+            match = re.search(r'(\d{15})$', combined)
+            if match:
+                ps_code = match.group(1)
+                # If there's text before the code, it's part of reg_center_name
+                prefix = combined[:match.start()].strip()
+                if prefix and not reg_center_name:
+                    reg_center_name = prefix
+            else:
+                # No 15-digit code found, treat as ps_code as-is
+                ps_code = combined if combined else None
+
+            # PS name is in the next column
+            ps_name = parts[9 + offset].strip() if len(parts) > 9 + offset else None
+
+        # Registered voters
+        registered_voters = 0
+        if len(parts) > 10 + offset:
+            voters_str = parts[10 + offset].strip()
+            if voters_str.isdigit():
+                registered_voters = int(voters_str)
+
         return {
             'county_code': county_code,
             'county_name': county_name,
@@ -62,11 +97,11 @@ def parse_iebc_line(line):
             'const_name': const_name,
             'ward_code': ward_code,
             'ward_name': ward_name,
-            'reg_center_code': parts[6 + offset].strip() if len(parts) > 6 + offset else None,
-            'reg_center_name': parts[7 + offset].strip() if len(parts) > 7 + offset else None,
-            'ps_code': parts[8 + offset].strip() if len(parts) > 8 + offset else None,
-            'ps_name': parts[9 + offset].strip() if len(parts) > 9 + offset else None,
-            'registered_voters': int(parts[10 + offset].strip()) if len(parts) > 10 + offset and parts[10 + offset].strip().isdigit() else 0
+            'reg_center_code': reg_center_code,
+            'reg_center_name': reg_center_name,
+            'ps_code': ps_code,
+            'ps_name': ps_name,
+            'registered_voters': registered_voters
         }
     except (ValueError, IndexError) as e:
         return None
@@ -266,12 +301,127 @@ def import_data(csv_path: str):
         if skipped_wards > 0:
             print(f"⚠️  Skipped {skipped_wards} wards (constituency not found)")
         print()
-        
-        # Skip Polling Stations (model doesn't exist yet)
-        print("⏭️  Skipping polling stations (model not implemented)")
-        print(f"   Found {len(polling_stations_data)} polling stations in data")
+
+        # Import Polling Stations
+        print("📥 Importing polling stations...")
+        imported_ps = 0
+        skipped_ps = 0
+        ps_voters = {}  # Track voters per ward for aggregation
+
+        # Group polling stations by unique code to avoid duplicates
+        unique_ps = {}
+        for row in polling_stations_data:
+            ps_code = row['ps_code']
+            if ps_code and ps_code not in unique_ps:
+                unique_ps[ps_code] = row
+
+        # Use raw SQL for better performance and to avoid ORM batching issues
+        from sqlalchemy import text as sql_text
+
+        for ps_code, row in unique_ps.items():
+            # Find ward ID using the unique ward code
+            ward_unique_code = f"{row['const_code']}-{row['ward_code']}"[:20]
+            ward_id = ward_map.get((row['const_code'], ward_unique_code))
+
+            if not ward_id:
+                skipped_ps += 1
+                continue
+
+            # Validate data types
+            try:
+                ward_id = int(ward_id)
+                voters = int(row['registered_voters']) if row['registered_voters'] else 0
+
+                # Ensure values are within INTEGER range
+                if ward_id > 2147483647 or voters > 2147483647:
+                    print(f"⚠️  Skipping {ps_code} - value out of range (ward_id={ward_id}, voters={voters})")
+                    skipped_ps += 1
+                    continue
+
+            except (ValueError, TypeError) as e:
+                print(f"⚠️  Skipping {ps_code} - invalid data: {e}")
+                skipped_ps += 1
+                continue
+
+            # Track voters per ward for aggregation
+            if ward_id not in ps_voters:
+                ps_voters[ward_id] = 0
+            ps_voters[ward_id] += voters
+
+            # Insert using raw SQL
+            try:
+                db.execute(sql_text("""
+                    INSERT INTO polling_stations
+                    (ward_id, code, name, registration_center_code, registration_center_name,
+                     registered_voters_2022, created_at, updated_at)
+                    VALUES (:ward_id, :code, :name, :reg_code, :reg_name, :voters, NOW(), NOW())
+                    ON CONFLICT (code) DO UPDATE SET
+                        registered_voters_2022 = EXCLUDED.registered_voters_2022,
+                        updated_at = NOW()
+                """), {
+                    'ward_id': ward_id,
+                    'code': ps_code[:100],  # Truncate to column size
+                    'name': (row['ps_name'] or '')[:200],
+                    'reg_code': (row['reg_center_code'] or '')[:50],
+                    'reg_name': (row['reg_center_name'] or '')[:200],
+                    'voters': voters
+                })
+                imported_ps += 1
+
+                # Commit in batches
+                if imported_ps % 1000 == 0:
+                    db.commit()
+                    print(f"   ... {imported_ps} polling stations imported")
+
+            except Exception as e:
+                print(f"⚠️  Error importing {ps_code}: {e}")
+                skipped_ps += 1
+                continue
+
+        db.commit()
+        print(f"✅ Imported {imported_ps} polling stations")
+        if skipped_ps > 0:
+            print(f"⚠️  Skipped {skipped_ps} polling stations (ward not found or invalid data)")
         print()
-        
+
+        # Update ward voter counts
+        print("📊 Updating ward voter counts...")
+        for ward_id, voters in ps_voters.items():
+            db.query(Ward).filter(Ward.id == ward_id).update({
+                'registered_voters_2022': voters
+            })
+        db.commit()
+        print(f"✅ Updated {len(ps_voters)} wards with voter counts")
+        print()
+
+        # Update constituency voter counts (aggregate from wards)
+        print("📊 Updating constituency voter counts...")
+        db.execute(text("""
+            UPDATE constituencies c
+            SET registered_voters_2022 = (
+                SELECT COALESCE(SUM(w.registered_voters_2022), 0)
+                FROM wards w
+                WHERE w.constituency_id = c.id
+            )
+        """))
+        db.commit()
+        print("✅ Updated constituency voter counts")
+        print()
+
+        # Update county voter counts (aggregate from constituencies)
+        print("📊 Updating county voter counts...")
+        db.execute(text("""
+            UPDATE counties co
+            SET registered_voters_2022 = (
+                SELECT COALESCE(SUM(c.registered_voters_2022), 0)
+                FROM constituencies c
+                WHERE c.county_id = co.id
+            )
+        """))
+        db.commit()
+        print("✅ Updated county voter counts")
+        print()
+
         # Summary
         print("=" * 60)
         print("✅ Import Complete!")
@@ -280,6 +430,24 @@ def import_data(csv_path: str):
         print(f"   Counties: {db.query(County).count()}")
         print(f"   Constituencies: {db.query(Constituency).count()}")
         print(f"   Wards: {db.query(Ward).count()}")
+        print(f"   Polling Stations: {db.query(PollingStation).count()}")
+        print()
+
+        # Show sample voter counts
+        print("📊 Sample Voter Counts:")
+        sample_county = db.query(County).filter(County.name == 'Nairobi').first()
+        if sample_county:
+            print(f"   Nairobi County: {sample_county.registered_voters_2022:,} voters")
+            sample_const = db.query(Constituency).filter(
+                Constituency.county_id == sample_county.id
+            ).first()
+            if sample_const:
+                print(f"   {sample_const.name} Constituency: {sample_const.registered_voters_2022:,} voters")
+                sample_ward = db.query(Ward).filter(
+                    Ward.constituency_id == sample_const.id
+                ).first()
+                if sample_ward:
+                    print(f"   {sample_ward.name} Ward: {sample_ward.registered_voters_2022:,} voters")
         
     except Exception as e:
         db.rollback()

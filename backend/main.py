@@ -68,7 +68,7 @@ app.include_router(surveys.router, prefix="/api")
 app.include_router(markets.router, prefix="/api")
 app.include_router(candidates.router, prefix="/api")
 app.include_router(scenarios.router, prefix="/api")
-app.include_router(polling_stations.router)
+app.include_router(polling_stations.router, prefix="/api/polling_stations", tags=["polling_stations"])
 
 
 @app.get("/")

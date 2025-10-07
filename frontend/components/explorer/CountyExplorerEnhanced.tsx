@@ -30,7 +30,7 @@ interface County {
   code: string;
   name: string;
   population_2019?: number;
-  registered_voters?: number;
+  registered_voters_2022?: number;
 }
 
 interface Constituency {
@@ -38,7 +38,7 @@ interface Constituency {
   code: string;
   name: string;
   county_id: number;
-  registered_voters?: number;
+  registered_voters_2022?: number;
 }
 
 interface Ward {
@@ -47,28 +47,42 @@ interface Ward {
   name: string;
   constituency_id: number;
   population_2019?: number;
+  registered_voters_2022?: number;
+}
+
+interface PollingStation {
+  id: number;
+  code: string;
+  name: string;
+  ward_id: number;
+  registration_center_code?: string;
+  registration_center_name?: string;
+  registered_voters_2022?: number;
 }
 
 interface Breadcrumb {
-  level: 'national' | 'county' | 'constituency' | 'ward';
+  level: 'national' | 'county' | 'constituency' | 'ward' | 'polling_station';
   id?: number;
   name: string;
+  voters?: number;
 }
 
 export default function CountyExplorerEnhanced() {
   const [counties, setCounties] = useState<County[]>([]);
   const [constituencies, setConstituencies] = useState<Constituency[]>([]);
   const [wards, setWards] = useState<Ward[]>([]);
+  const [pollingStations, setPollingStations] = useState<PollingStation[]>([]);
   const [loading, setLoading] = useState(true);
-  
+
   // Navigation state
   const [breadcrumbs, setBreadcrumbs] = useState<Breadcrumb[]>([
     { level: 'national', name: 'Kenya' }
   ]);
-  const [currentLevel, setCurrentLevel] = useState<'national' | 'county' | 'constituency' | 'ward'>('national');
+  const [currentLevel, setCurrentLevel] = useState<'national' | 'county' | 'constituency' | 'ward' | 'polling_station'>('national');
   const [selectedCounty, setSelectedCounty] = useState<County | null>(null);
   const [selectedConstituency, setSelectedConstituency] = useState<Constituency | null>(null);
   const [selectedWard, setSelectedWard] = useState<Ward | null>(null);
+  const [selectedPollingStation, setSelectedPollingStation] = useState<PollingStation | null>(null);
 
   // Search and filter
   const [searchTerm, setSearchTerm] = useState('');
@@ -122,14 +136,28 @@ export default function CountyExplorerEnhanced() {
     }
   };
 
+  const fetchPollingStations = async (wardId: number) => {
+    setLoading(true);
+    try {
+      const response = await fetch(`${API_BASE_URL}/polling_stations/?ward_id=${wardId}`);
+      const data = await response.json();
+      setPollingStations(data);
+    } catch (error) {
+      console.error('Failed to fetch polling stations:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleCountyClick = (county: County) => {
     setSelectedCounty(county);
     setSelectedConstituency(null);
     setSelectedWard(null);
+    setSelectedPollingStation(null);
     setCurrentLevel('county');
     setBreadcrumbs([
       { level: 'national', name: 'Kenya' },
-      { level: 'county', id: county.id, name: county.name }
+      { level: 'county', id: county.id, name: county.name, voters: county.registered_voters_2022 }
     ]);
     fetchConstituencies(county.id);
     setSearchTerm('');
@@ -138,11 +166,12 @@ export default function CountyExplorerEnhanced() {
   const handleConstituencyClick = (constituency: Constituency) => {
     setSelectedConstituency(constituency);
     setSelectedWard(null);
+    setSelectedPollingStation(null);
     setCurrentLevel('constituency');
     setBreadcrumbs([
       { level: 'national', name: 'Kenya' },
-      { level: 'county', id: selectedCounty!.id, name: selectedCounty!.name },
-      { level: 'constituency', id: constituency.id, name: constituency.name }
+      { level: 'county', id: selectedCounty!.id, name: selectedCounty!.name, voters: selectedCounty!.registered_voters_2022 },
+      { level: 'constituency', id: constituency.id, name: constituency.name, voters: constituency.registered_voters_2022 }
     ]);
     fetchWards(constituency.id);
     setSearchTerm('');
@@ -150,39 +179,64 @@ export default function CountyExplorerEnhanced() {
 
   const handleWardClick = (ward: Ward) => {
     setSelectedWard(ward);
+    setSelectedPollingStation(null);
     setCurrentLevel('ward');
     setBreadcrumbs([
       { level: 'national', name: 'Kenya' },
-      { level: 'county', id: selectedCounty!.id, name: selectedCounty!.name },
-      { level: 'constituency', id: selectedConstituency!.id, name: selectedConstituency!.name },
-      { level: 'ward', id: ward.id, name: ward.name }
+      { level: 'county', id: selectedCounty!.id, name: selectedCounty!.name, voters: selectedCounty!.registered_voters_2022 },
+      { level: 'constituency', id: selectedConstituency!.id, name: selectedConstituency!.name, voters: selectedConstituency!.registered_voters_2022 },
+      { level: 'ward', id: ward.id, name: ward.name, voters: ward.registered_voters_2022 }
+    ]);
+    fetchPollingStations(ward.id);
+    setSearchTerm('');
+  };
+
+  const handlePollingStationClick = (pollingStation: PollingStation) => {
+    setSelectedPollingStation(pollingStation);
+    setCurrentLevel('polling_station');
+    setBreadcrumbs([
+      { level: 'national', name: 'Kenya' },
+      { level: 'county', id: selectedCounty!.id, name: selectedCounty!.name, voters: selectedCounty!.registered_voters_2022 },
+      { level: 'constituency', id: selectedConstituency!.id, name: selectedConstituency!.name, voters: selectedConstituency!.registered_voters_2022 },
+      { level: 'ward', id: selectedWard!.id, name: selectedWard!.name, voters: selectedWard!.registered_voters_2022 },
+      { level: 'polling_station', id: pollingStation.id, name: pollingStation.name, voters: pollingStation.registered_voters_2022 }
     ]);
     setSearchTerm('');
   };
 
   const handleBreadcrumbClick = (index: number) => {
     const breadcrumb = breadcrumbs[index];
-    
+
     if (breadcrumb.level === 'national') {
       setCurrentLevel('national');
       setSelectedCounty(null);
       setSelectedConstituency(null);
       setSelectedWard(null);
+      setSelectedPollingStation(null);
       setBreadcrumbs([{ level: 'national', name: 'Kenya' }]);
       setConstituencies([]);
       setWards([]);
+      setPollingStations([]);
     } else if (breadcrumb.level === 'county') {
       setCurrentLevel('county');
       setSelectedConstituency(null);
       setSelectedWard(null);
+      setSelectedPollingStation(null);
       setBreadcrumbs(breadcrumbs.slice(0, 2));
       setWards([]);
+      setPollingStations([]);
     } else if (breadcrumb.level === 'constituency') {
       setCurrentLevel('constituency');
       setSelectedWard(null);
+      setSelectedPollingStation(null);
       setBreadcrumbs(breadcrumbs.slice(0, 3));
+      setPollingStations([]);
+    } else if (breadcrumb.level === 'ward') {
+      setCurrentLevel('ward');
+      setSelectedPollingStation(null);
+      setBreadcrumbs(breadcrumbs.slice(0, 4));
     }
-    
+
     setSearchTerm('');
   };
 
@@ -202,37 +256,53 @@ export default function CountyExplorerEnhanced() {
     w.code.includes(searchTerm)
   );
 
+  const filteredPollingStations = pollingStations.filter(ps =>
+    ps.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    ps.code.includes(searchTerm) ||
+    (ps.registration_center_name && ps.registration_center_name.toLowerCase().includes(searchTerm.toLowerCase()))
+  );
+
   // Export Functions
   const handleExportPDF = () => {
     if (currentLevel === 'national' && counties.length > 0) {
       exportTableToPDF(
         'Kenya Counties',
-        ['Code', 'County Name', 'Population (2019)', 'Registered Voters'],
+        ['Code', 'County Name', 'Population (2019)', 'Registered Voters (2022)'],
         counties.map(c => [
           c.code,
           c.name,
           c.population_2019?.toLocaleString() || 'N/A',
-          c.registered_voters?.toLocaleString() || 'N/A'
+          c.registered_voters_2022?.toLocaleString() || 'N/A'
         ])
       );
     } else if (currentLevel === 'county' && constituencies.length > 0) {
       exportTableToPDF(
         `${selectedCounty?.name} Constituencies`,
-        ['Code', 'Constituency Name', 'Registered Voters'],
+        ['Code', 'Constituency Name', 'Registered Voters (2022)'],
         constituencies.map(c => [
           c.code,
           c.name,
-          c.registered_voters?.toLocaleString() || 'N/A'
+          c.registered_voters_2022?.toLocaleString() || 'N/A'
         ])
       );
     } else if (currentLevel === 'constituency' && wards.length > 0) {
       exportTableToPDF(
         `${selectedConstituency?.name} Wards`,
-        ['Code', 'Ward Name', 'Population (2019)'],
+        ['Code', 'Ward Name', 'Registered Voters (2022)'],
         wards.map(w => [
           w.code,
           w.name,
-          w.population_2019?.toLocaleString() || 'N/A'
+          w.registered_voters_2022?.toLocaleString() || 'N/A'
+        ])
+      );
+    } else if (currentLevel === 'ward' && pollingStations.length > 0) {
+      exportTableToPDF(
+        `${selectedWard?.name} Polling Stations`,
+        ['Code', 'Polling Station Name', 'Registered Voters (2022)'],
+        pollingStations.map(ps => [
+          ps.code,
+          ps.name,
+          ps.registered_voters_2022?.toLocaleString() || 'N/A'
         ])
       );
     }
@@ -244,7 +314,7 @@ export default function CountyExplorerEnhanced() {
         Code: c.code,
         'County Name': c.name,
         'Population 2019': c.population_2019 || 0,
-        'Registered Voters': c.registered_voters || 0
+        'Registered Voters 2022': c.registered_voters_2022 || 0
       }));
       exportObjectsToCSV(csvData, 'KenPoliMarket_Counties.csv');
     } else if (currentLevel === 'county' && constituencies.length > 0) {
@@ -252,7 +322,7 @@ export default function CountyExplorerEnhanced() {
         Code: c.code,
         'Constituency Name': c.name,
         County: selectedCounty?.name || '',
-        'Registered Voters': c.registered_voters || 0
+        'Registered Voters 2022': c.registered_voters_2022 || 0
       }));
       exportObjectsToCSV(csvData, `KenPoliMarket_${selectedCounty?.name}_Constituencies.csv`);
     } else if (currentLevel === 'constituency' && wards.length > 0) {
@@ -261,9 +331,18 @@ export default function CountyExplorerEnhanced() {
         'Ward Name': w.name,
         Constituency: selectedConstituency?.name || '',
         County: selectedCounty?.name || '',
-        'Population 2019': w.population_2019 || 0
+        'Registered Voters 2022': w.registered_voters_2022 || 0
       }));
       exportObjectsToCSV(csvData, `KenPoliMarket_${selectedConstituency?.name}_Wards.csv`);
+    } else if (currentLevel === 'ward' && pollingStations.length > 0) {
+      const csvData = pollingStations.map(ps => ({
+        Code: ps.code,
+        'Polling Station Name': ps.name,
+        Ward: selectedWard?.name || '',
+        'Registration Center': ps.registration_center_name || '',
+        'Registered Voters 2022': ps.registered_voters_2022 || 0
+      }));
+      exportObjectsToCSV(csvData, `KenPoliMarket_${selectedWard?.name}_PollingStations.csv`);
     }
   };
 
@@ -281,7 +360,7 @@ export default function CountyExplorerEnhanced() {
       <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl shadow-lg p-6 text-white">
         <h2 className="text-2xl font-bold mb-2">Geographic Explorer</h2>
         <p className="text-blue-100">
-          Navigate through Kenya's administrative divisions: Counties → Constituencies → Wards
+          Navigate through Kenya's administrative divisions: Counties → Constituencies → Wards → Polling Stations
         </p>
       </div>
 
@@ -318,7 +397,14 @@ export default function CountyExplorerEnhanced() {
                 }`}
               >
                 {index === 0 && <Home className="w-4 h-4 mr-1" />}
-                {crumb.name}
+                <span>
+                  {crumb.name}
+                  {crumb.voters && (
+                    <span className="ml-2 text-xs opacity-75">
+                      ({(crumb.voters / 1000).toFixed(0)}K voters)
+                    </span>
+                  )}
+                </span>
               </button>
             </div>
           ))}
@@ -362,7 +448,7 @@ export default function CountyExplorerEnhanced() {
             Interactive Map with Leaflet
           </h3>
           <LeafletInteractiveMap
-            level={currentLevel}
+            level={currentLevel === 'polling_station' ? 'ward' : currentLevel}
             countyId={selectedCounty?.id}
             constituencyId={selectedConstituency?.id}
             wardId={selectedWard?.id}
@@ -446,9 +532,9 @@ export default function CountyExplorerEnhanced() {
                           {constituency.name}
                         </h4>
                         <p className="text-sm text-gray-500">Code: {constituency.code}</p>
-                        {constituency.registered_voters && (
+                        {constituency.registered_voters_2022 && (
                           <p className="text-sm text-gray-500">
-                            Voters: {constituency.registered_voters.toLocaleString()}
+                            Voters: {constituency.registered_voters_2022.toLocaleString()}
                           </p>
                         )}
                       </div>
@@ -499,46 +585,121 @@ export default function CountyExplorerEnhanced() {
           </div>
         )}
 
-        {/* Ward Level - Details */}
-        {currentLevel === 'ward' && selectedWard && (
+        {/* Ward Level - Polling Stations */}
+        {currentLevel === 'ward' && (
           <div>
             <div className="bg-gray-50 px-6 py-4 border-b border-gray-200">
               <h3 className="text-lg font-semibold text-gray-900">
-                {selectedWard.name} Ward Details
+                Polling Stations in {selectedWard?.name} ({filteredPollingStations.length})
               </h3>
+              {selectedWard?.registered_voters_2022 && (
+                <p className="text-sm text-gray-600 mt-1">
+                  Total Registered Voters: {selectedWard.registered_voters_2022.toLocaleString()}
+                </p>
+              )}
+            </div>
+            {loading ? (
+              <div className="flex items-center justify-center h-64">
+                <div className="text-gray-500">Loading polling stations...</div>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-6">
+                {filteredPollingStations.map((pollingStation) => (
+                  <button
+                    key={pollingStation.id}
+                    onClick={() => handlePollingStationClick(pollingStation)}
+                    className="text-left p-4 border border-gray-200 rounded-lg hover:border-blue-500 hover:shadow-md transition-all group"
+                  >
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <h4 className="font-semibold text-gray-900 group-hover:text-blue-600 mb-1">
+                          {pollingStation.name}
+                        </h4>
+                        <p className="text-xs text-gray-500 mb-1">Code: {pollingStation.code}</p>
+                        {pollingStation.registration_center_name && (
+                          <p className="text-xs text-gray-500 mb-1">
+                            Center: {pollingStation.registration_center_name}
+                          </p>
+                        )}
+                        {pollingStation.registered_voters_2022 && (
+                          <p className="text-sm text-blue-600 font-medium">
+                            {pollingStation.registered_voters_2022.toLocaleString()} voters
+                          </p>
+                        )}
+                      </div>
+                      <ChevronRight className="w-5 h-5 text-gray-400 group-hover:text-blue-600" />
+                    </div>
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Polling Station Level - Details */}
+        {currentLevel === 'polling_station' && selectedPollingStation && (
+          <div>
+            <div className="bg-gray-50 px-6 py-4 border-b border-gray-200">
+              <h3 className="text-lg font-semibold text-gray-900">
+                {selectedPollingStation.name}
+              </h3>
+              <p className="text-sm text-gray-600 mt-1">
+                Polling Station Details
+              </p>
             </div>
             <div className="p-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="bg-blue-50 rounded-lg p-4">
-                  <h4 className="font-semibold text-blue-900 mb-2">Basic Information</h4>
+                <div className="bg-blue-50 p-4 rounded-lg">
+                  <h4 className="text-sm font-medium text-gray-700 mb-2">Basic Information</h4>
                   <dl className="space-y-2">
                     <div>
-                      <dt className="text-sm text-blue-700">Ward Code</dt>
-                      <dd className="text-lg font-semibold text-blue-900">{selectedWard.code}</dd>
+                      <dt className="text-xs text-gray-500">Code</dt>
+                      <dd className="text-sm font-medium text-gray-900">{selectedPollingStation.code}</dd>
                     </div>
                     <div>
-                      <dt className="text-sm text-blue-700">Constituency</dt>
-                      <dd className="text-lg font-semibold text-blue-900">{selectedConstituency?.name}</dd>
+                      <dt className="text-xs text-gray-500">Name</dt>
+                      <dd className="text-sm font-medium text-gray-900">{selectedPollingStation.name}</dd>
                     </div>
+                    {selectedPollingStation.registration_center_name && (
+                      <div>
+                        <dt className="text-xs text-gray-500">Registration Center</dt>
+                        <dd className="text-sm font-medium text-gray-900">
+                          {selectedPollingStation.registration_center_name}
+                        </dd>
+                      </div>
+                    )}
+                    {selectedPollingStation.registration_center_code && (
+                      <div>
+                        <dt className="text-xs text-gray-500">Center Code</dt>
+                        <dd className="text-sm font-medium text-gray-900">
+                          {selectedPollingStation.registration_center_code}
+                        </dd>
+                      </div>
+                    )}
+                  </dl>
+                </div>
+
+                <div className="bg-green-50 p-4 rounded-lg">
+                  <h4 className="text-sm font-medium text-gray-700 mb-2">Voter Statistics</h4>
+                  <dl className="space-y-2">
                     <div>
-                      <dt className="text-sm text-blue-700">County</dt>
-                      <dd className="text-lg font-semibold text-blue-900">{selectedCounty?.name}</dd>
+                      <dt className="text-xs text-gray-500">Registered Voters (2022)</dt>
+                      <dd className="text-2xl font-bold text-green-700">
+                        {selectedPollingStation.registered_voters_2022?.toLocaleString() || 'N/A'}
+                      </dd>
                     </div>
                   </dl>
                 </div>
-                {selectedWard.population_2019 && (
-                  <div className="bg-green-50 rounded-lg p-4">
-                    <h4 className="font-semibold text-green-900 mb-2">Demographics</h4>
-                    <dl className="space-y-2">
-                      <div>
-                        <dt className="text-sm text-green-700">Population (2019)</dt>
-                        <dd className="text-lg font-semibold text-green-900">
-                          {selectedWard.population_2019.toLocaleString()}
-                        </dd>
-                      </div>
-                    </dl>
-                  </div>
-                )}
+              </div>
+
+              <div className="mt-6 p-4 bg-gray-50 rounded-lg">
+                <h4 className="text-sm font-medium text-gray-700 mb-2">Location Hierarchy</h4>
+                <div className="text-sm text-gray-600 space-y-1">
+                  <p>County: {selectedCounty?.name}</p>
+                  <p>Constituency: {selectedConstituency?.name}</p>
+                  <p>Ward: {selectedWard?.name}</p>
+                  <p>Polling Station: {selectedPollingStation.name}</p>
+                </div>
               </div>
             </div>
           </div>
