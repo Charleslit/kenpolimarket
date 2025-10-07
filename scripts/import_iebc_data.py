@@ -25,30 +25,48 @@ def parse_iebc_line(line):
     """Parse a line from the IEBC CSV file."""
     # Remove quotes and extra spaces
     line = line.strip().strip('"')
-    
+
     # Skip empty lines or header lines
     if not line or 'County Name' in line or 'REGISTERED VOTERS' in line:
         return None
-    
+
     # Split by multiple spaces (the delimiter in this file)
     parts = re.split(r'\s{2,}', line)
-    
+
     if len(parts) < 10:
         return None
-    
+
     try:
+        # Handle special cases where county name is split across columns
+        # This happens for "UASIN GISHU" and "NAIROBI CITY"
+        county_code = parts[0].strip()
+        county_name = parts[1].strip()
+        offset = 0
+
+        # Check if county name is split (e.g., "UASIN" in one column, "GISHU" in next)
+        # This happens when the county name has single spaces that get treated as delimiters
+        if county_name in ['UASIN', 'NAIROBI', 'TAITA', 'ELGEYO', 'THARAKA', 'TRANS']:
+            # Merge with next part
+            county_name = f"{county_name} {parts[2].strip()}"
+            offset = 1
+
+        const_code = parts[2 + offset].strip()
+        const_name = parts[3 + offset].strip()
+        ward_code = parts[4 + offset].strip()
+        ward_name = parts[5 + offset].strip()
+
         return {
-            'county_code': parts[0].strip(),
-            'county_name': parts[1].strip(),
-            'const_code': parts[2].strip(),
-            'const_name': parts[3].strip(),
-            'ward_code': parts[4].strip(),
-            'ward_name': parts[5].strip(),
-            'reg_center_code': parts[6].strip() if len(parts) > 6 else None,
-            'reg_center_name': parts[7].strip() if len(parts) > 7 else None,
-            'ps_code': parts[8].strip() if len(parts) > 8 else None,
-            'ps_name': parts[9].strip() if len(parts) > 9 else None,
-            'registered_voters': int(parts[10].strip()) if len(parts) > 10 and parts[10].strip().isdigit() else 0
+            'county_code': county_code,
+            'county_name': county_name,
+            'const_code': const_code,
+            'const_name': const_name,
+            'ward_code': ward_code,
+            'ward_name': ward_name,
+            'reg_center_code': parts[6 + offset].strip() if len(parts) > 6 + offset else None,
+            'reg_center_name': parts[7 + offset].strip() if len(parts) > 7 + offset else None,
+            'ps_code': parts[8 + offset].strip() if len(parts) > 8 + offset else None,
+            'ps_name': parts[9 + offset].strip() if len(parts) > 9 + offset else None,
+            'registered_voters': int(parts[10 + offset].strip()) if len(parts) > 10 + offset and parts[10 + offset].strip().isdigit() else 0
         }
     except (ValueError, IndexError) as e:
         return None
@@ -125,10 +143,16 @@ def import_data(csv_path: str):
         special_mappings = {
             'THARAKA - NITHI': 'Tharaka Nithi',
             'THARAKA-NITHI': 'Tharaka Nithi',
+            'THARAKA NITHI': 'Tharaka Nithi',
             'NAIROBI CITY': 'Nairobi',
-            'UASIN': 'Uasin Gishu',
+            'UASIN GISHU': 'Uasin Gishu',
             'ELGEYO/MARAKWET': 'Elgeyo Marakwet',
             'ELGEYO-MARAKWET': 'Elgeyo Marakwet',
+            'ELGEYO MARAKWET': 'Elgeyo Marakwet',
+            'TAITA TAVETA': 'Taita Taveta',
+            'TAITA-TAVETA': 'Taita Taveta',
+            'TRANS NZOIA': 'Trans Nzoia',
+            'TRANS-NZOIA': 'Trans Nzoia',
         }
 
         for county in counties:
