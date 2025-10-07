@@ -154,6 +154,76 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Insights from Our Divisions - Colorful & Beautiful */}
+      <section className="py-20 bg-gradient-to-b from-white to-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+              Latest Insights from Our Divisions
+            </h2>
+            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              Real-time data and analytics across Kenya's key sectors
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8">
+            {/* Political Insights */}
+            <InsightCard
+              title="Political Analysis"
+              color="bg-gradient-to-br from-[#BB0000] to-[#8B0000]"
+              accentColor="bg-[#BB0000]"
+              stats={[
+                { label: '2027 Election', value: 'Tracking', trend: 'Active' },
+                { label: 'Counties Analyzed', value: '47', trend: '100%' },
+                { label: 'Polling Stations', value: '46,229', trend: 'Live' },
+              ]}
+              insights={[
+                'Presidential race forecasting active',
+                'Gubernatorial predictions updated',
+                'Voter registration trends analyzed',
+              ]}
+              href="/political"
+            />
+
+            {/* Budget Insights */}
+            <InsightCard
+              title="Budget Analysis"
+              color="bg-gradient-to-br from-[#006600] to-[#004400]"
+              accentColor="bg-[#006600]"
+              stats={[
+                { label: 'National Budget', value: 'KES 3.9T', trend: '2024/25' },
+                { label: 'County Budgets', value: '47', trend: 'Tracked' },
+                { label: 'Revenue Streams', value: '12+', trend: 'Monitored' },
+              ]}
+              insights={[
+                'Fiscal year 2024/25 analysis ready',
+                'County allocation tracking',
+                'Revenue projection models',
+              ]}
+              comingSoon
+            />
+
+            {/* Health Insights */}
+            <InsightCard
+              title="Health Analytics"
+              color="bg-gradient-to-br from-gray-900 to-gray-700"
+              accentColor="bg-gray-900"
+              stats={[
+                { label: 'Health Facilities', value: '9,000+', trend: 'Mapped' },
+                { label: 'Counties', value: '47', trend: 'Coverage' },
+                { label: 'Health Indicators', value: '50+', trend: 'Tracked' },
+              ]}
+              insights={[
+                'Facility performance metrics',
+                'Public health trend analysis',
+                'County health system tracking',
+              ]}
+              comingSoon
+            />
+          </div>
+        </div>
+      </section>
+
       {/* CTA Section */}
       <section className="py-20 bg-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -246,5 +316,117 @@ function ApproachItem({ title, description }: { title: string; description: stri
         <p className="text-gray-600 leading-relaxed">{description}</p>
       </div>
     </div>
+  );
+}
+
+// Insight Card Component
+function InsightCard({
+  title,
+  color,
+  accentColor,
+  stats,
+  insights,
+  href,
+  comingSoon = false,
+}: {
+  title: string;
+  color: string;
+  accentColor: string;
+  stats: { label: string; value: string; trend: string }[];
+  insights: string[];
+  href?: string;
+  comingSoon?: boolean;
+}) {
+  const content = (
+    <div className="relative bg-white border-2 border-gray-200 overflow-hidden group hover:border-gray-900 transition-all h-full">
+      {/* Colorful Header with Gradient */}
+      <div className={`${color} text-white p-6 relative overflow-hidden`}>
+        {/* Decorative Pattern */}
+        <div className="absolute inset-0 opacity-10">
+          <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <pattern id={`pattern-${title}`} x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+                <circle cx="20" cy="20" r="2" fill="white" />
+              </pattern>
+            </defs>
+            <rect width="100%" height="100%" fill={`url(#pattern-${title})`} />
+          </svg>
+        </div>
+
+        <div className="relative">
+          <h3 className="text-2xl font-bold mb-2">{title}</h3>
+          {comingSoon && (
+            <div className="inline-block bg-white/20 backdrop-blur-sm text-white text-xs px-3 py-1 font-bold">
+              COMING SOON
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Stats Grid */}
+      <div className="p-6 border-b border-gray-200">
+        <div className="grid grid-cols-3 gap-4">
+          {stats.map((stat, idx) => (
+            <div key={idx} className="text-center">
+              <div className="text-xl font-bold text-gray-900 mb-1">{stat.value}</div>
+              <div className="text-xs text-gray-500 mb-1">{stat.label}</div>
+              <div className={`text-[10px] font-semibold ${accentColor} text-white px-2 py-0.5 inline-block`}>
+                {stat.trend}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Insights List */}
+      <div className="p-6">
+        <div className="text-xs font-semibold text-gray-500 uppercase mb-3">Latest Insights</div>
+        <ul className="space-y-2">
+          {insights.map((insight, idx) => (
+            <li key={idx} className="flex items-start gap-2 text-sm text-gray-700">
+              <div className={`w-1.5 h-1.5 ${accentColor} mt-1.5 flex-shrink-0`}></div>
+              <span className={comingSoon ? 'opacity-60' : ''}>{insight}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      {/* Action Footer */}
+      {!comingSoon && href && (
+        <div className="px-6 pb-6">
+          <div className="text-sm font-medium text-gray-900 group-hover:text-gray-600 transition-colors flex items-center">
+            Explore Division
+            <svg className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          </div>
+        </div>
+      )}
+
+      {/* Data Visualization Accent */}
+      <div className="absolute bottom-0 right-0 opacity-5 pointer-events-none">
+        <svg width="120" height="80" viewBox="0 0 120 80">
+          <polyline
+            points="0,60 30,45 60,50 90,30 120,35"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="3"
+          />
+          <circle cx="30" cy="45" r="4" fill="currentColor" />
+          <circle cx="60" cy="50" r="4" fill="currentColor" />
+          <circle cx="90" cy="30" r="4" fill="currentColor" />
+        </svg>
+      </div>
+    </div>
+  );
+
+  if (comingSoon || !href) {
+    return <div className="cursor-default">{content}</div>;
+  }
+
+  return (
+    <Link href={href} className="block">
+      {content}
+    </Link>
   );
 }

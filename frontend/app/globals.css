@@ -105,6 +105,16 @@ html {
   background: #555;
 }
 
+/* Hide scrollbar for subdivision nav */
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
 /* Mobile-specific enhancements */
 
 /* Prevent text size adjustment on orientation change */
