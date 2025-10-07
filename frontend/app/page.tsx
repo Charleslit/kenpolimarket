@@ -77,6 +77,7 @@ export default function Home() {
                 { value: "2027", label: "Next Election" },
               ]}
               accentColor="border-[#BB0000]"
+              bgColor="bg-gradient-to-br from-red-50/50 to-white"
             />
 
             {/* Budget Analysis Division */}
@@ -89,6 +90,7 @@ export default function Home() {
                 { value: "47", label: "County Budgets" },
               ]}
               accentColor="border-[#006600]"
+              bgColor="bg-gradient-to-br from-green-50/50 to-white"
               comingSoon
             />
 
@@ -102,6 +104,7 @@ export default function Home() {
                 { value: "Real-time", label: "Data Updates" },
               ]}
               accentColor="border-[#000000]"
+              bgColor="bg-gradient-to-br from-gray-50/50 to-white"
               comingSoon
             />
           </div>
@@ -248,13 +251,14 @@ export default function Home() {
   );
 }
 
-// Division Card Component
+// Division Card Component with 3D Effects
 function DivisionCard({
   title,
   description,
   href,
   stats,
   accentColor,
+  bgColor = "bg-white",
   comingSoon = false,
 }: {
   title: string;
@@ -262,41 +266,67 @@ function DivisionCard({
   href: string;
   stats: { value: string; label: string }[];
   accentColor: string;
+  bgColor?: string;
   comingSoon?: boolean;
 }) {
   const content = (
-    <div className={`relative bg-white border-2 ${accentColor} p-8 h-full transition-all hover:shadow-lg ${comingSoon ? 'opacity-75' : ''}`}>
+    <div
+      className={`relative ${bgColor} border-2 ${accentColor} p-8 h-full rounded-2xl transition-all duration-500 ease-out
+        ${comingSoon ? 'opacity-75' : 'hover:shadow-2xl hover:-translate-y-2 hover:scale-[1.02] hover:from-opacity-100'}
+        shadow-lg
+        group-hover:rotate-1
+        transform-gpu
+        perspective-1000
+      `}
+      style={{
+        transformStyle: 'preserve-3d',
+        backfaceVisibility: 'hidden',
+      }}
+    >
+      {/* Subtle gradient overlay for depth - enhanced on hover */}
+      <div className="absolute inset-0 bg-gradient-to-br from-white/30 to-transparent rounded-2xl pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+
+      {/* 3D depth layer */}
+      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/3 rounded-2xl pointer-events-none"></div>
+
       {comingSoon && (
-        <div className="absolute top-4 right-4 bg-gray-900 text-white text-xs px-3 py-1 font-medium">
+        <div className="absolute top-4 right-4 bg-gray-900 text-white text-xs px-3 py-1 font-medium rounded-full shadow-md z-10">
           COMING SOON
         </div>
       )}
 
-      <h3 className="text-2xl font-bold text-gray-900 mb-4">{title}</h3>
-      <p className="text-gray-600 mb-6 leading-relaxed">{description}</p>
+      <div className="relative z-10">
+        <h3 className="text-2xl font-bold text-gray-900 mb-4 group-hover:translate-x-1 transition-transform duration-300">{title}</h3>
+        <p className="text-gray-600 mb-6 leading-relaxed">{description}</p>
 
-      <div className="grid grid-cols-2 gap-4 pt-6 border-t border-gray-200">
-        {stats.map((stat, idx) => (
-          <div key={idx}>
-            <div className="text-2xl font-bold text-gray-900">{stat.value}</div>
-            <div className="text-sm text-gray-500">{stat.label}</div>
+        <div className="grid grid-cols-2 gap-4 pt-6 border-t border-gray-200">
+          {stats.map((stat, idx) => (
+            <div key={idx} className="transform group-hover:scale-105 transition-transform duration-300" style={{ transitionDelay: `${idx * 50}ms` }}>
+              <div className="text-2xl font-bold text-gray-900">{stat.value}</div>
+              <div className="text-sm text-gray-500">{stat.label}</div>
+            </div>
+          ))}
+        </div>
+
+        {!comingSoon && (
+          <div className="mt-6 text-gray-900 font-medium flex items-center group-hover:translate-x-2 transition-transform duration-300">
+            Explore Division
+            <svg className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
           </div>
-        ))}
+        )}
       </div>
 
-      {!comingSoon && (
-        <div className="mt-6 text-gray-900 font-medium flex items-center">
-          Explore Division
-          <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-          </svg>
-        </div>
-      )}
+      {/* Shine effect on hover */}
+      <div className="absolute inset-0 rounded-2xl overflow-hidden pointer-events-none">
+        <div className="absolute inset-0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-12"></div>
+      </div>
     </div>
   );
 
   if (comingSoon) {
-    return <div className="cursor-not-allowed">{content}</div>;
+    return <div className="cursor-not-allowed group">{content}</div>;
   }
 
   return (
@@ -319,7 +349,7 @@ function ApproachItem({ title, description }: { title: string; description: stri
   );
 }
 
-// Insight Card Component
+// Insight Card Component with 3D Effects
 function InsightCard({
   title,
   color,
@@ -338,11 +368,23 @@ function InsightCard({
   comingSoon?: boolean;
 }) {
   const content = (
-    <div className="relative bg-white border-2 border-gray-200 overflow-hidden group hover:border-gray-900 transition-all h-full">
+    <div
+      className={`relative bg-white border-2 border-gray-200 overflow-hidden rounded-2xl h-full
+        transition-all duration-500 ease-out
+        ${comingSoon ? '' : 'hover:border-gray-900 hover:shadow-2xl hover:-translate-y-3 hover:scale-[1.03]'}
+        shadow-lg
+        group
+        transform-gpu
+      `}
+      style={{
+        transformStyle: 'preserve-3d',
+        backfaceVisibility: 'hidden',
+      }}
+    >
       {/* Colorful Header with Gradient */}
-      <div className={`${color} text-white p-6 relative overflow-hidden`}>
+      <div className={`${color} text-white p-6 relative overflow-hidden transition-all duration-500 group-hover:scale-[1.02]`}>
         {/* Decorative Pattern */}
-        <div className="absolute inset-0 opacity-10">
+        <div className="absolute inset-0 opacity-10 group-hover:opacity-20 transition-opacity duration-500">
           <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
             <defs>
               <pattern id={`pattern-${title}`} x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
@@ -353,10 +395,13 @@ function InsightCard({
           </svg>
         </div>
 
-        <div className="relative">
-          <h3 className="text-2xl font-bold mb-2">{title}</h3>
+        {/* Animated gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-br from-white/0 via-white/10 to-white/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+
+        <div className="relative z-10">
+          <h3 className="text-2xl font-bold mb-2 group-hover:translate-x-1 transition-transform duration-300">{title}</h3>
           {comingSoon && (
-            <div className="inline-block bg-white/20 backdrop-blur-sm text-white text-xs px-3 py-1 font-bold">
+            <div className="inline-block bg-white/20 backdrop-blur-sm text-white text-xs px-3 py-1 font-bold rounded-full">
               COMING SOON
             </div>
           )}
@@ -364,13 +409,17 @@ function InsightCard({
       </div>
 
       {/* Stats Grid */}
-      <div className="p-6 border-b border-gray-200">
+      <div className="p-6 border-b border-gray-200 relative z-10">
         <div className="grid grid-cols-3 gap-4">
           {stats.map((stat, idx) => (
-            <div key={idx} className="text-center">
-              <div className="text-xl font-bold text-gray-900 mb-1">{stat.value}</div>
+            <div
+              key={idx}
+              className="text-center transform group-hover:scale-110 transition-all duration-300"
+              style={{ transitionDelay: `${idx * 75}ms` }}
+            >
+              <div className="text-xl font-bold text-gray-900 mb-1 group-hover:text-2xl transition-all duration-300">{stat.value}</div>
               <div className="text-xs text-gray-500 mb-1">{stat.label}</div>
-              <div className={`text-[10px] font-semibold ${accentColor} text-white px-2 py-0.5 inline-block`}>
+              <div className={`text-[10px] font-semibold ${accentColor} text-white px-2 py-0.5 inline-block rounded-full transform group-hover:scale-110 transition-transform duration-300`}>
                 {stat.trend}
               </div>
             </div>
@@ -379,12 +428,16 @@ function InsightCard({
       </div>
 
       {/* Insights List */}
-      <div className="p-6">
-        <div className="text-xs font-semibold text-gray-500 uppercase mb-3">Latest Insights</div>
+      <div className="p-6 relative z-10">
+        <div className="text-xs font-semibold text-gray-500 uppercase mb-3 group-hover:translate-x-1 transition-transform duration-300">Latest Insights</div>
         <ul className="space-y-2">
           {insights.map((insight, idx) => (
-            <li key={idx} className="flex items-start gap-2 text-sm text-gray-700">
-              <div className={`w-1.5 h-1.5 ${accentColor} mt-1.5 flex-shrink-0`}></div>
+            <li
+              key={idx}
+              className="flex items-start gap-2 text-sm text-gray-700 group-hover:translate-x-2 transition-all duration-300"
+              style={{ transitionDelay: `${idx * 50}ms` }}
+            >
+              <div className={`w-1.5 h-1.5 ${accentColor} mt-1.5 flex-shrink-0 rounded-full group-hover:scale-150 transition-transform duration-300`}></div>
               <span className={comingSoon ? 'opacity-60' : ''}>{insight}</span>
             </li>
           ))}
@@ -393,10 +446,10 @@ function InsightCard({
 
       {/* Action Footer */}
       {!comingSoon && href && (
-        <div className="px-6 pb-6">
-          <div className="text-sm font-medium text-gray-900 group-hover:text-gray-600 transition-colors flex items-center">
+        <div className="px-6 pb-6 relative z-10">
+          <div className="text-sm font-medium text-gray-900 group-hover:text-gray-600 transition-all duration-300 flex items-center group-hover:translate-x-3">
             Explore Division
-            <svg className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-4 h-4 ml-2 group-hover:translate-x-2 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
             </svg>
           </div>
@@ -404,18 +457,23 @@ function InsightCard({
       )}
 
       {/* Data Visualization Accent */}
-      <div className="absolute bottom-0 right-0 opacity-5 pointer-events-none">
-        <svg width="120" height="80" viewBox="0 0 120 80">
+      <div className="absolute bottom-0 right-0 opacity-5 group-hover:opacity-10 pointer-events-none transition-opacity duration-500">
+        <svg width="120" height="80" viewBox="0 0 120 80" className="group-hover:scale-110 transition-transform duration-500">
           <polyline
             points="0,60 30,45 60,50 90,30 120,35"
             fill="none"
             stroke="currentColor"
             strokeWidth="3"
           />
-          <circle cx="30" cy="45" r="4" fill="currentColor" />
-          <circle cx="60" cy="50" r="4" fill="currentColor" />
-          <circle cx="90" cy="30" r="4" fill="currentColor" />
+          <circle cx="30" cy="45" r="4" fill="currentColor" className="group-hover:r-6 transition-all duration-300" />
+          <circle cx="60" cy="50" r="4" fill="currentColor" className="group-hover:r-6 transition-all duration-300" />
+          <circle cx="90" cy="30" r="4" fill="currentColor" className="group-hover:r-6 transition-all duration-300" />
         </svg>
+      </div>
+
+      {/* Shine effect on hover */}
+      <div className="absolute inset-0 rounded-2xl overflow-hidden pointer-events-none">
+        <div className="absolute inset-0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/10 to-transparent skew-x-12"></div>
       </div>
     </div>
   );

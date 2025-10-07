@@ -115,6 +115,46 @@ html {
   display: none;
 }
 
+/* 3D Card Effects */
+.perspective-1000 {
+  perspective: 1000px;
+}
+
+.transform-gpu {
+  transform: translateZ(0);
+  will-change: transform;
+}
+
+/* Smooth 3D transforms */
+@media (prefers-reduced-motion: no-preference) {
+  .group:hover .group-hover\:rotate-1 {
+    transform: rotateY(1deg) rotateX(-1deg);
+  }
+}
+
+/* Disable 3D effects for users who prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .group:hover .group-hover\:rotate-1 {
+    transform: none;
+  }
+
+  .hover\:-translate-y-2:hover,
+  .hover\:-translate-y-3:hover,
+  .group-hover\:translate-x-1,
+  .group-hover\:translate-x-2,
+  .group-hover\:translate-x-3 {
+    transform: none;
+  }
+}
+
+/* Enhanced shadow for 3D depth */
+.hover\:shadow-2xl:hover {
+  box-shadow:
+    0 25px 50px -12px rgba(0, 0, 0, 0.25),
+    0 10px 20px -5px rgba(0, 0, 0, 0.1),
+    0 0 0 1px rgba(0, 0, 0, 0.05);
+}
+
 /* Mobile-specific enhancements */
 
 /* Prevent text size adjustment on orientation change */
