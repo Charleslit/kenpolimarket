@@ -83,7 +83,7 @@ def create_constituencies_geojson(output_path: str):
         # Fetch all constituencies with their counties
         # Defer optional columns that might not exist in the database
         constituencies = db.query(Constituency).options(
-            defer(Constituency.registered_voters),
+            defer(Constituency.registered_voters_2022),
             defer(Constituency.geometry)
         ).all()
         

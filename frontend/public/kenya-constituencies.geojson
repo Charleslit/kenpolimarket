@@ -1,4 +1,4646 @@
 {
   "type": "FeatureCollection",
-  "features": []
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 1,
+        "code": "001",
+        "name": "CHANGAMWE",
+        "county_id": 142,
+        "county_name": "Mombasa"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          39.593199999999996,
+          -4.1185
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 2,
+        "code": "002",
+        "name": "JOMVU",
+        "county_id": 142,
+        "county_name": "Mombasa"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          39.6432,
+          -4.1185
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 3,
+        "code": "003",
+        "name": "KISAUNI",
+        "county_id": 142,
+        "county_name": "Mombasa"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          39.6932,
+          -4.1185
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 4,
+        "code": "004",
+        "name": "NYALI",
+        "county_id": 142,
+        "county_name": "Mombasa"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          39.593199999999996,
+          -4.0685
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 5,
+        "code": "005",
+        "name": "LIKONI",
+        "county_id": 142,
+        "county_name": "Mombasa"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          39.6432,
+          -4.0685
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 6,
+        "code": "006",
+        "name": "MVITA",
+        "county_id": 142,
+        "county_name": "Mombasa"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          39.6932,
+          -4.0685
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 7,
+        "code": "007",
+        "name": "MSAMBWENI",
+        "county_id": 143,
+        "county_name": "Kwale"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          39.376999999999995,
+          -4.2492
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 8,
+        "code": "008",
+        "name": "LUNGALUNGA",
+        "county_id": 143,
+        "county_name": "Kwale"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          39.452,
+          -4.2492
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 9,
+        "code": "009",
+        "name": "MATUGA",
+        "county_id": 143,
+        "county_name": "Kwale"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          39.376999999999995,
+          -4.1742
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 10,
+        "code": "010",
+        "name": "KINANGO",
+        "county_id": 143,
+        "county_name": "Kwale"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          39.452,
+          -4.1742
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 11,
+        "code": "011",
+        "name": "KILIFI NORTH",
+        "county_id": 144,
+        "county_name": "Kilifi"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          39.7743,
+          -3.7059
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 12,
+        "code": "012",
+        "name": "KILIFI",
+        "county_id": 144,
+        "county_name": "Kilifi"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          39.8243,
+          -3.7059
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 13,
+        "code": "013",
+        "name": "KALOLENI",
+        "county_id": 144,
+        "county_name": "Kilifi"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          39.8743,
+          -3.7059
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 14,
+        "code": "014",
+        "name": "RABAI",
+        "county_id": 144,
+        "county_name": "Kilifi"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          39.7743,
+          -3.6559
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 15,
+        "code": "015",
+        "name": "GANZE",
+        "county_id": 144,
+        "county_name": "Kilifi"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          39.8243,
+          -3.6559
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 16,
+        "code": "016",
+        "name": "MALINDI",
+        "county_id": 144,
+        "county_name": "Kilifi"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          39.8743,
+          -3.6559
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 17,
+        "code": "017",
+        "name": "MAGARINI",
+        "county_id": 144,
+        "county_name": "Kilifi"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          39.7743,
+          -3.6059
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 18,
+        "code": "018",
+        "name": "GARSEN",
+        "county_id": 145,
+        "county_name": "Tana River"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          39.9122,
+          -1.5986
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 19,
+        "code": "019",
+        "name": "GALOLE",
+        "county_id": 145,
+        "county_name": "Tana River"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          39.9872,
+          -1.5986
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 20,
+        "code": "020",
+        "name": "BURA",
+        "county_id": 145,
+        "county_name": "Tana River"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          39.9122,
+          -1.5236
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 21,
+        "code": "021",
+        "name": "LAMU EAST",
+        "county_id": 146,
+        "county_name": "Lamu"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          40.827,
+          -2.3467000000000002
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 22,
+        "code": "022",
+        "name": "LAMU WEST",
+        "county_id": 146,
+        "county_name": "Lamu"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          40.902,
+          -2.3467000000000002
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 23,
+        "code": "023",
+        "name": "TAVETA",
+        "county_id": 147,
+        "county_name": "Taita Taveta"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          38.4083,
+          -3.3917
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 24,
+        "code": "024",
+        "name": "WUNDANYI",
+        "county_id": 147,
+        "county_name": "Taita Taveta"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          38.4833,
+          -3.3917
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 25,
+        "code": "025",
+        "name": "MWATATE",
+        "county_id": 147,
+        "county_name": "Taita Taveta"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          38.4083,
+          -3.3167
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 26,
+        "code": "026",
+        "name": "VOI",
+        "county_id": 147,
+        "county_name": "Taita Taveta"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          38.4833,
+          -3.3167
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 27,
+        "code": "027",
+        "name": "GARISSA TOWNSHIP",
+        "county_id": 148,
+        "county_name": "Garissa"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          39.565099999999994,
+          -0.5286
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 28,
+        "code": "028",
+        "name": "BALAMBALA",
+        "county_id": 148,
+        "county_name": "Garissa"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          39.6151,
+          -0.5286
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 29,
+        "code": "029",
+        "name": "LAGDERA",
+        "county_id": 148,
+        "county_name": "Garissa"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          39.665099999999995,
+          -0.5286
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 30,
+        "code": "030",
+        "name": "DADAAB",
+        "county_id": 148,
+        "county_name": "Garissa"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          39.565099999999994,
+          -0.4786
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 31,
+        "code": "031",
+        "name": "FAFI",
+        "county_id": 148,
+        "county_name": "Garissa"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          39.6151,
+          -0.4786
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 32,
+        "code": "032",
+        "name": "IJARA",
+        "county_id": 148,
+        "county_name": "Garissa"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          39.665099999999995,
+          -0.4786
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 33,
+        "code": "033",
+        "name": "WAJIR NORTH",
+        "county_id": 149,
+        "county_name": "Wajir"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          39.987899999999996,
+          1.6721000000000001
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 34,
+        "code": "034",
+        "name": "WAJIR EAST",
+        "county_id": 149,
+        "county_name": "Wajir"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          40.0379,
+          1.6721000000000001
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 35,
+        "code": "035",
+        "name": "TARBAJ",
+        "county_id": 149,
+        "county_name": "Wajir"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          40.0879,
+          1.6721000000000001
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 36,
+        "code": "036",
+        "name": "WAJIR WEST",
+        "county_id": 149,
+        "county_name": "Wajir"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          39.987899999999996,
+          1.7221000000000002
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 37,
+        "code": "037",
+        "name": "ELDAS",
+        "county_id": 149,
+        "county_name": "Wajir"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          40.0379,
+          1.7221000000000002
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 38,
+        "code": "038",
+        "name": "WAJIR SOUTH",
+        "county_id": 149,
+        "county_name": "Wajir"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          40.0879,
+          1.7221000000000002
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 39,
+        "code": "039",
+        "name": "MANDERA WEST",
+        "county_id": 150,
+        "county_name": "Mandera"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          41.779999999999994,
+          3.8615999999999997
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 40,
+        "code": "040",
+        "name": "BANISSA",
+        "county_id": 150,
+        "county_name": "Mandera"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          41.83,
+          3.8615999999999997
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 41,
+        "code": "041",
+        "name": "MANDERA NORTH",
+        "county_id": 150,
+        "county_name": "Mandera"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          41.879999999999995,
+          3.8615999999999997
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 42,
+        "code": "042",
+        "name": "MANDERA SOUTH",
+        "county_id": 150,
+        "county_name": "Mandera"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          41.779999999999994,
+          3.9116
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 43,
+        "code": "043",
+        "name": "MANDERA EAST",
+        "county_id": 150,
+        "county_name": "Mandera"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          41.83,
+          3.9116
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 44,
+        "code": "044",
+        "name": "LAFEY",
+        "county_id": 150,
+        "county_name": "Mandera"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          41.879999999999995,
+          3.9116
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 45,
+        "code": "045",
+        "name": "MOYALE",
+        "county_id": 151,
+        "county_name": "Marsabit"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.914899999999996,
+          2.2533999999999996
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 46,
+        "code": "046",
+        "name": "NORTH HORR",
+        "county_id": 151,
+        "county_name": "Marsabit"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.9899,
+          2.2533999999999996
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 47,
+        "code": "047",
+        "name": "SAKU",
+        "county_id": 151,
+        "county_name": "Marsabit"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.914899999999996,
+          2.3284
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 48,
+        "code": "048",
+        "name": "LAISAMIS",
+        "county_id": 151,
+        "county_name": "Marsabit"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.9899,
+          2.3284
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 49,
+        "code": "049",
+        "name": "ISIOLO NORTH",
+        "county_id": 152,
+        "county_name": "Isiolo"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.5083,
+          0.2806
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 50,
+        "code": "050",
+        "name": "ISIOLO SOUTH",
+        "county_id": 152,
+        "county_name": "Isiolo"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.5833,
+          0.2806
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 51,
+        "code": "051",
+        "name": "IGEMBE SOUTH",
+        "county_id": 153,
+        "county_name": "Meru"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.574999999999996,
+          0.2806
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 52,
+        "code": "052",
+        "name": "IGEMBE CENTRAL",
+        "county_id": 153,
+        "county_name": "Meru"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.625,
+          0.2806
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 53,
+        "code": "053",
+        "name": "IGEMBE NORTH",
+        "county_id": 153,
+        "county_name": "Meru"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.675,
+          0.2806
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 54,
+        "code": "054",
+        "name": "TIGANIA WEST",
+        "county_id": 153,
+        "county_name": "Meru"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.574999999999996,
+          0.3306
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 55,
+        "code": "055",
+        "name": "TIGANIA EAST",
+        "county_id": 153,
+        "county_name": "Meru"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.625,
+          0.3306
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 56,
+        "code": "056",
+        "name": "NORTH IMENTI",
+        "county_id": 153,
+        "county_name": "Meru"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.675,
+          0.3306
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 57,
+        "code": "057",
+        "name": "BUURI",
+        "county_id": 153,
+        "county_name": "Meru"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.574999999999996,
+          0.38060000000000005
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 58,
+        "code": "058",
+        "name": "CENTRAL IMENTI",
+        "county_id": 153,
+        "county_name": "Meru"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.625,
+          0.38060000000000005
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 59,
+        "code": "059",
+        "name": "SOUTH IMENTI",
+        "county_id": 153,
+        "county_name": "Meru"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.675,
+          0.38060000000000005
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 60,
+        "code": "063",
+        "name": "MANYATTA",
+        "county_id": 155,
+        "county_name": "Embu"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.3825,
+          -0.606
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 61,
+        "code": "064",
+        "name": "RUNYENJES",
+        "county_id": 155,
+        "county_name": "Embu"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.4575,
+          -0.606
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 62,
+        "code": "065",
+        "name": "MBEERE SOUTH",
+        "county_id": 155,
+        "county_name": "Embu"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.3825,
+          -0.531
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 63,
+        "code": "066",
+        "name": "MBEERE NORTH",
+        "county_id": 155,
+        "county_name": "Embu"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.4575,
+          -0.531
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 64,
+        "code": "067",
+        "name": "MWINGI NORTH",
+        "county_id": 156,
+        "county_name": "Kitui"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.9417,
+          -1.4417
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 65,
+        "code": "068",
+        "name": "MWINGI",
+        "county_id": 156,
+        "county_name": "Kitui"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.9917,
+          -1.4417
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 66,
+        "code": "069",
+        "name": "MWINGI",
+        "county_id": 156,
+        "county_name": "Kitui"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          38.0417,
+          -1.4417
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 67,
+        "code": "070",
+        "name": "KITUI WEST",
+        "county_id": 156,
+        "county_name": "Kitui"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.9417,
+          -1.3917
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 68,
+        "code": "071",
+        "name": "KITUI",
+        "county_id": 156,
+        "county_name": "Kitui"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.9917,
+          -1.3917
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 69,
+        "code": "072",
+        "name": "KITUI",
+        "county_id": 156,
+        "county_name": "Kitui"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          38.0417,
+          -1.3917
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 70,
+        "code": "073",
+        "name": "KITUI",
+        "county_id": 156,
+        "county_name": "Kitui"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.9417,
+          -1.3417000000000001
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 71,
+        "code": "074",
+        "name": "KITUI",
+        "county_id": 156,
+        "county_name": "Kitui"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.9917,
+          -1.3417000000000001
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 72,
+        "code": "075",
+        "name": "MASINGA",
+        "county_id": 157,
+        "county_name": "Machakos"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.188399999999994,
+          -1.5927
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 73,
+        "code": "076",
+        "name": "YATTA",
+        "county_id": 157,
+        "county_name": "Machakos"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.2384,
+          -1.5927
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 74,
+        "code": "077",
+        "name": "KANGUNDO",
+        "county_id": 157,
+        "county_name": "Machakos"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.288399999999996,
+          -1.5927
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 75,
+        "code": "078",
+        "name": "MATUNGULU",
+        "county_id": 157,
+        "county_name": "Machakos"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.188399999999994,
+          -1.5427
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 76,
+        "code": "079",
+        "name": "KATHIANI",
+        "county_id": 157,
+        "county_name": "Machakos"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.2384,
+          -1.5427
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 77,
+        "code": "080",
+        "name": "MAVOKO",
+        "county_id": 157,
+        "county_name": "Machakos"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.288399999999996,
+          -1.5427
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 78,
+        "code": "081",
+        "name": "MACHAKOS TOWN",
+        "county_id": 157,
+        "county_name": "Machakos"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.188399999999994,
+          -1.4927000000000001
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 79,
+        "code": "082",
+        "name": "MWALA",
+        "county_id": 157,
+        "county_name": "Machakos"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.2384,
+          -1.4927000000000001
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 80,
+        "code": "083",
+        "name": "MBOONI",
+        "county_id": 158,
+        "county_name": "Makueni"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.7583,
+          -2.3417000000000003
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 81,
+        "code": "084",
+        "name": "KILOME",
+        "county_id": 158,
+        "county_name": "Makueni"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.8083,
+          -2.3417000000000003
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 82,
+        "code": "085",
+        "name": "KAITI",
+        "county_id": 158,
+        "county_name": "Makueni"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.8583,
+          -2.3417000000000003
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 83,
+        "code": "086",
+        "name": "MAKUENI",
+        "county_id": 158,
+        "county_name": "Makueni"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.7583,
+          -2.2917
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 84,
+        "code": "087",
+        "name": "KIBWEZI WEST",
+        "county_id": 158,
+        "county_name": "Makueni"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.8083,
+          -2.2917
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 85,
+        "code": "088",
+        "name": "KIBWEZI",
+        "county_id": 158,
+        "county_name": "Makueni"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.8583,
+          -2.2917
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 86,
+        "code": "089",
+        "name": "KINANGOP",
+        "county_id": 159,
+        "county_name": "Nyandarua"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          36.4083,
+          -0.2583
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 87,
+        "code": "090",
+        "name": "KIPIPIRI",
+        "county_id": 159,
+        "county_name": "Nyandarua"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          36.4583,
+          -0.2583
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 88,
+        "code": "091",
+        "name": "OL KALOU",
+        "county_id": 159,
+        "county_name": "Nyandarua"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          36.5083,
+          -0.2583
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 89,
+        "code": "092",
+        "name": "OL JOROK",
+        "county_id": 159,
+        "county_name": "Nyandarua"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          36.4083,
+          -0.20829999999999999
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 90,
+        "code": "093",
+        "name": "NDARAGWA",
+        "county_id": 159,
+        "county_name": "Nyandarua"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          36.4583,
+          -0.20829999999999999
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 91,
+        "code": "094",
+        "name": "TETU",
+        "county_id": 160,
+        "county_name": "Nyeri"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          36.875,
+          -0.4917
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 92,
+        "code": "095",
+        "name": "KIENI",
+        "county_id": 160,
+        "county_name": "Nyeri"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          36.925000000000004,
+          -0.4917
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 93,
+        "code": "096",
+        "name": "MATHIRA",
+        "county_id": 160,
+        "county_name": "Nyeri"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          36.975,
+          -0.4917
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 94,
+        "code": "097",
+        "name": "OTHAYA",
+        "county_id": 160,
+        "county_name": "Nyeri"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          36.875,
+          -0.44170000000000004
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 95,
+        "code": "098",
+        "name": "MUKURWEINI",
+        "county_id": 160,
+        "county_name": "Nyeri"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          36.925000000000004,
+          -0.44170000000000004
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 96,
+        "code": "099",
+        "name": "NYERI TOWN",
+        "county_id": 160,
+        "county_name": "Nyeri"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          36.975,
+          -0.44170000000000004
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 97,
+        "code": "100",
+        "name": "MWEA",
+        "county_id": 161,
+        "county_name": "Kirinyaga"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.308299999999996,
+          -0.7339
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 98,
+        "code": "101",
+        "name": "GICHUGU",
+        "county_id": 161,
+        "county_name": "Kirinyaga"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.3833,
+          -0.7339
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 99,
+        "code": "102",
+        "name": "NDIA",
+        "county_id": 161,
+        "county_name": "Kirinyaga"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.308299999999996,
+          -0.6589
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 100,
+        "code": "103",
+        "name": "KIRINYAGA CENTRAL",
+        "county_id": 161,
+        "county_name": "Kirinyaga"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.3833,
+          -0.6589
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 101,
+        "code": "104",
+        "name": "KANGEMA",
+        "county_id": 162,
+        "county_name": "Murang'a"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.074999999999996,
+          -0.8583
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 102,
+        "code": "105",
+        "name": "MATHIOYA",
+        "county_id": 162,
+        "county_name": "Murang'a"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.125,
+          -0.8583
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 103,
+        "code": "106",
+        "name": "KIHARU",
+        "county_id": 162,
+        "county_name": "Murang'a"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.175,
+          -0.8583
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 104,
+        "code": "107",
+        "name": "KIGUMO",
+        "county_id": 162,
+        "county_name": "Murang'a"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.074999999999996,
+          -0.8083
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 105,
+        "code": "108",
+        "name": "MARAGWA",
+        "county_id": 162,
+        "county_name": "Murang'a"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.125,
+          -0.8083
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 106,
+        "code": "109",
+        "name": "KANDARA",
+        "county_id": 162,
+        "county_name": "Murang'a"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.175,
+          -0.8083
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 107,
+        "code": "110",
+        "name": "GATANGA",
+        "county_id": 162,
+        "county_name": "Murang'a"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.074999999999996,
+          -0.7583
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 108,
+        "code": "111",
+        "name": "GATUNDU SOUTH",
+        "county_id": 163,
+        "county_name": "Kiambu"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          36.7606,
+          -1.2464
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 109,
+        "code": "112",
+        "name": "GATUNDU NORTH",
+        "county_id": 163,
+        "county_name": "Kiambu"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          36.7981,
+          -1.2464
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 110,
+        "code": "113",
+        "name": "JUJA",
+        "county_id": 163,
+        "county_name": "Kiambu"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          36.8356,
+          -1.2464
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 111,
+        "code": "114",
+        "name": "THIKA TOWN",
+        "county_id": 163,
+        "county_name": "Kiambu"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          36.8731,
+          -1.2464
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 112,
+        "code": "115",
+        "name": "RUIRU",
+        "county_id": 163,
+        "county_name": "Kiambu"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          36.7606,
+          -1.2089
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 113,
+        "code": "116",
+        "name": "GITHUNGURI",
+        "county_id": 163,
+        "county_name": "Kiambu"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          36.7981,
+          -1.2089
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 114,
+        "code": "117",
+        "name": "KIAMBU",
+        "county_id": 163,
+        "county_name": "Kiambu"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          36.8356,
+          -1.2089
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 115,
+        "code": "118",
+        "name": "KIAMBAA",
+        "county_id": 163,
+        "county_name": "Kiambu"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          36.8731,
+          -1.2089
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 116,
+        "code": "119",
+        "name": "KABETE",
+        "county_id": 163,
+        "county_name": "Kiambu"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          36.7606,
+          -1.1714
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 117,
+        "code": "120",
+        "name": "KIKUYU",
+        "county_id": 163,
+        "county_name": "Kiambu"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          36.7981,
+          -1.1714
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 118,
+        "code": "121",
+        "name": "LIMURU",
+        "county_id": 163,
+        "county_name": "Kiambu"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          36.8356,
+          -1.1714
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 119,
+        "code": "122",
+        "name": "LARI",
+        "county_id": 163,
+        "county_name": "Kiambu"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          36.8731,
+          -1.1714
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 120,
+        "code": "123",
+        "name": "TURKANA NORTH",
+        "county_id": 164,
+        "county_name": "Turkana"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          35.5417,
+          3.0416999999999996
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 121,
+        "code": "124",
+        "name": "TURKANA WEST",
+        "county_id": 164,
+        "county_name": "Turkana"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          35.5917,
+          3.0416999999999996
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 122,
+        "code": "125",
+        "name": "TURKANA CENTRAL",
+        "county_id": 164,
+        "county_name": "Turkana"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          35.6417,
+          3.0416999999999996
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 123,
+        "code": "126",
+        "name": "LOIMA",
+        "county_id": 164,
+        "county_name": "Turkana"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          35.5417,
+          3.0917
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 124,
+        "code": "127",
+        "name": "TURKANA SOUTH",
+        "county_id": 164,
+        "county_name": "Turkana"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          35.5917,
+          3.0917
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 125,
+        "code": "128",
+        "name": "TURKANA EAST",
+        "county_id": 164,
+        "county_name": "Turkana"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          35.6417,
+          3.0917
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 126,
+        "code": "129",
+        "name": "KAPENGURIA",
+        "county_id": 165,
+        "county_name": "West Pokot"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          35.308299999999996,
+          1.5417
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 127,
+        "code": "130",
+        "name": "SIGOR",
+        "county_id": 165,
+        "county_name": "West Pokot"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          35.3833,
+          1.5417
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 128,
+        "code": "131",
+        "name": "KACHELIBA",
+        "county_id": 165,
+        "county_name": "West Pokot"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          35.308299999999996,
+          1.6167
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 129,
+        "code": "132",
+        "name": "POKOT SOUTH",
+        "county_id": 165,
+        "county_name": "West Pokot"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          35.3833,
+          1.6167
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 130,
+        "code": "133",
+        "name": "SAMBURU WEST",
+        "county_id": 166,
+        "county_name": "Samburu"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          36.8703,
+          1.1403
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 131,
+        "code": "134",
+        "name": "SAMBURU NORTH",
+        "county_id": 166,
+        "county_name": "Samburu"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          36.9453,
+          1.1403
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 132,
+        "code": "135",
+        "name": "SAMBURU EAST",
+        "county_id": 166,
+        "county_name": "Samburu"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          36.8703,
+          1.2153
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 133,
+        "code": "136",
+        "name": "KWANZA",
+        "county_id": 167,
+        "county_name": "Trans Nzoia"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          34.875,
+          0.9750000000000001
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 134,
+        "code": "137",
+        "name": "ENDEBESS",
+        "county_id": 167,
+        "county_name": "Trans Nzoia"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          34.925000000000004,
+          0.9750000000000001
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 135,
+        "code": "138",
+        "name": "SABOTI",
+        "county_id": 167,
+        "county_name": "Trans Nzoia"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          34.975,
+          0.9750000000000001
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 136,
+        "code": "139",
+        "name": "KIMININI",
+        "county_id": 167,
+        "county_name": "Trans Nzoia"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          34.875,
+          1.0250000000000001
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 137,
+        "code": "140",
+        "name": "CHERANGANY",
+        "county_id": 167,
+        "county_name": "Trans Nzoia"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          34.925000000000004,
+          1.0250000000000001
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 138,
+        "code": "141",
+        "name": "SOY",
+        "county_id": 168,
+        "county_name": "Uasin Gishu"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          35.224999999999994,
+          0.47500000000000003
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 139,
+        "code": "146",
+        "name": "KESSES",
+        "county_id": 168,
+        "county_name": "Uasin Gishu"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          35.3,
+          0.47500000000000003
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 271,
+        "code": "GISHU",
+        "name": "141",
+        "county_id": 168,
+        "county_name": "Uasin Gishu"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          35.224999999999994,
+          0.55
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 140,
+        "code": "151",
+        "name": "TINDERET",
+        "county_id": 170,
+        "county_name": "Nandi"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          35.0417,
+          0.1083
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 141,
+        "code": "152",
+        "name": "ALDAI",
+        "county_id": 170,
+        "county_name": "Nandi"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          35.0917,
+          0.1083
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 142,
+        "code": "153",
+        "name": "NANDI",
+        "county_id": 170,
+        "county_name": "Nandi"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          35.1417,
+          0.1083
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 143,
+        "code": "154",
+        "name": "CHESUMEI",
+        "county_id": 170,
+        "county_name": "Nandi"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          35.0417,
+          0.1583
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 144,
+        "code": "155",
+        "name": "EMGWEN",
+        "county_id": 170,
+        "county_name": "Nandi"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          35.0917,
+          0.1583
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 145,
+        "code": "156",
+        "name": "MOSOP",
+        "county_id": 170,
+        "county_name": "Nandi"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          35.1417,
+          0.1583
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 146,
+        "code": "157",
+        "name": "TIATY",
+        "county_id": 171,
+        "county_name": "Baringo"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          36.0083,
+          0.3917
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 147,
+        "code": "158",
+        "name": "BARINGO",
+        "county_id": 171,
+        "county_name": "Baringo"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          36.0583,
+          0.3917
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 148,
+        "code": "159",
+        "name": "BARINGO CENTRAL",
+        "county_id": 171,
+        "county_name": "Baringo"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          36.1083,
+          0.3917
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 149,
+        "code": "160",
+        "name": "BARINGO SOUTH",
+        "county_id": 171,
+        "county_name": "Baringo"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          36.0083,
+          0.4417
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 150,
+        "code": "161",
+        "name": "MOGOTIO",
+        "county_id": 171,
+        "county_name": "Baringo"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          36.0583,
+          0.4417
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 151,
+        "code": "162",
+        "name": "ELDAMA RAVINE",
+        "county_id": 171,
+        "county_name": "Baringo"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          36.1083,
+          0.4417
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 152,
+        "code": "163",
+        "name": "LAIKIPIA WEST",
+        "county_id": 172,
+        "county_name": "Laikipia"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          36.708299999999994,
+          0.2917
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 153,
+        "code": "164",
+        "name": "LAIKIPIA EAST",
+        "county_id": 172,
+        "county_name": "Laikipia"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          36.7833,
+          0.2917
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 154,
+        "code": "165",
+        "name": "LAIKIPIA NORTH",
+        "county_id": 172,
+        "county_name": "Laikipia"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          36.708299999999994,
+          0.3667
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 155,
+        "code": "166",
+        "name": "MOLO",
+        "county_id": 173,
+        "county_name": "Nakuru"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          36.004999999999995,
+          -0.3781
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 156,
+        "code": "167",
+        "name": "NJORO",
+        "county_id": 173,
+        "county_name": "Nakuru"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          36.0425,
+          -0.3781
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 157,
+        "code": "168",
+        "name": "NAIVASHA",
+        "county_id": 173,
+        "county_name": "Nakuru"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          36.08,
+          -0.3781
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 158,
+        "code": "169",
+        "name": "GILGIL",
+        "county_id": 173,
+        "county_name": "Nakuru"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          36.1175,
+          -0.3781
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 159,
+        "code": "170",
+        "name": "KURESOI",
+        "county_id": 173,
+        "county_name": "Nakuru"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          36.004999999999995,
+          -0.34059999999999996
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 160,
+        "code": "171",
+        "name": "KURESOI",
+        "county_id": 173,
+        "county_name": "Nakuru"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          36.0425,
+          -0.34059999999999996
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 161,
+        "code": "172",
+        "name": "SUBUKIA",
+        "county_id": 173,
+        "county_name": "Nakuru"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          36.08,
+          -0.34059999999999996
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 162,
+        "code": "173",
+        "name": "RONGAI",
+        "county_id": 173,
+        "county_name": "Nakuru"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          36.1175,
+          -0.34059999999999996
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 163,
+        "code": "174",
+        "name": "BAHATI",
+        "county_id": 173,
+        "county_name": "Nakuru"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          36.004999999999995,
+          -0.3031
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 164,
+        "code": "175",
+        "name": "NAKURU TOWN",
+        "county_id": 173,
+        "county_name": "Nakuru"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          36.0425,
+          -0.3031
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 165,
+        "code": "176",
+        "name": "NAKURU TOWN",
+        "county_id": 173,
+        "county_name": "Nakuru"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          36.08,
+          -0.3031
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 166,
+        "code": "177",
+        "name": "KILGORIS",
+        "county_id": 174,
+        "county_name": "Narok"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          35.7917,
+          -1.1582999999999999
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 167,
+        "code": "178",
+        "name": "EMURUA DIKIRR",
+        "county_id": 174,
+        "county_name": "Narok"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          35.8417,
+          -1.1582999999999999
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 168,
+        "code": "179",
+        "name": "NAROK NORTH",
+        "county_id": 174,
+        "county_name": "Narok"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          35.8917,
+          -1.1582999999999999
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 169,
+        "code": "180",
+        "name": "NAROK EAST",
+        "county_id": 174,
+        "county_name": "Narok"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          35.7917,
+          -1.1082999999999998
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 170,
+        "code": "181",
+        "name": "NAROK SOUTH",
+        "county_id": 174,
+        "county_name": "Narok"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          35.8417,
+          -1.1082999999999998
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 171,
+        "code": "182",
+        "name": "NAROK WEST",
+        "county_id": 174,
+        "county_name": "Narok"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          35.8917,
+          -1.1082999999999998
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 172,
+        "code": "183",
+        "name": "KAJIADO NORTH",
+        "county_id": 175,
+        "county_name": "Kajiado"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          36.706999999999994,
+          -2.1728
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 173,
+        "code": "184",
+        "name": "KAJIADO CENTRAL",
+        "county_id": 175,
+        "county_name": "Kajiado"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          36.757,
+          -2.1728
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 174,
+        "code": "185",
+        "name": "KAJIADO EAST",
+        "county_id": 175,
+        "county_name": "Kajiado"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          36.806999999999995,
+          -2.1728
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 175,
+        "code": "186",
+        "name": "KAJIADO WEST",
+        "county_id": 175,
+        "county_name": "Kajiado"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          36.706999999999994,
+          -2.1228
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 176,
+        "code": "187",
+        "name": "KAJIADO SOUTH",
+        "county_id": 175,
+        "county_name": "Kajiado"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          36.757,
+          -2.1228
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 177,
+        "code": "188",
+        "name": "KIPKELION EAST",
+        "county_id": 176,
+        "county_name": "Kericho"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          35.208299999999994,
+          -0.44170000000000004
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 178,
+        "code": "189",
+        "name": "KIPKELION",
+        "county_id": 176,
+        "county_name": "Kericho"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          35.2583,
+          -0.44170000000000004
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 179,
+        "code": "190",
+        "name": "AINAMOI",
+        "county_id": 176,
+        "county_name": "Kericho"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          35.308299999999996,
+          -0.44170000000000004
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 180,
+        "code": "191",
+        "name": "BURETI",
+        "county_id": 176,
+        "county_name": "Kericho"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          35.208299999999994,
+          -0.39170000000000005
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 181,
+        "code": "192",
+        "name": "BELGUT",
+        "county_id": 176,
+        "county_name": "Kericho"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          35.2583,
+          -0.39170000000000005
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 182,
+        "code": "193",
+        "name": "SIGOWET/SOIN",
+        "county_id": 176,
+        "county_name": "Kericho"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          35.308299999999996,
+          -0.39170000000000005
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 183,
+        "code": "194",
+        "name": "SOTIK",
+        "county_id": 177,
+        "county_name": "Bomet"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          35.241699999999994,
+          -0.8583
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 184,
+        "code": "195",
+        "name": "CHEPALUNGU",
+        "county_id": 177,
+        "county_name": "Bomet"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          35.2917,
+          -0.8583
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 185,
+        "code": "196",
+        "name": "BOMET EAST",
+        "county_id": 177,
+        "county_name": "Bomet"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          35.341699999999996,
+          -0.8583
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 186,
+        "code": "197",
+        "name": "BOMET CENTRAL",
+        "county_id": 177,
+        "county_name": "Bomet"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          35.241699999999994,
+          -0.8083
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 187,
+        "code": "198",
+        "name": "KONOIN",
+        "county_id": 177,
+        "county_name": "Bomet"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          35.2917,
+          -0.8083
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 188,
+        "code": "199",
+        "name": "LUGARI",
+        "county_id": 178,
+        "county_name": "Kakamega"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          34.676899999999996,
+          0.2077
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 189,
+        "code": "200",
+        "name": "LIKUYANI",
+        "county_id": 178,
+        "county_name": "Kakamega"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          34.7144,
+          0.2077
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 190,
+        "code": "201",
+        "name": "MALAVA",
+        "county_id": 178,
+        "county_name": "Kakamega"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          34.7519,
+          0.2077
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 191,
+        "code": "202",
+        "name": "LURAMBI",
+        "county_id": 178,
+        "county_name": "Kakamega"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          34.7894,
+          0.2077
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 192,
+        "code": "203",
+        "name": "NAVAKHOLO",
+        "county_id": 178,
+        "county_name": "Kakamega"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          34.676899999999996,
+          0.2452
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 193,
+        "code": "204",
+        "name": "MUMIAS WEST",
+        "county_id": 178,
+        "county_name": "Kakamega"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          34.7144,
+          0.2452
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 194,
+        "code": "205",
+        "name": "MUMIAS EAST",
+        "county_id": 178,
+        "county_name": "Kakamega"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          34.7519,
+          0.2452
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 195,
+        "code": "206",
+        "name": "MATUNGU",
+        "county_id": 178,
+        "county_name": "Kakamega"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          34.7894,
+          0.2452
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 196,
+        "code": "207",
+        "name": "BUTERE",
+        "county_id": 178,
+        "county_name": "Kakamega"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          34.676899999999996,
+          0.2827
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 197,
+        "code": "208",
+        "name": "KHWISERO",
+        "county_id": 178,
+        "county_name": "Kakamega"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          34.7144,
+          0.2827
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 198,
+        "code": "209",
+        "name": "SHINYALU",
+        "county_id": 178,
+        "county_name": "Kakamega"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          34.7519,
+          0.2827
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 199,
+        "code": "210",
+        "name": "IKOLOMANI",
+        "county_id": 178,
+        "county_name": "Kakamega"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          34.7894,
+          0.2827
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 200,
+        "code": "211",
+        "name": "VIHIGA",
+        "county_id": 179,
+        "county_name": "Vihiga"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          34.6417,
+          -0.008300000000000002
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 201,
+        "code": "212",
+        "name": "SABATIA",
+        "county_id": 179,
+        "county_name": "Vihiga"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          34.691700000000004,
+          -0.008300000000000002
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 202,
+        "code": "213",
+        "name": "HAMISI",
+        "county_id": 179,
+        "county_name": "Vihiga"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          34.7417,
+          -0.008300000000000002
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 203,
+        "code": "214",
+        "name": "LUANDA",
+        "county_id": 179,
+        "county_name": "Vihiga"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          34.6417,
+          0.0417
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 204,
+        "code": "215",
+        "name": "EMUHAYA",
+        "county_id": 179,
+        "county_name": "Vihiga"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          34.691700000000004,
+          0.0417
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 205,
+        "code": "216",
+        "name": "MT. ELGON",
+        "county_id": 180,
+        "county_name": "Bungoma"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          34.4856,
+          0.4885
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 206,
+        "code": "217",
+        "name": "SIRISIA",
+        "county_id": 180,
+        "county_name": "Bungoma"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          34.5356,
+          0.4885
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 207,
+        "code": "218",
+        "name": "KABUCHAI",
+        "county_id": 180,
+        "county_name": "Bungoma"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          34.5856,
+          0.4885
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 208,
+        "code": "219",
+        "name": "BUMULA",
+        "county_id": 180,
+        "county_name": "Bungoma"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          34.4856,
+          0.5385
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 209,
+        "code": "220",
+        "name": "KANDUYI",
+        "county_id": 180,
+        "county_name": "Bungoma"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          34.5356,
+          0.5385
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 210,
+        "code": "221",
+        "name": "WEBUYE EAST",
+        "county_id": 180,
+        "county_name": "Bungoma"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          34.5856,
+          0.5385
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 211,
+        "code": "222",
+        "name": "WEBUYE WEST",
+        "county_id": 180,
+        "county_name": "Bungoma"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          34.4856,
+          0.5885
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 212,
+        "code": "223",
+        "name": "KIMILILI",
+        "county_id": 180,
+        "county_name": "Bungoma"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          34.5356,
+          0.5885
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 213,
+        "code": "224",
+        "name": "TONGAREN",
+        "county_id": 180,
+        "county_name": "Bungoma"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          34.5856,
+          0.5885
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 214,
+        "code": "225",
+        "name": "TESO NORTH",
+        "county_id": 181,
+        "county_name": "Busia"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          34.0365,
+          0.3596
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 215,
+        "code": "226",
+        "name": "TESO SOUTH",
+        "county_id": 181,
+        "county_name": "Busia"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          34.0865,
+          0.3596
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 216,
+        "code": "227",
+        "name": "NAMBALE",
+        "county_id": 181,
+        "county_name": "Busia"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          34.1365,
+          0.3596
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 217,
+        "code": "228",
+        "name": "MATAYOS",
+        "county_id": 181,
+        "county_name": "Busia"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          34.0365,
+          0.40959999999999996
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 218,
+        "code": "229",
+        "name": "BUTULA",
+        "county_id": 181,
+        "county_name": "Busia"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          34.0865,
+          0.40959999999999996
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 219,
+        "code": "230",
+        "name": "FUNYULA",
+        "county_id": 181,
+        "county_name": "Busia"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          34.1365,
+          0.40959999999999996
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 220,
+        "code": "231",
+        "name": "BUDALANGI",
+        "county_id": 181,
+        "county_name": "Busia"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          34.0365,
+          0.4596
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 221,
+        "code": "232",
+        "name": "UGENYA",
+        "county_id": 182,
+        "county_name": "Siaya"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          34.208299999999994,
+          -0.008300000000000002
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 222,
+        "code": "233",
+        "name": "UGUNJA",
+        "county_id": 182,
+        "county_name": "Siaya"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          34.2583,
+          -0.008300000000000002
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 223,
+        "code": "234",
+        "name": "ALEGO USONGA",
+        "county_id": 182,
+        "county_name": "Siaya"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          34.308299999999996,
+          -0.008300000000000002
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 224,
+        "code": "235",
+        "name": "GEM",
+        "county_id": 182,
+        "county_name": "Siaya"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          34.208299999999994,
+          0.0417
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 225,
+        "code": "236",
+        "name": "BONDO",
+        "county_id": 182,
+        "county_name": "Siaya"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          34.2583,
+          0.0417
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 226,
+        "code": "237",
+        "name": "RARIEDA",
+        "county_id": 182,
+        "county_name": "Siaya"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          34.308299999999996,
+          0.0417
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 227,
+        "code": "238",
+        "name": "KISUMU EAST",
+        "county_id": 183,
+        "county_name": "Kisumu"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          34.693,
+          -0.16670000000000001
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 228,
+        "code": "239",
+        "name": "KISUMU WEST",
+        "county_id": 183,
+        "county_name": "Kisumu"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          34.743,
+          -0.16670000000000001
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 229,
+        "code": "240",
+        "name": "KISUMU CENTRAL",
+        "county_id": 183,
+        "county_name": "Kisumu"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          34.793,
+          -0.16670000000000001
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 230,
+        "code": "241",
+        "name": "SEME",
+        "county_id": 183,
+        "county_name": "Kisumu"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          34.693,
+          -0.1167
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 231,
+        "code": "242",
+        "name": "NYANDO",
+        "county_id": 183,
+        "county_name": "Kisumu"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          34.743,
+          -0.1167
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 232,
+        "code": "243",
+        "name": "MUHORONI",
+        "county_id": 183,
+        "county_name": "Kisumu"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          34.793,
+          -0.1167
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 233,
+        "code": "244",
+        "name": "NYAKACH",
+        "county_id": 183,
+        "county_name": "Kisumu"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          34.693,
+          -0.06670000000000001
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 234,
+        "code": "245",
+        "name": "KASIPUL",
+        "county_id": 184,
+        "county_name": "Homa Bay"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          34.375,
+          -0.5917
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 235,
+        "code": "246",
+        "name": "KABONDO KASIPUL",
+        "county_id": 184,
+        "county_name": "Homa Bay"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          34.425000000000004,
+          -0.5917
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 236,
+        "code": "247",
+        "name": "KARACHUONYO",
+        "county_id": 184,
+        "county_name": "Homa Bay"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          34.475,
+          -0.5917
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 237,
+        "code": "248",
+        "name": "RANGWE",
+        "county_id": 184,
+        "county_name": "Homa Bay"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          34.375,
+          -0.5417000000000001
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 238,
+        "code": "249",
+        "name": "HOMA BAY TOWN",
+        "county_id": 184,
+        "county_name": "Homa Bay"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          34.425000000000004,
+          -0.5417000000000001
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 239,
+        "code": "250",
+        "name": "NDHIWA",
+        "county_id": 184,
+        "county_name": "Homa Bay"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          34.475,
+          -0.5417000000000001
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 240,
+        "code": "251",
+        "name": "SUBA NORTH",
+        "county_id": 184,
+        "county_name": "Homa Bay"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          34.375,
+          -0.4917
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 241,
+        "code": "252",
+        "name": "SUBA SOUTH",
+        "county_id": 184,
+        "county_name": "Homa Bay"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          34.425000000000004,
+          -0.4917
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 242,
+        "code": "253",
+        "name": "RONGO",
+        "county_id": 185,
+        "county_name": "Migori"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          34.3981,
+          -1.1383999999999999
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 243,
+        "code": "254",
+        "name": "AWENDO",
+        "county_id": 185,
+        "county_name": "Migori"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          34.448100000000004,
+          -1.1383999999999999
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 244,
+        "code": "255",
+        "name": "SUNA EAST",
+        "county_id": 185,
+        "county_name": "Migori"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          34.4981,
+          -1.1383999999999999
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 245,
+        "code": "256",
+        "name": "SUNA WEST",
+        "county_id": 185,
+        "county_name": "Migori"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          34.3981,
+          -1.0883999999999998
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 246,
+        "code": "257",
+        "name": "URIRI",
+        "county_id": 185,
+        "county_name": "Migori"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          34.448100000000004,
+          -1.0883999999999998
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 247,
+        "code": "258",
+        "name": "NYATIKE",
+        "county_id": 185,
+        "county_name": "Migori"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          34.4981,
+          -1.0883999999999998
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 248,
+        "code": "259",
+        "name": "KURIA WEST",
+        "county_id": 185,
+        "county_name": "Migori"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          34.3981,
+          -1.0384
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 249,
+        "code": "260",
+        "name": "KURIA EAST",
+        "county_id": 185,
+        "county_name": "Migori"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          34.448100000000004,
+          -1.0384
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 250,
+        "code": "261",
+        "name": "BONCHARI",
+        "county_id": 186,
+        "county_name": "Kisii"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          34.693,
+          -0.7566999999999999
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 251,
+        "code": "262",
+        "name": "SOUTH MUGIRANGO",
+        "county_id": 186,
+        "county_name": "Kisii"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          34.743,
+          -0.7566999999999999
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 252,
+        "code": "263",
+        "name": "BOMACHOGE BORABU",
+        "county_id": 186,
+        "county_name": "Kisii"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          34.793,
+          -0.7566999999999999
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 253,
+        "code": "264",
+        "name": "BOBASI",
+        "county_id": 186,
+        "county_name": "Kisii"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          34.693,
+          -0.7067
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 254,
+        "code": "265",
+        "name": "BOMACHOGE CHACHE",
+        "county_id": 186,
+        "county_name": "Kisii"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          34.743,
+          -0.7067
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 255,
+        "code": "266",
+        "name": "NYARIBARI MASABA",
+        "county_id": 186,
+        "county_name": "Kisii"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          34.793,
+          -0.7067
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 256,
+        "code": "267",
+        "name": "NYARIBARI CHACHE",
+        "county_id": 186,
+        "county_name": "Kisii"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          34.693,
+          -0.6567
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 257,
+        "code": "268",
+        "name": "KITUTU CHACHE NORTH",
+        "county_id": 186,
+        "county_name": "Kisii"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          34.743,
+          -0.6567
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 258,
+        "code": "269",
+        "name": "KITUTU CHACHE SOUTH",
+        "county_id": 186,
+        "county_name": "Kisii"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          34.793,
+          -0.6567
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 259,
+        "code": "270",
+        "name": "KITUTU MASABA",
+        "county_id": 187,
+        "county_name": "Nyamira"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          34.8583,
+          -0.6416999999999999
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 260,
+        "code": "271",
+        "name": "WEST MUGIRANGO",
+        "county_id": 187,
+        "county_name": "Nyamira"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          34.9333,
+          -0.6416999999999999
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 261,
+        "code": "272",
+        "name": "NORTH MUGIRANGO",
+        "county_id": 187,
+        "county_name": "Nyamira"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          34.8583,
+          -0.5667
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 262,
+        "code": "273",
+        "name": "BORABU",
+        "county_id": 187,
+        "county_name": "Nyamira"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          34.9333,
+          -0.5667
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 263,
+        "code": "CITY",
+        "name": "274",
+        "county_id": 188,
+        "county_name": "Nairobi"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          36.7422,
+          -1.3614
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 272,
+        "code": "274",
+        "name": "WESTLANDS",
+        "county_id": 188,
+        "county_name": "Nairobi"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          36.8172,
+          -1.3614
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 273,
+        "code": "290",
+        "name": "MATHARE",
+        "county_id": 188,
+        "county_name": "Nairobi"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          36.7422,
+          -1.2864
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 264,
+        "code": "147",
+        "name": "MARAKWET EAST",
+        "county_id": 169,
+        "county_name": "Elgeyo Marakwet"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          35.3917,
+          0.7917000000000001
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 265,
+        "code": "148",
+        "name": "MARAKWET WEST",
+        "county_id": 169,
+        "county_name": "Elgeyo Marakwet"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          35.4667,
+          0.7917000000000001
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 266,
+        "code": "149",
+        "name": "KEIYO NORTH",
+        "county_id": 169,
+        "county_name": "Elgeyo Marakwet"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          35.3917,
+          0.8667
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 267,
+        "code": "150",
+        "name": "KEIYO SOUTH",
+        "county_id": 169,
+        "county_name": "Elgeyo Marakwet"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          35.4667,
+          0.8667
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 268,
+        "code": "060",
+        "name": "MAARA",
+        "county_id": 154,
+        "county_name": "Tharaka Nithi"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.6583,
+          -0.44170000000000004
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 269,
+        "code": "061",
+        "name": "CHUKA/IGAMBANG'OMBE",
+        "county_id": 154,
+        "county_name": "Tharaka Nithi"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.7333,
+          -0.44170000000000004
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": 270,
+        "code": "062",
+        "name": "THARAKA",
+        "county_id": 154,
+        "county_name": "Tharaka Nithi"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.6583,
+          -0.3667
+        ]
+      }
+    }
+  ]
 }

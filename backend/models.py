@@ -69,7 +69,8 @@ class Constituency(Base):
     code = Column(String(10), unique=True, nullable=False)
     name = Column(String(100), nullable=False)
     geometry = Column(Geometry('MULTIPOLYGON', srid=4326))
-    registered_voters = Column(Integer)
+    population_2019 = Column(Integer)
+    registered_voters_2022 = Column(Integer)
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
