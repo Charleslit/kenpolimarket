@@ -3,9 +3,25 @@
 import { useState, useEffect } from 'react';
 import { MapPin, ChevronRight, Home, Map as MapIcon } from 'lucide-react';
 import ExportButton from '../common/ExportButton';
-import InteractiveMap from './InteractiveMap';
+import dynamic from 'next/dynamic';
 import YearSelector from '../common/YearSelector';
 import { exportTableToPDF, exportObjectsToCSV } from '@/utils/exportUtils';
+
+// Dynamically import Leaflet map to avoid SSR issues
+const LeafletInteractiveMap = dynamic(
+  () => import('./LeafletInteractiveMap'),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="h-[500px] flex items-center justify-center bg-gray-50 rounded-lg border border-gray-200">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading map...</p>
+        </div>
+      </div>
+    )
+  }
+);
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8001';
 
@@ -343,9 +359,9 @@ export default function CountyExplorerEnhanced() {
         <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-6">
           <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
             <MapIcon className="w-5 h-5 text-blue-600" />
-            Interactive Map
+            Interactive Map with Leaflet
           </h3>
-          <InteractiveMap
+          <LeafletInteractiveMap
             level={currentLevel}
             countyId={selectedCounty?.id}
             constituencyId={selectedConstituency?.id}
