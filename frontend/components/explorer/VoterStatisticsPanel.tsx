@@ -163,7 +163,7 @@ export default function VoterStatisticsPanel({ statistics, loading }: VoterStati
                   cx="50%"
                   cy="50%"
                   labelLine={false}
-                  label={({ name, percentage }) => `${name}: ${percentage.toFixed(1)}%`}
+                  label={(entry: any) => `${entry.name}: ${entry.percent ? (entry.percent * 100).toFixed(1) : '0'}%`}
                   outerRadius={60}
                   fill="#8884d8"
                   dataKey="value"
@@ -216,8 +216,8 @@ export default function VoterStatisticsPanel({ statistics, loading }: VoterStati
                   cx="50%"
                   cy="50%"
                   labelLine={false}
-                  label={({ name, percentage }) => 
-                    name === 'PWD' ? `PWD: ${percentage.toFixed(1)}%` : ''
+                  label={(entry: any) =>
+                    entry.name === 'PWD' ? `PWD: ${entry.percent ? (entry.percent * 100).toFixed(1) : '0'}%` : ''
                   }
                   outerRadius={60}
                   fill="#8884d8"
