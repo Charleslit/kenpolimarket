@@ -117,6 +117,88 @@ class PollingStationDetailSchema(PollingStationBaseSchema):
 
 
 # ============================================================================
+# VOTER DEMOGRAPHICS SCHEMAS
+# ============================================================================
+
+class VoterDemographicsBase(BaseModel):
+    """Base voter demographics schema"""
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    election_year: int
+    total_registered_voters: int
+    male_voters: Optional[int] = 0
+    female_voters: Optional[int] = 0
+    pwd_voters: Optional[int] = 0
+    data_source: Optional[str] = None
+    verified: Optional[bool] = False
+
+    # Computed fields
+    @property
+    def male_percentage(self) -> float:
+        if self.total_registered_voters > 0:
+            return round((self.male_voters or 0) / self.total_registered_voters * 100, 2)
+        return 0.0
+
+    @property
+    def female_percentage(self) -> float:
+        if self.total_registered_voters > 0:
+            return round((self.female_voters or 0) / self.total_registered_voters * 100, 2)
+        return 0.0
+
+    @property
+    def pwd_percentage(self) -> float:
+        if self.total_registered_voters > 0:
+            return round((self.pwd_voters or 0) / self.total_registered_voters * 100, 2)
+        return 0.0
+
+
+class CountyVoterDemographicsSchema(VoterDemographicsBase):
+    """County voter demographics"""
+    county_id: int
+
+
+class ConstituencyVoterDemographicsSchema(VoterDemographicsBase):
+    """Constituency voter demographics"""
+    constituency_id: int
+
+
+class WardVoterDemographicsSchema(VoterDemographicsBase):
+    """Ward voter demographics"""
+    ward_id: int
+
+
+class PollingStationVoterDemographicsSchema(VoterDemographicsBase):
+    """Polling station voter demographics"""
+    polling_station_id: int
+
+
+class VoterStatisticsSummary(BaseModel):
+    """Summary statistics for voter demographics"""
+    model_config = ConfigDict(from_attributes=True)
+
+    level: str  # 'county', 'constituency', 'ward', 'polling_station'
+    id: int
+    name: str
+    code: Optional[str] = None
+
+    # Voter counts
+    total_registered_voters: int
+    male_voters: int
+    female_voters: int
+    pwd_voters: int
+
+    # Percentages
+    male_percentage: float
+    female_percentage: float
+    pwd_percentage: float
+
+    # Additional context
+    election_year: int
+    parent_name: Optional[str] = None  # e.g., county name for constituency
+
+
+# ============================================================================
 # Election Schemas
 # ============================================================================
 

@@ -27,26 +27,37 @@ interface LeafletInteractiveMapProps {
 }
 
 // Component to handle map updates and bounds
-function MapUpdater({ 
-  markers, 
-  level 
-}: { 
-  markers: MapMarker[]; 
+function MapUpdater({
+  markers,
+  level,
+  geoJsonBounds
+}: {
+  markers: MapMarker[];
   level: string;
+  geoJsonBounds?: L.LatLngBounds | null;
 }) {
   const map = useMap();
-  
+
   useEffect(() => {
-    if (markers.length > 0) {
-      // Create bounds from all markers
+    // If we have GeoJSON bounds, use those for more accurate fitting
+    if (geoJsonBounds) {
+      map.fitBounds(geoJsonBounds, {
+        padding: [50, 50],
+        maxZoom: level === 'national' ? 7 : level === 'county' ? 10 : level === 'constituency' ? 12 : 14
+      });
+    } else if (markers.length > 0) {
+      // Fallback to marker bounds
       const bounds = L.latLngBounds(markers.map(m => [m.lat, m.lng]));
-      map.fitBounds(bounds, { padding: [50, 50], maxZoom: level === 'national' ? 7 : 10 });
+      map.fitBounds(bounds, {
+        padding: [50, 50],
+        maxZoom: level === 'national' ? 7 : level === 'county' ? 10 : level === 'constituency' ? 12 : 14
+      });
     } else {
       // Default to Kenya center
       map.setView([-0.0236, 37.9062], 6);
     }
-  }, [markers, level, map]);
-  
+  }, [markers, level, geoJsonBounds, map]);
+
   return null;
 }
 
@@ -95,11 +106,17 @@ export default function LeafletInteractiveMap({
   const [markers, setMarkers] = useState<MapMarker[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  
+  const [geoJsonBounds, setGeoJsonBounds] = useState<L.LatLngBounds | null>(null);
+
   // GeoJSON data for boundaries
   const [countiesGeoJSON, setCountiesGeoJSON] = useState<any>(null);
   const [constituenciesGeoJSON, setConstituenciesGeoJSON] = useState<any>(null);
   const [wardsGeoJSON, setWardsGeoJSON] = useState<any>(null);
+
+  // County/Constituency/Ward names for filtering GeoJSON
+  const [selectedCountyName, setSelectedCountyName] = useState<string | null>(null);
+  const [selectedConstituencyName, setSelectedConstituencyName] = useState<string | null>(null);
+  const [selectedWardName, setSelectedWardName] = useState<string | null>(null);
 
   // Load GeoJSON files
   useEffect(() => {
@@ -141,6 +158,27 @@ export default function LeafletInteractiveMap({
     loadGeoJSON();
   }, []);
 
+  // Helper function to calculate bounds from GeoJSON feature
+  const calculateBoundsFromGeoJSON = (feature: any): L.LatLngBounds | null => {
+    if (!feature || !feature.geometry) return null;
+
+    try {
+      const coords = feature.geometry.type === 'Polygon'
+        ? feature.geometry.coordinates[0]
+        : feature.geometry.type === 'MultiPolygon'
+        ? feature.geometry.coordinates.flat(2)
+        : null;
+
+      if (!coords || coords.length === 0) return null;
+
+      const latLngs = coords.map((coord: number[]) => L.latLng(coord[1], coord[0]));
+      return L.latLngBounds(latLngs);
+    } catch (err) {
+      console.error('Error calculating bounds:', err);
+      return null;
+    }
+  };
+
   // Fetch markers based on level
   useEffect(() => {
     fetchMarkers();
@@ -149,12 +187,28 @@ export default function LeafletInteractiveMap({
   const fetchMarkers = async () => {
     setLoading(true);
     setError(null);
+    setGeoJsonBounds(null);
+
     try {
       if (level === 'national') {
         // Fetch all counties
         const response = await fetch(`${API_BASE_URL}/counties/`);
         if (!response.ok) throw new Error('Failed to fetch counties');
         const counties = await response.json();
+
+        // Set bounds to all of Kenya
+        if (countiesGeoJSON && countiesGeoJSON.features) {
+          const allCoords: L.LatLng[] = [];
+          countiesGeoJSON.features.forEach((feature: any) => {
+            const bounds = calculateBoundsFromGeoJSON(feature);
+            if (bounds) {
+              allCoords.push(bounds.getNorthEast(), bounds.getSouthWest());
+            }
+          });
+          if (allCoords.length > 0) {
+            setGeoJsonBounds(L.latLngBounds(allCoords));
+          }
+        }
         
         const countyMarkers: MapMarker[] = counties.map((county: any) => {
           // Try to get coordinates from GeoJSON
@@ -191,6 +245,24 @@ export default function LeafletInteractiveMap({
         setMarkers(countyMarkers);
         
       } else if (level === 'county' && countyId) {
+        // Fetch county details first to get name
+        const countyResponse = await fetch(`${API_BASE_URL}/counties/${countyId}`);
+        if (!countyResponse.ok) throw new Error('Failed to fetch county');
+        const county = await countyResponse.json();
+        setSelectedCountyName(county.name);
+
+        // Set bounds to the selected county
+        if (countiesGeoJSON) {
+          const countyFeature = countiesGeoJSON.features.find((f: any) =>
+            f.properties.COUNTY_NAM?.toLowerCase() === county.name.toLowerCase() ||
+            f.properties.name?.toLowerCase() === county.name.toLowerCase()
+          );
+          if (countyFeature) {
+            const bounds = calculateBoundsFromGeoJSON(countyFeature);
+            if (bounds) setGeoJsonBounds(bounds);
+          }
+        }
+
         // Fetch constituencies in county
         const response = await fetch(`${API_BASE_URL}/constituencies/?county_id=${countyId}`);
         if (!response.ok) throw new Error('Failed to fetch constituencies');
@@ -230,6 +302,24 @@ export default function LeafletInteractiveMap({
         setMarkers(constMarkers);
         
       } else if (level === 'constituency' && constituencyId) {
+        // Fetch constituency details first to get name
+        const constResponse = await fetch(`${API_BASE_URL}/constituencies/${constituencyId}`);
+        if (!constResponse.ok) throw new Error('Failed to fetch constituency');
+        const constituency = await constResponse.json();
+        setSelectedConstituencyName(constituency.name);
+
+        // Set bounds to the selected constituency
+        if (constituenciesGeoJSON) {
+          const constFeature = constituenciesGeoJSON.features.find((f: any) =>
+            f.properties.name?.toLowerCase() === constituency.name.toLowerCase() ||
+            f.properties.CONSTITUEN?.toLowerCase() === constituency.name.toLowerCase()
+          );
+          if (constFeature) {
+            const bounds = calculateBoundsFromGeoJSON(constFeature);
+            if (bounds) setGeoJsonBounds(bounds);
+          }
+        }
+
         // Fetch wards in constituency
         const response = await fetch(`${API_BASE_URL}/wards/?constituency_id=${constituencyId}`);
         if (!response.ok) throw new Error('Failed to fetch wards');
@@ -269,6 +359,24 @@ export default function LeafletInteractiveMap({
         setMarkers(wardMarkers);
         
       } else if (level === 'ward' && wardId) {
+        // Fetch ward details first to get name
+        const wardResponse = await fetch(`${API_BASE_URL}/wards/${wardId}`);
+        if (!wardResponse.ok) throw new Error('Failed to fetch ward');
+        const ward = await wardResponse.json();
+        setSelectedWardName(ward.name);
+
+        // Set bounds to the selected ward
+        if (wardsGeoJSON) {
+          const wardFeature = wardsGeoJSON.features.find((f: any) =>
+            f.properties.name?.toLowerCase() === ward.name.toLowerCase() ||
+            f.properties.WARD_NAME?.toLowerCase() === ward.name.toLowerCase()
+          );
+          if (wardFeature) {
+            const bounds = calculateBoundsFromGeoJSON(wardFeature);
+            if (bounds) setGeoJsonBounds(bounds);
+          }
+        }
+
         // Fetch polling stations in ward
         const yearParam = selectedYear !== 'all' ? `&year=${selectedYear}` : '';
         const response = await fetch(`${API_BASE_URL}/polling-stations/?ward_id=${wardId}&limit=100${yearParam}`);
@@ -364,7 +472,7 @@ export default function LeafletInteractiveMap({
           </Marker>
         ))}
 
-        <MapUpdater markers={markers} level={level} />
+        <MapUpdater markers={markers} level={level} geoJsonBounds={geoJsonBounds} />
       </MapContainer>
 
       {/* Legend */}

@@ -6,6 +6,7 @@ import ExportButton from '../common/ExportButton';
 import dynamic from 'next/dynamic';
 import YearSelector from '../common/YearSelector';
 import { exportTableToPDF, exportObjectsToCSV } from '@/utils/exportUtils';
+import VoterStatisticsPanel from './VoterStatisticsPanel';
 
 // Dynamically import Leaflet map to avoid SSR issues
 const LeafletInteractiveMap = dynamic(
@@ -67,12 +68,32 @@ interface Breadcrumb {
   voters?: number;
 }
 
+interface VoterStatistics {
+  level: string;
+  id: number;
+  name: string;
+  code?: string;
+  total_registered_voters: number;
+  male_voters: number;
+  female_voters: number;
+  pwd_voters: number;
+  male_percentage: number;
+  female_percentage: number;
+  pwd_percentage: number;
+  election_year: number;
+  parent_name?: string;
+}
+
 export default function CountyExplorerEnhanced() {
   const [counties, setCounties] = useState<County[]>([]);
   const [constituencies, setConstituencies] = useState<Constituency[]>([]);
   const [wards, setWards] = useState<Ward[]>([]);
   const [pollingStations, setPollingStations] = useState<PollingStation[]>([]);
   const [loading, setLoading] = useState(true);
+
+  // Voter demographics state
+  const [voterStatistics, setVoterStatistics] = useState<VoterStatistics | null>(null);
+  const [statisticsLoading, setStatisticsLoading] = useState(false);
 
   // Navigation state
   const [breadcrumbs, setBreadcrumbs] = useState<Breadcrumb[]>([
@@ -149,6 +170,39 @@ export default function CountyExplorerEnhanced() {
     }
   };
 
+  // Fetch voter demographics
+  const fetchVoterDemographics = async (level: string, id: number) => {
+    setStatisticsLoading(true);
+    try {
+      const endpoint = level === 'county' ? 'counties' :
+                      level === 'constituency' ? 'constituencies' :
+                      level === 'ward' ? 'wards' :
+                      level === 'polling_station' ? 'polling-stations' : null;
+
+      if (!endpoint) {
+        setVoterStatistics(null);
+        return;
+      }
+
+      const response = await fetch(
+        `${API_BASE_URL}/voter-demographics/${endpoint}/${id}?year=${selectedYear === 'all' ? 2022 : selectedYear}`
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        setVoterStatistics(data);
+      } else {
+        console.log(`No demographics data available for ${level} ${id}`);
+        setVoterStatistics(null);
+      }
+    } catch (error) {
+      console.error('Error fetching voter demographics:', error);
+      setVoterStatistics(null);
+    } finally {
+      setStatisticsLoading(false);
+    }
+  };
+
   const handleCountyClick = (county: County) => {
     setSelectedCounty(county);
     setSelectedConstituency(null);
@@ -160,6 +214,7 @@ export default function CountyExplorerEnhanced() {
       { level: 'county', id: county.id, name: county.name, voters: county.registered_voters_2022 }
     ]);
     fetchConstituencies(county.id);
+    fetchVoterDemographics('county', county.id);
     setSearchTerm('');
   };
 
@@ -174,6 +229,7 @@ export default function CountyExplorerEnhanced() {
       { level: 'constituency', id: constituency.id, name: constituency.name, voters: constituency.registered_voters_2022 }
     ]);
     fetchWards(constituency.id);
+    fetchVoterDemographics('constituency', constituency.id);
     setSearchTerm('');
   };
 
@@ -188,6 +244,7 @@ export default function CountyExplorerEnhanced() {
       { level: 'ward', id: ward.id, name: ward.name, voters: ward.registered_voters_2022 }
     ]);
     fetchPollingStations(ward.id);
+    fetchVoterDemographics('ward', ward.id);
     setSearchTerm('');
   };
 
@@ -201,6 +258,7 @@ export default function CountyExplorerEnhanced() {
       { level: 'ward', id: selectedWard!.id, name: selectedWard!.name, voters: selectedWard!.registered_voters_2022 },
       { level: 'polling_station', id: pollingStation.id, name: pollingStation.name, voters: pollingStation.registered_voters_2022 }
     ]);
+    fetchVoterDemographics('polling_station', pollingStation.id);
     setSearchTerm('');
   };
 
@@ -440,31 +498,42 @@ export default function CountyExplorerEnhanced() {
         </div>
       </div>
 
-      {/* Interactive Map */}
-      {showMap && (
-        <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-            <MapIcon className="w-5 h-5 text-blue-600" />
-            Interactive Map with Leaflet
-          </h3>
-          <LeafletInteractiveMap
-            level={currentLevel === 'polling_station' ? 'ward' : currentLevel}
-            countyId={selectedCounty?.id}
-            constituencyId={selectedConstituency?.id}
-            wardId={selectedWard?.id}
-            selectedYear={selectedYear}
-            onMarkerClick={(marker) => {
-              if (marker.type === 'county') {
-                handleCountyClick(marker.data);
-              } else if (marker.type === 'constituency') {
-                handleConstituencyClick(marker.data);
-              } else if (marker.type === 'ward') {
-                handleWardClick(marker.data);
-              }
-            }}
+      {/* Map and Statistics Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Interactive Map */}
+        {showMap && (
+          <div className="lg:col-span-2 bg-white rounded-xl shadow-lg border border-gray-200 p-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+              <MapIcon className="w-5 h-5 text-blue-600" />
+              Interactive Map with Leaflet
+            </h3>
+            <LeafletInteractiveMap
+              level={currentLevel === 'polling_station' ? 'ward' : currentLevel}
+              countyId={selectedCounty?.id}
+              constituencyId={selectedConstituency?.id}
+              wardId={selectedWard?.id}
+              selectedYear={selectedYear}
+              onMarkerClick={(marker) => {
+                if (marker.type === 'county') {
+                  handleCountyClick(marker.data);
+                } else if (marker.type === 'constituency') {
+                  handleConstituencyClick(marker.data);
+                } else if (marker.type === 'ward') {
+                  handleWardClick(marker.data);
+                }
+              }}
+            />
+          </div>
+        )}
+
+        {/* Voter Statistics Panel */}
+        <div className={showMap ? 'lg:col-span-1' : 'lg:col-span-3'}>
+          <VoterStatisticsPanel
+            statistics={voterStatistics}
+            loading={statisticsLoading}
           />
         </div>
-      )}
+      </div>
 
       {/* Content Area */}
       <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">

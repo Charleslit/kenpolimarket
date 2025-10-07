@@ -17,7 +17,7 @@ Base = declarative_base()
 class County(Base):
     """County model - Kenya's 47 counties"""
     __tablename__ = "counties"
-    
+
     id = Column(Integer, primary_key=True, index=True)
     code = Column(String(3), unique=True, nullable=False, index=True)
     name = Column(String(100), nullable=False)
@@ -26,14 +26,15 @@ class County(Base):
     registered_voters_2022 = Column(Integer)
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
-    
+
     # Relationships
     demographics = relationship("CountyDemographics", back_populates="county", cascade="all, delete-orphan")
+    voter_demographics = relationship("CountyVoterDemographics", back_populates="county", cascade="all, delete-orphan")
     election_results = relationship("ElectionResultCounty", back_populates="county", cascade="all, delete-orphan")
     ethnicity_aggregates = relationship("CountyEthnicityAggregate", back_populates="county", cascade="all, delete-orphan")
     forecast_county = relationship("ForecastCounty", back_populates="county", cascade="all, delete-orphan")
     constituencies = relationship("Constituency", back_populates="county", cascade="all, delete-orphan")
-    
+
     def __repr__(self):
         return f"<County(code='{self.code}', name='{self.name}')>"
 
@@ -76,6 +77,7 @@ class Constituency(Base):
 
     # Relationships
     county = relationship("County", back_populates="constituencies")
+    voter_demographics = relationship("ConstituencyVoterDemographics", back_populates="constituency", cascade="all, delete-orphan")
     wards = relationship("Ward", back_populates="constituency", cascade="all, delete-orphan")
     election_results = relationship("ElectionResultConstituency", back_populates="constituency")
     forecasts = relationship("ForecastConstituency", back_populates="constituency")
@@ -101,6 +103,7 @@ class Ward(Base):
 
     # Relationships
     constituency = relationship("Constituency", back_populates="wards")
+    voter_demographics = relationship("WardVoterDemographics", back_populates="ward", cascade="all, delete-orphan")
     candidates = relationship("Candidate", back_populates="ward")
     polling_stations = relationship("PollingStation", back_populates="ward", cascade="all, delete-orphan")
 
@@ -125,9 +128,106 @@ class PollingStation(Base):
 
     # Relationships
     ward = relationship("Ward", back_populates="polling_stations")
+    demographics = relationship("PollingStationVoterDemographics", back_populates="polling_station", cascade="all, delete-orphan")
 
     def __repr__(self):
         return f"<PollingStation(code='{self.code}', name='{self.name}')>"
+
+
+class CountyVoterDemographics(Base):
+    """County voter demographics including gender and disability statistics"""
+    __tablename__ = "county_voter_demographics"
+
+    id = Column(Integer, primary_key=True, index=True)
+    county_id = Column(Integer, ForeignKey('counties.id', ondelete='CASCADE'))
+    election_year = Column(Integer, nullable=False)
+    total_registered_voters = Column(Integer, nullable=False, default=0)
+    male_voters = Column(Integer, default=0)
+    female_voters = Column(Integer, default=0)
+    pwd_voters = Column(Integer, default=0)
+    data_source = Column(String(255))
+    verified = Column(Integer, default=0)  # SQLite uses 0/1 for boolean
+    notes = Column(Text)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    # Relationships
+    county = relationship("County", back_populates="voter_demographics")
+
+    def __repr__(self):
+        return f"<CountyVoterDemographics(county_id={self.county_id}, year={self.election_year})>"
+
+
+class ConstituencyVoterDemographics(Base):
+    """Constituency voter demographics including gender and disability statistics"""
+    __tablename__ = "constituency_voter_demographics"
+
+    id = Column(Integer, primary_key=True, index=True)
+    constituency_id = Column(Integer, ForeignKey('constituencies.id', ondelete='CASCADE'))
+    election_year = Column(Integer, nullable=False)
+    total_registered_voters = Column(Integer, nullable=False, default=0)
+    male_voters = Column(Integer, default=0)
+    female_voters = Column(Integer, default=0)
+    pwd_voters = Column(Integer, default=0)
+    data_source = Column(String(255))
+    verified = Column(Integer, default=0)
+    notes = Column(Text)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    # Relationships
+    constituency = relationship("Constituency", back_populates="voter_demographics")
+
+    def __repr__(self):
+        return f"<ConstituencyVoterDemographics(constituency_id={self.constituency_id}, year={self.election_year})>"
+
+
+class WardVoterDemographics(Base):
+    """Ward voter demographics including gender and disability statistics"""
+    __tablename__ = "ward_voter_demographics"
+
+    id = Column(Integer, primary_key=True, index=True)
+    ward_id = Column(Integer, ForeignKey('wards.id', ondelete='CASCADE'))
+    election_year = Column(Integer, nullable=False)
+    total_registered_voters = Column(Integer, nullable=False, default=0)
+    male_voters = Column(Integer, default=0)
+    female_voters = Column(Integer, default=0)
+    pwd_voters = Column(Integer, default=0)
+    data_source = Column(String(255))
+    verified = Column(Integer, default=0)
+    notes = Column(Text)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    # Relationships
+    ward = relationship("Ward", back_populates="voter_demographics")
+
+    def __repr__(self):
+        return f"<WardVoterDemographics(ward_id={self.ward_id}, year={self.election_year})>"
+
+
+class PollingStationVoterDemographics(Base):
+    """Polling station voter demographics including gender and disability statistics"""
+    __tablename__ = "polling_station_voter_demographics"
+
+    id = Column(Integer, primary_key=True, index=True)
+    polling_station_id = Column(Integer, ForeignKey('polling_stations.id', ondelete='CASCADE'))
+    election_year = Column(Integer, nullable=False)
+    total_registered_voters = Column(Integer, nullable=False, default=0)
+    male_voters = Column(Integer, default=0)
+    female_voters = Column(Integer, default=0)
+    pwd_voters = Column(Integer, default=0)
+    data_source = Column(String(255))
+    verified = Column(Integer, default=0)
+    notes = Column(Text)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    # Relationships
+    polling_station = relationship("PollingStation", back_populates="demographics")
+
+    def __repr__(self):
+        return f"<PollingStationVoterDemographics(polling_station_id={self.polling_station_id}, year={self.election_year})>"
 
 
 class Election(Base):
