@@ -1,7 +1,8 @@
 'use client';
 
-import { Users, UserCheck, UserX, Accessibility } from 'lucide-react';
-import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
+import { Users, UserCheck, Accessibility, ShieldCheck, ShieldAlert, Download } from 'lucide-react';
+import React from 'react';
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 
 interface VoterStatistics {
   level: string;
@@ -17,6 +18,8 @@ interface VoterStatistics {
   pwd_percentage: number;
   election_year: number;
   parent_name?: string;
+  verified?: boolean;
+  data_source?: string;
 }
 
 interface VoterStatisticsPanelProps {
@@ -35,6 +38,37 @@ const PWD_COLORS = {
 };
 
 export default function VoterStatisticsPanel({ statistics, loading }: VoterStatisticsPanelProps) {
+  const [displayMode, setDisplayMode] = React.useState<'counts' | 'percent'>('counts');
+
+  const downloadCSV = () => {
+    if (!statistics) return;
+    const rows = [
+      ['Level','Name','Code','Year','Total Voters','Male','Female','PWD','Male %','Female %','PWD %','Verified','Source'],
+      [
+        statistics.level,
+        statistics.name,
+        statistics.code || '',
+        String(statistics.election_year),
+        String(statistics.total_registered_voters),
+        String(statistics.male_voters),
+        String(statistics.female_voters),
+        String(statistics.pwd_voters),
+        statistics.male_percentage.toFixed(2),
+        statistics.female_percentage.toFixed(2),
+        statistics.pwd_percentage.toFixed(2),
+        statistics.verified ? 'Yes' : 'No',
+        statistics.data_source || 'Unknown'
+      ]
+    ];
+    const csv = rows.map(r => r.map(v => `"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${statistics.level}-${statistics.name}-demographics.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
   if (loading) {
     return (
       <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-6">
@@ -86,9 +120,32 @@ export default function VoterStatisticsPanel({ statistics, loading }: VoterStati
     <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
       {/* Header */}
       <div className="bg-gradient-to-r from-blue-600 to-indigo-600 px-6 py-4 text-white">
-        <div className="flex items-center gap-2">
-          <Users className="w-5 h-5" />
-          <h3 className="text-lg font-semibold">Voter Demographics</h3>
+        <div className="flex items-center justify-between gap-4">
+          <div className="flex items-center gap-2">
+            <Users className="w-5 h-5" />
+            <h3 className="text-lg font-semibold">Voter Demographics</h3>
+          </div>
+          <div className="flex items-center gap-2">
+            {/* Verified badge */}
+            {statistics.verified ? (
+              <span className="inline-flex items-center gap-1 bg-green-500/20 text-green-100 px-2 py-1 rounded">
+                <ShieldCheck className="w-4 h-4" /> Verified
+              </span>
+            ) : (
+              <span className="inline-flex items-center gap-1 bg-amber-500/20 text-amber-100 px-2 py-1 rounded">
+                <ShieldAlert className="w-4 h-4" /> Unverified
+              </span>
+            )}
+            {/* Display mode toggle */}
+            <div className="bg-white/10 rounded overflow-hidden text-xs">
+              <button onClick={() => setDisplayMode('counts')} className={`px-2 py-1 ${displayMode==='counts' ? 'bg-white text-blue-700' : 'text-white hover:bg-white/20'}`}>Counts</button>
+              <button onClick={() => setDisplayMode('percent')} className={`px-2 py-1 ${displayMode==='percent' ? 'bg-white text-blue-700' : 'text-white hover:bg-white/20'}`}>Percent</button>
+            </div>
+            {/* Download CSV */}
+            <button onClick={downloadCSV} className="inline-flex items-center gap-1 bg-white/10 hover:bg-white/20 px-2 py-1 rounded text-xs">
+              <Download className="w-4 h-4" /> CSV
+            </button>
+          </div>
         </div>
         <p className="text-sm text-blue-100 mt-1">
           {statistics.name} {statistics.parent_name && `• ${statistics.parent_name}`}
@@ -132,10 +189,10 @@ export default function VoterStatisticsPanel({ statistics, loading }: VoterStati
                 <p className="text-xs font-medium text-gray-600 uppercase">Male</p>
               </div>
               <p className="text-2xl font-bold text-blue-900">
-                {formatNumber(statistics.male_voters)}
+                {displayMode === 'counts' ? formatNumber(statistics.male_voters) : `${statistics.male_percentage.toFixed(1)}%`}
               </p>
-              <p className="text-sm text-blue-700 font-medium mt-1">
-                {statistics.male_percentage.toFixed(1)}%
+              <p className="text-xs text-blue-700 font-medium mt-1">
+                {displayMode === 'counts' ? `${statistics.male_percentage.toFixed(1)}% of total` : `${formatNumber(statistics.male_voters)} voters`}
               </p>
             </div>
 
@@ -146,10 +203,10 @@ export default function VoterStatisticsPanel({ statistics, loading }: VoterStati
                 <p className="text-xs font-medium text-gray-600 uppercase">Female</p>
               </div>
               <p className="text-2xl font-bold text-pink-900">
-                {formatNumber(statistics.female_voters)}
+                {displayMode === 'counts' ? formatNumber(statistics.female_voters) : `${statistics.female_percentage.toFixed(1)}%`}
               </p>
-              <p className="text-sm text-pink-700 font-medium mt-1">
-                {statistics.female_percentage.toFixed(1)}%
+              <p className="text-xs text-pink-700 font-medium mt-1">
+                {displayMode === 'counts' ? `${statistics.female_percentage.toFixed(1)}% of total` : `${formatNumber(statistics.female_voters)} voters`}
               </p>
             </div>
           </div>
@@ -193,16 +250,16 @@ export default function VoterStatisticsPanel({ statistics, loading }: VoterStati
                   PWD Voters
                 </p>
                 <p className="text-3xl font-bold text-violet-900">
-                  {formatNumber(statistics.pwd_voters)}
+                  {displayMode === 'counts' ? formatNumber(statistics.pwd_voters) : `${statistics.pwd_percentage.toFixed(1)}%`}
                 </p>
               </div>
               <div className="text-right">
                 <div className="bg-violet-600 rounded-full px-4 py-2">
                   <p className="text-2xl font-bold text-white">
-                    {statistics.pwd_percentage.toFixed(1)}%
+                    {displayMode === 'counts' ? `${statistics.pwd_percentage.toFixed(1)}%` : `${formatNumber(statistics.pwd_voters)} voters`}
                   </p>
                 </div>
-                <p className="text-xs text-gray-500 mt-1">of total voters</p>
+                <p className="text-xs text-gray-200 mt-1">{displayMode === 'counts' ? 'of total voters' : 'absolute count'}</p>
               </div>
             </div>
           </div>
@@ -246,8 +303,15 @@ export default function VoterStatisticsPanel({ statistics, loading }: VoterStati
               </p>
             </div>
             <div className="bg-gray-50 rounded p-3">
-              <p className="text-gray-600 mb-1">Data Source</p>
-              <p className="font-semibold text-gray-900">IEBC {statistics.election_year}</p>
+              <p className="text-gray-600 mb-1">Data Quality</p>
+              <p className="font-semibold text-gray-900 flex items-center gap-2">
+                {statistics.verified ? (
+                  <span className="inline-flex items-center gap-1 text-green-700"><ShieldCheck className="w-4 h-4"/> Verified</span>
+                ) : (
+                  <span className="inline-flex items-center gap-1 text-amber-700"><ShieldAlert className="w-4 h-4"/> Unverified</span>
+                )}
+                <span className="text-gray-500">• Source: {statistics.data_source || 'IEBC'} {statistics.election_year}</span>
+              </p>
             </div>
           </div>
         </div>
