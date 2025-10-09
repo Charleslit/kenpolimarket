@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { usePathname, useRouter } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import ForecastChart from '@/components/charts/ForecastChart';
 import ForecastWithUncertainty from '@/components/charts/ForecastWithUncertainty';
@@ -11,8 +12,8 @@ import LiveTicker from '@/components/dashboard/LiveTicker';
 import Breadcrumbs from '@/components/layout/Breadcrumbs';
 import CountySearch from '@/components/ui/CountySearch';
 import ShareButton from '@/components/ui/ShareButton';
-import ErrorMessage, { EmptyState } from '@/components/ui/ErrorMessage';
-import { DashboardSkeleton, ChartSkeleton } from '@/components/ui/LoadingSkeleton';
+import ErrorMessage from '@/components/ui/ErrorMessage';
+import { DashboardSkeleton } from '@/components/ui/LoadingSkeleton';
 
 // API Base URL - update this to match your backend
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8001';
@@ -60,7 +61,7 @@ interface ElectionResult {
 }
 
 type ViewMode = 'national' | 'comparison' | 'regional';
-type ChartType = 'bar' | 'line' | 'pie' | 'map';
+
 
 export default function ForecastsPage() {
   const [counties, setCounties] = useState<County[]>([]);
@@ -72,10 +73,47 @@ export default function ForecastsPage() {
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'historical' | 'forecast'>('forecast');
   const [viewMode, setViewMode] = useState<ViewMode>('national');
-  const [chartType, setChartType] = useState<ChartType>('bar');
-  const [countySearchQuery, setCountySearchQuery] = useState<string>('');
   const [pinnedCounty, setPinnedCounty] = useState<County | null>(null);
   const [selectedRegion, setSelectedRegion] = useState<string | null>(null);
+
+  const router = useRouter();
+  const pathname = usePathname();
+
+
+  // Initialize selectedRegion from URL or localStorage (once on mount)
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    try {
+      const sp = new URLSearchParams(window.location.search);
+      const regionParam = sp.get('region');
+      const saved = localStorage.getItem('selectedRegion');
+      const initial = regionParam || saved;
+      if (initial) setSelectedRegion(initial);
+    } catch (e) {
+      // ignore
+    }
+  }, []);
+
+  // Persist selectedRegion to URL and localStorage
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    try {
+      const sp = new URLSearchParams(window.location.search);
+      if (selectedRegion) {
+        sp.set('region', selectedRegion);
+        const q = sp.toString();
+        router.replace(`${pathname}?${q}`, { scroll: false });
+        localStorage.setItem('selectedRegion', selectedRegion);
+      } else {
+        sp.delete('region');
+        const q = sp.toString();
+        router.replace(q ? `${pathname}?${q}` : pathname, { scroll: false });
+        localStorage.removeItem('selectedRegion');
+      }
+    } catch (e) {
+      // ignore
+    }
+  }, [selectedRegion, router, pathname]);
 
   // Fetch counties on mount
   useEffect(() => {
@@ -106,6 +144,7 @@ export default function ForecastsPage() {
         setLoading(false);
       }
     };
+
 
     fetchCounties();
     fetchElections();
@@ -140,11 +179,20 @@ export default function ForecastsPage() {
   const regions = Array.from(new Set(counties.map(c => c.region).filter(Boolean))) as string[];
 
   const filteredCounties = counties
-    .filter(county => !selectedRegion || county.region === selectedRegion)
-    .filter(county =>
-      county.name.toLowerCase().includes(countySearchQuery.toLowerCase()) ||
-      county.code.toLowerCase().includes(countySearchQuery.toLowerCase())
-    );
+    .filter(county => !selectedRegion || county.region === selectedRegion);
+
+
+  // Region summary (when a region is selected)
+  const regionCounties = selectedRegion ? counties.filter(c => c.region === selectedRegion) : [];
+  const totalVotersInRegion = regionCounties.reduce((sum, c) => sum + (c.registered_voters_2022 ?? 0), 0);
+  const countyCodesInRegion = new Set(regionCounties.map(c => c.code));
+  const turnoutsInRegion = electionResults
+    .filter(r => countyCodesInRegion.has(r.county_code))
+    .map(r => Number(r.turnout_percentage))
+    .filter(n => !Number.isNaN(n));
+  const avgTurnoutInRegion = turnoutsInRegion.length
+    ? turnoutsInRegion.reduce((a, b) => a + b, 0) / turnoutsInRegion.length
+    : null;
 
   if (loading) {
     return (
@@ -385,6 +433,25 @@ export default function ForecastsPage() {
 
               </div>
 
+              {/* Region Summary Chips */}
+              {selectedRegion && regionCounties.length > 0 && (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div className="rounded-lg border border-gray-200 bg-white p-3 sm:p-4">
+                    <p className="text-xs text-gray-500">Total registered voters</p>
+                    <p className="text-lg sm:text-xl font-semibold text-gray-900">
+                      {totalVotersInRegion.toLocaleString()}
+                    </p>
+                  </div>
+                  <div className="rounded-lg border border-gray-200 bg-white p-3 sm:p-4">
+                    <p className="text-xs text-gray-500">Average turnout</p>
+                    <p className="text-lg sm:text-xl font-semibold text-gray-900">
+                      {avgTurnoutInRegion !== null ? `${avgTurnoutInRegion.toFixed(1)}%` : '—'}
+                    </p>
+                  </div>
+                </div>
+              )}
+
+
               {/* Two Column Layout */}
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
                 {/* County Map */}
@@ -504,7 +571,7 @@ export default function ForecastsPage() {
 
 
               {/* County List */}
-              {( (countySearchQuery || selectedRegion) && filteredCounties.length > 0 ) && (
+              {( selectedRegion && filteredCounties.length > 0 ) && (
                 <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-6">
                   <h2 className="text-xl font-semibold text-gray-900 mb-4 flex items-center">
                     <span className="mr-2">📋</span>
