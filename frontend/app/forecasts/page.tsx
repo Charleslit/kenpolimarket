@@ -184,7 +184,7 @@ export default function ForecastsPage() {
             <div>
               <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white flex items-center flex-wrap">
                 <span className="mr-2 sm:mr-3">🇰🇪</span>
-                BlockcertAfrica
+                Electoral Forecasting
                 <span className="ml-2 sm:ml-3 px-2 sm:px-3 py-1 bg-white bg-opacity-20 rounded-full text-xs sm:text-sm font-medium">
                   2027
                 </span>
@@ -195,24 +195,24 @@ export default function ForecastsPage() {
                                 <p className="mt-1 text-blue-200 text-sm">
                                   Kenya's most comprehensive political forecasting platform. Advanced Bayesian AI models, official IEBC data, and probabilistic predictions for the 2027 elections.
                                 </p>            </div>
-            <div className="hidden lg:flex items-center space-x-4">
+            <div className="hidden lg:flex items-center space-x-3">
               <ShareButton
                 title={`BlockcertAfrica - ${selectedCounty ? selectedCounty.name : 'National'} Forecast`}
                 text={`Check out the ${selectedCounty ? selectedCounty.name : 'national'} election forecast on BlockcertAfrica`}
               />
               <a
                 href="/admin"
-                className="px-4 py-2 bg-white bg-opacity-20 hover:bg-opacity-30 text-white rounded-lg transition-colors font-medium border border-white border-opacity-30"
+                className="px-4 py-2.5 bg-white text-blue-700 hover:bg-blue-50 rounded-lg transition-all font-semibold shadow-md hover:shadow-lg"
               >
-                🧮 Admin Tools
+                 Admin Tools
               </a>
-              <div className="bg-white bg-opacity-10 backdrop-blur-sm rounded-lg px-4 py-3 border border-white border-opacity-20">
-                <p className="text-xs text-blue-100 uppercase tracking-wide">Compliance</p>
-                <p className="text-sm font-semibold text-white">Data Protection Act 2019</p>
+              <div className="bg-white bg-opacity-20 backdrop-blur-md rounded-lg px-4 py-3 border-2 border-white border-opacity-40 shadow-lg">
+                <p className="text-xs text-white uppercase tracking-wider font-semibold">Compliance</p>
+                <p className="text-sm font-bold text-white mt-0.5">Data Protection Act 2019</p>
               </div>
-              <div className="bg-white bg-opacity-10 backdrop-blur-sm rounded-lg px-4 py-3 border border-white border-opacity-20">
-                <p className="text-xs text-blue-100 uppercase tracking-wide">Last Update</p>
-                <p className="text-sm font-semibold text-white">{new Date().toLocaleDateString()}</p>
+              <div className="bg-white bg-opacity-20 backdrop-blur-md rounded-lg px-4 py-3 border-2 border-white border-opacity-40 shadow-lg">
+                <p className="text-xs text-white uppercase tracking-wider font-semibold">Last Update</p>
+                <p className="text-sm font-bold text-white mt-0.5">{new Date().toLocaleDateString()}</p>
               </div>
             </div>
           </div>
