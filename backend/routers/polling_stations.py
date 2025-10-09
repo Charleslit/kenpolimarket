@@ -56,27 +56,6 @@ async def get_polling_stations(
 
     return polling_stations
 
-@router.get("/{polling_station_id}", response_model=PollingStationDetailSchema)
-async def get_polling_station(
-    polling_station_id: int,
-    db: Session = Depends(get_db)
-):
-    """
-    Get a specific polling station by ID.
-
-    Returns detailed information including the ward it belongs to.
-    """
-    polling_station = db.query(PollingStation).filter(
-        PollingStation.id == polling_station_id
-    ).first()
-
-    if not polling_station:
-        raise HTTPException(
-            status_code=404,
-            detail=f"Polling station with ID {polling_station_id} not found"
-        )
-
-    return polling_station
 
 
 @router.get("/by-code/{code}", response_model=PollingStationDetailSchema)
@@ -206,3 +185,25 @@ async def get_polling_stations_by_county(
         }
         for r in rows
     ]
+
+@router.get("/{polling_station_id}", response_model=PollingStationDetailSchema)
+async def get_polling_station(
+    polling_station_id: int,
+    db: Session = Depends(get_db)
+):
+    """
+    Get a specific polling station by ID.
+
+    Returns detailed information including the ward it belongs to.
+    """
+    polling_station = db.query(PollingStation).filter(
+        PollingStation.id == polling_station_id
+    ).first()
+
+    if not polling_station:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Polling station with ID {polling_station_id} not found"
+        )
+
+    return polling_station
