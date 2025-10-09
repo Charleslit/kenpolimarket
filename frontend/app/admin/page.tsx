@@ -5,6 +5,7 @@ import CandidateManager from '@/components/admin/CandidateManager';
 import ElectionDataManager from '@/components/admin/ElectionDataManager';
 import DataImportManager from '@/components/admin/DataImportManager';
 import ScenarioCalculator from '@/components/scenarios/ScenarioCalculator';
+import CountyScenarioCalculator from '@/components/scenarios/CountyScenarioCalculator';
 
 // Temporary password protection - will be replaced with proper auth later
 const ADMIN_PASSWORD = process.env.NEXT_PUBLIC_ADMIN_PASSWORD || 'ken2027';
@@ -219,7 +220,16 @@ export default function AdminPage() {
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {activeTab === 'data' && <ElectionDataManager />}
-        {activeTab === 'scenarios' && <ScenarioCalculator />}
+        {activeTab === 'scenarios' && (
+          <div className="space-y-10">
+            <div>
+              <ScenarioCalculator />
+            </div>
+            <div className="pt-4 border-t">
+              <CountyScenarioCalculator />
+            </div>
+          </div>
+        )}
         {activeTab === 'candidates' && <CandidateManager />}
         {activeTab === 'import' && <DataImportManager />}
       </main>
