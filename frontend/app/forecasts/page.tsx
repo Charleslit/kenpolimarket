@@ -76,6 +76,16 @@ export default function ForecastsPage() {
   const [pinnedCounty, setPinnedCounty] = useState<County | null>(null);
   const [selectedRegion, setSelectedRegion] = useState<string | null>(null);
   const [colorBy, setColorBy] = useState<'turnout' | 'winner' | 'registered'>('turnout');
+  // Forecast run context
+  const [runs, setRuns] = useState<any[]>([]);
+  const [selectedRunId, setSelectedRunId] = useState<string | null>(null);
+  const [runForecastByCounty, setRunForecastByCounty] = useState<Record<string, { winner: string | null; turnout: number | null }>>({});
+  const [runIncludedCountyCodes, setRunIncludedCountyCodes] = useState<Set<string>>(new Set());
+
+  const [runDetails, setRunDetails] = useState<any | null>(null);
+  const [fallbackMode, setFallbackMode] = useState<boolean>(false);
+  const [fallbackLatestByCounty, setFallbackLatestByCounty] = useState<Record<string, { winner: string | null; turnout: number | null }>>({});
+  const [fallbackUsedCountyCodes, setFallbackUsedCountyCodes] = useState<Set<string>>(new Set());
 
   const router = useRouter();
   const pathname = usePathname();
@@ -93,6 +103,16 @@ export default function ForecastsPage() {
     } catch (e) {
       // ignore
     }
+  }, []);
+
+  // Initialize selected forecast run from URL (once on mount)
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    try {
+      const sp = new URLSearchParams(window.location.search);
+      const runParam = sp.get('run_id');
+      if (runParam) setSelectedRunId(runParam);
+    } catch {}
   }, []);
 
   // Persist selectedRegion to URL and localStorage
@@ -152,6 +172,135 @@ export default function ForecastsPage() {
       // ignore
     }
   }, [selectedCounty, router, pathname]);
+
+  // Persist selectedRunId in URL (deep-linkable)
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    try {
+      const sp = new URLSearchParams(window.location.search);
+      if (selectedRunId) {
+        sp.set('run_id', selectedRunId);
+      } else {
+        sp.delete('run_id');
+      }
+      const q = sp.toString();
+      router.replace(q ? `${pathname}?${q}` : pathname, { scroll: false });
+    } catch {}
+  }, [selectedRunId, router, pathname]);
+
+  // Load available forecast runs for the selected election year
+  useEffect(() => {
+    const loadRuns = async () => {
+      if (!selectedElection) return;
+      try {
+        const res = await fetch(`${API_BASE_URL}/forecasts/?election_year=${selectedElection.year}`);
+        if (!res.ok) return;
+        const items = await res.json();
+        setRuns(items || []);
+      } catch {}
+    };
+    loadRuns();
+  }, [selectedElection]);
+
+  // When a run is selected, fetch all county forecasts for that run
+  useEffect(() => {
+    const loadRunCounties = async () => {
+      if (!selectedRunId) {
+        setRunForecastByCounty({});
+        setRunIncludedCountyCodes(new Set());
+        return;
+      }
+      try {
+        const res = await fetch(`${API_BASE_URL}/forecasts/${selectedRunId}/counties`);
+        if (!res.ok) return;
+        const rows = await res.json();
+        const byCounty: Record<string, { winner: string | null; turnout: number | null; maxShare: number }>= {};
+        for (const r of rows) {
+          const code = r.county?.code || r.county_code;
+          const share = Number(r.predicted_vote_share ?? 0);
+          const candName = r.candidate?.name || r.candidate_name || '';
+          const turnout = r.predicted_turnout != null ? Number(r.predicted_turnout) : null;
+          if (!code) continue;
+          if (!byCounty[code]) {
+            byCounty[code] = { winner: candName || null, turnout, maxShare: share };
+          } else {
+            if (turnout != null && byCounty[code].turnout == null) byCounty[code].turnout = turnout;
+            if (share > byCounty[code].maxShare) {
+              byCounty[code].maxShare = share;
+              byCounty[code].winner = candName || null;
+            }
+          }
+        }
+        const simple: Record<string, { winner: string | null; turnout: number | null }> = {};
+        Object.entries(byCounty).forEach(([k, v]) => simple[k] = { winner: v.winner, turnout: v.turnout });
+        setRunForecastByCounty(simple);
+
+  // Load selected run details (for notes/assumptions, meta)
+  useEffect(() => {
+    const loadRunDetails = async () => {
+      if (!selectedRunId) { setRunDetails(null); return; }
+      try {
+        const res = await fetch(`${API_BASE_URL}/forecasts/${selectedRunId}`);
+        if (!res.ok) return;
+        const d = await res.json();
+        setRunDetails(d);
+      } catch {}
+    };
+    loadRunDetails();
+  }, [selectedRunId]);
+
+  // When fallbackMode is on, fetch latest run per election year and compute fallback map
+  useEffect(() => {
+    const loadFallback = async () => {
+      if (!fallbackMode || !selectedElection) {
+        setFallbackLatestByCounty({});
+        setFallbackUsedCountyCodes(new Set());
+        return;
+      }
+      try {
+        const latestRes = await fetch(`${API_BASE_URL}/forecasts/latest?election_year=${selectedElection.year}`);
+        if (!latestRes.ok) return;
+        const latestRun = await latestRes.json();
+        if (!latestRun?.id) return;
+        const rowsRes = await fetch(`${API_BASE_URL}/forecasts/${latestRun.id}/counties`);
+        if (!rowsRes.ok) return;
+        const rows = await rowsRes.json();
+        const byCounty: Record<string, { winner: string | null; turnout: number | null; maxShare: number }> = {};
+        for (const r of rows) {
+          const code = r.county?.code || r.county_code;
+          const share = Number(r.predicted_vote_share ?? 0);
+          const candName = r.candidate?.name || r.candidate_name || '';
+          const turnout = r.predicted_turnout != null ? Number(r.predicted_turnout) : null;
+          if (!code) continue;
+          if (!byCounty[code]) {
+            byCounty[code] = { winner: candName || null, turnout, maxShare: share };
+          } else {
+            if (turnout != null && byCounty[code].turnout == null) byCounty[code].turnout = turnout;
+            if (share > byCounty[code].maxShare) {
+              byCounty[code].maxShare = share;
+              byCounty[code].winner = candName || null;
+            }
+          }
+        }
+        const simple: Record<string, { winner: string | null; turnout: number | null }> = {};
+        Object.entries(byCounty).forEach(([k, v]) => simple[k] = { winner: v.winner, turnout: v.turnout });
+        setFallbackLatestByCounty(simple);
+        // mark fallback used for those not in selected run
+        const used = new Set<string>();
+        Object.keys(simple).forEach((code) => {
+          if (!runIncludedCountyCodes.has(code)) used.add(code);
+        });
+        setFallbackUsedCountyCodes(used);
+      } catch {}
+    };
+    loadFallback();
+  }, [fallbackMode, selectedElection, selectedRunId, runIncludedCountyCodes]);
+
+        setRunIncludedCountyCodes(new Set(Object.keys(simple)));
+      } catch {}
+    };
+    loadRunCounties();
+  }, [selectedRunId]);
 
   // Fetch counties on mount
   useEffect(() => {
@@ -231,6 +380,15 @@ export default function ForecastsPage() {
   const avgTurnoutInRegion = turnoutsInRegion.length
     ? turnoutsInRegion.reduce((a, b) => a + b, 0) / turnoutsInRegion.length
     : null;
+  // If a forecast run is selected, prefer its turnout for the region average
+  const avgTurnoutForRegion = selectedRunId
+    ? (() => {
+        const vals = regionCounties
+          .map((c) => runForecastByCounty[c.code]?.turnout)
+          .filter((v): v is number => typeof v === 'number');
+        return vals.length ? vals.reduce((a, b) => a + b, 0) / vals.length : null;
+      })()
+    : avgTurnoutInRegion;
 
   if (loading) {
     return (
@@ -346,6 +504,7 @@ export default function ForecastsPage() {
                   : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
               } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors flex items-center`}
             >
+
               <span className="mr-2">⚖️</span>
               Candidate Comparison
             </button>
@@ -379,6 +538,27 @@ export default function ForecastsPage() {
                 <h2 className="text-2xl font-bold mb-2">County Forecasts</h2>
                 <p className="text-blue-100">
                   Explore election predictions and historical data by county
+                {selectedRunId && runDetails && (
+                  <div className="mt-4 bg-white/10 border border-white/30 rounded-lg p-4">
+                    <div className="flex items-start justify-between gap-3">
+                      <div>
+                        <div className="text-sm uppercase tracking-wide text-blue-100">Scenario</div>
+                        <div className="text-lg font-semibold text-white">{runDetails.model_name}</div>
+                        {(() => {
+                          const params = (() => { try { return runDetails.parameters ? JSON.parse(runDetails.parameters) : null; } catch { return null; }})();
+                          const desc = params?.description || runDetails.description;
+                          return desc ? <p className="text-blue-100 text-sm mt-1 whitespace-pre-line">{desc}</p> : null;
+                        })()}
+                      </div>
+                      <div className="text-right text-xs text-blue-100">
+                        <div>{runDetails?.election?.year} {runDetails?.election?.election_type}</div>
+                        <div>{runDetails?.run_timestamp && new Date(runDetails.run_timestamp).toLocaleString()}</div>
+                        <div>{runIncludedCountyCodes.size} counties in run</div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
                 </p>
                 <p className="text-sm text-blue-200 mt-2">
                   💡 Looking for voter registration data and polling stations? Visit the{' '}
@@ -412,6 +592,61 @@ export default function ForecastsPage() {
                     </select>
                     <p className="mt-1 text-xs text-gray-500">Tip: Switch years to compare historical vs current forecasts.</p>
                   </div>
+
+
+                  <div className="flex-1">
+                    <div className="flex items-center justify-between mb-2">
+                      <label className="block text-sm font-medium text-gray-700">
+                        Forecast Run / Scenario
+                      </label>
+                      {selectedRunId && runDetails && (
+                        <div className="relative group">
+                          <button type="button" className="text-gray-500 hover:text-gray-700 text-sm" aria-label="Run details">ℹ️</button>
+                          <div className="hidden group-hover:block absolute right-0 z-10 mt-2 w-80 rounded-lg border border-gray-200 bg-white p-3 shadow-lg">
+                            <div className="text-sm font-semibold text-gray-900">{runDetails.model_name || 'Scenario'}</div>
+                            <div className="text-xs text-gray-500 mt-0.5">{runDetails?.election?.year} {runDetails?.election?.election_type}</div>
+                            {(() => { const p = (()=>{try{return runDetails.parameters?JSON.parse(runDetails.parameters):null}catch{return null}})(); const d = p?.description || runDetails.description; return d ? <p className="text-sm text-gray-700 mt-2 line-clamp-4">{d}</p> : null; })()}
+                            <div className="mt-2 flex items-center justify-between text-xs text-gray-500">
+                              <span>{runIncludedCountyCodes.size} counties</span>
+                              <span>{runDetails?.run_timestamp && new Date(runDetails.run_timestamp).toLocaleString()}</span>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                    <select
+                      className="block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm"
+                      value={selectedRunId || ''}
+                      onChange={(e) => setSelectedRunId(e.target.value || null)}
+                    >
+                      <option value="">Latest (Default)</option>
+                      {runs.map((run: any) => (
+                        <option key={run.id} value={run.id}>
+                          {(run.model_name || run.name || 'Scenario')}
+                          - {run.run_timestamp ? new Date(run.run_timestamp).toLocaleString() : ''}
+                        </option>
+                      ))}
+                    </select>
+                    <p className="mt-1 text-xs text-gray-500">
+                      {selectedRunId
+                        ? `${runIncludedCountyCodes.size} counties included in selected run`
+                        : 'No run selected: showing latest available forecasts'}
+                    </p>
+                  </div>
+
+                  <div className="flex items-center gap-3">
+                    <input
+                      id="fallback-toggle"
+                      type="checkbox"
+                      className="h-4 w-4 text-blue-600 border-gray-300 rounded"
+                      checked={fallbackMode}
+                      onChange={(e) => setFallbackMode(e.target.checked)}
+                    />
+                    <label htmlFor="fallback-toggle" className="text-sm text-gray-700">
+                      Fallback missing counties to latest forecast
+                    </label>
+                  </div>
+
 
                   <div className="flex-1">
                     <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -483,7 +718,7 @@ export default function ForecastsPage() {
                   <div className="rounded-lg border border-gray-200 bg-white p-3 sm:p-4">
                     <p className="text-xs text-gray-500">Average turnout</p>
                     <p className="text-lg sm:text-xl font-semibold text-gray-900">
-                      {avgTurnoutInRegion !== null ? `${avgTurnoutInRegion.toFixed(1)}%` : '—'}
+                      {avgTurnoutForRegion !== null ? `${avgTurnoutForRegion.toFixed(1)}%` : '—'}
                     </p>
                   </div>
                   <div className="rounded-lg border border-gray-200 bg-white p-3 sm:p-4">
@@ -524,6 +759,11 @@ export default function ForecastsPage() {
                     onCountyClick={handleCountyClick}
                     electionResults={electionResults}
                     colorBy={colorBy}
+                    forecastData={selectedRunId ? (fallbackMode ? {
+                      ...runForecastByCounty,
+                      ...Object.fromEntries(Object.entries(fallbackLatestByCounty).filter(([code]) => !runIncludedCountyCodes.has(code)))
+                    } : runForecastByCounty) : undefined}
+                    greyOutMissing={!!selectedRunId && !fallbackMode}
                   />
                 </div>
 
@@ -553,6 +793,27 @@ export default function ForecastsPage() {
                       </div>
                     )}
                   </div>
+
+
+                  {selectedRunId && runDetails && selectedCounty && (
+                    <div className="mb-4 rounded-md border border-amber-200 bg-amber-50 p-3">
+                      <div className="flex items-start justify-between gap-3">
+                        <div>
+                          <div className="text-xs uppercase tracking-wide text-amber-700">Scenario Notes</div>
+                          {(() => {
+                            const params = (() => { try { return runDetails.parameters ? JSON.parse(runDetails.parameters) : null; } catch { return null; }})();
+                            const desc = params?.description || runDetails.description;
+                            return desc ? <p className="text-sm text-amber-800 mt-1 whitespace-pre-line">{desc}</p> : <p className="text-sm text-amber-800 mt-1">No notes provided.</p>;
+                          })()}
+                        </div>
+                        {!runIncludedCountyCodes.has(selectedCounty.code) && (
+                          <span className={`text-xs px-2 py-0.5 rounded-full ${fallbackMode ? 'bg-amber-100 text-amber-800' : 'bg-gray-100 text-gray-600'}`}>
+                            {fallbackMode ? 'Fallback data' : 'No data in run'}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  )}
 
                   {selectedCounty ? (
                     <div>
@@ -647,7 +908,24 @@ export default function ForecastsPage() {
                             : 'border-gray-200 hover:border-blue-300'
                         }`}
                       >
-                        <div className="font-semibold text-gray-900">{county.name}</div>
+                        <div className="flex items-center justify-between">
+                          <div className="font-semibold text-gray-900">{county.name}</div>
+                          {selectedRunId && (
+                            <span className={`text-xs px-2 py-0.5 rounded-full ${
+                              runIncludedCountyCodes.has(county.code)
+                                ? 'bg-green-100 text-green-700'
+                                : fallbackMode && fallbackUsedCountyCodes.has(county.code)
+                                  ? 'bg-amber-100 text-amber-700'
+                                  : 'bg-gray-100 text-gray-500'
+                            }`}>
+                              {runIncludedCountyCodes.has(county.code)
+                                ? '✓ In run'
+                                : fallbackMode && fallbackUsedCountyCodes.has(county.code)
+                                  ? 'Fallback'
+                                  : 'No data'}
+                            </span>
+                          )}
+                        </div>
                         <div className="text-sm text-gray-500 mt-1">Code: {county.code}</div>
                         <div className="text-xs text-gray-400 mt-1">
                           Pop: {county.population_2019.toLocaleString()}

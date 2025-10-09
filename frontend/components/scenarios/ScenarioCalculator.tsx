@@ -75,6 +75,54 @@ export default function ScenarioCalculator() {
   const [loading, setLoading] = useState(false);
   const [calculating, setCalculating] = useState(false);
 
+  const [showSaveRun, setShowSaveRun] = useState(false);
+  const [saveLoading, setSaveLoading] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
+  const [saveSuccess, setSaveSuccess] = useState<{ runId: string } | null>(null);
+  const [electionYear, setElectionYear] = useState<number>(2027);
+  const [electionType, setElectionType] = useState<string>('Presidential');
+  const [countiesJson, setCountiesJson] = useState<string>('[\n  {\n    "county_code": "45",\n    "turnout": 62.0,\n    "registered_voters": 650000,\n    "candidates": [\n      { "name": "Candidate A", "predicted_vote_share": 52.0 },\n      { "name": "Candidate B", "predicted_vote_share": 46.0 }\n    ]\n  }\n]');
+
+  const canSaveRun = !!result && !!scenarioName.trim();
+
+  const handleSaveRun = async () => {
+    if (!canSaveRun) return;
+    setSaveLoading(true);
+    setSaveError(null);
+    setSaveSuccess(null);
+    try {
+      let countiesPayload: any[] = [];
+      try {
+        countiesPayload = JSON.parse(countiesJson);
+        if (!Array.isArray(countiesPayload)) throw new Error('Counties must be an array');
+      } catch (e: any) {
+        throw new Error('Invalid counties JSON: ' + (e?.message || ''));
+      }
+      const payload = {
+        election_year: electionYear,
+        election_type: electionType,
+        scenario_name: scenarioName,
+        description: scenarioDescription,
+        counties: countiesPayload,
+      };
+      const res = await fetch(`${API_BASE_URL}/forecasts/scenario/run`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.detail || 'Failed to save forecast run');
+      }
+      const data = await res.json();
+      setSaveSuccess({ runId: data.forecast_run_id || data.id || '' });
+    } catch (err: any) {
+      setSaveError(err.message || 'Failed to save run');
+    } finally {
+      setSaveLoading(false);
+    }
+  };
+
   // Current adjustment for selected region
   const [currentShares, setCurrentShares] = useState<Record<string, number>>({});
 
@@ -133,7 +181,7 @@ export default function ScenarioCalculator() {
 
     // Check if region already has an adjustment
     const existingIndex = adjustments.findIndex(a => a.region === selectedRegion);
-    
+
     const newAdjustment: RegionalAdjustment = {
       region: selectedRegion,
       candidate_shares: { ...currentShares }
@@ -373,7 +421,7 @@ export default function ScenarioCalculator() {
                   placeholder="e.g., Ruto Wins Back Mount Kenya"
                 />
               </div>
-              
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Description (Optional)
@@ -392,7 +440,7 @@ export default function ScenarioCalculator() {
           {/* Regional Adjustment */}
           <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-6">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">Adjust Regional Shares</h3>
-            
+
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -515,8 +563,15 @@ export default function ScenarioCalculator() {
         <div className="space-y-6">
           {result ? (
             <div id="scenario-results">
-              {/* Export Button */}
-              <div className="flex justify-end mb-4">
+              {/* Actions */}
+              <div className="flex justify-between items-center mb-4 gap-3">
+                <button
+                  onClick={() => setShowSaveRun(true)}
+                  disabled={!canSaveRun}
+                  className="px-3 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
+                >
+                  💾 Save as Forecast Run
+                </button>
                 <ExportButton
                   variant="compact"
                   onExportPDF={handleExportPDF}
@@ -579,6 +634,56 @@ export default function ScenarioCalculator() {
                         <div>
                           <div className="text-gray-500">New</div>
                           <div className="font-semibold">{data.share.toFixed(1)}%</div>
+      {/* Save Run Modal */}
+      {showSaveRun && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+          <div className="absolute inset-0 bg-black/40" onClick={() => setShowSaveRun(false)} />
+          <div className="relative bg-white rounded-xl shadow-2xl border border-gray-200 w-full max-w-3xl mx-4 p-6">
+            <div className="flex items-start justify-between mb-4">
+              <h3 className="text-lg font-semibold text-gray-900">Save as Forecast Run</h3>
+              <button onClick={() => setShowSaveRun(false)} className="text-gray-500 hover:text-gray-700">✕</button>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Election Year</label>
+                <input type="number" className="w-full rounded-lg border-gray-300" value={electionYear} onChange={(e)=>setElectionYear(parseInt(e.target.value||'2027'))} />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Election Type</label>
+                <select className="w-full rounded-lg border-gray-300" value={electionType} onChange={(e)=>setElectionType(e.target.value)}>
+                  <option>Presidential</option>
+                  <option>Governor</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Scenario Name</label>
+                <input type="text" className="w-full rounded-lg border-gray-300" value={scenarioName} onChange={(e)=>{}} disabled />
+              </div>
+            </div>
+            <div className="mb-2 text-sm text-gray-600">
+              Provide per-county forecasts to persist this scenario as a browsable run. You can paste JSON from your pipeline or craft manually below.
+            </div>
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 mb-1">Counties JSON</label>
+              <textarea className="w-full h-56 rounded-lg border-gray-300 font-mono text-xs p-2" value={countiesJson} onChange={(e)=>setCountiesJson(e.target.value)} />
+              <p className="text-xs text-gray-500 mt-1">Format: [{'{' } county_code, turnout, registered_voters?, candidates: [{'{' } name, predicted_vote_share {'}'} , ...] {'}'}]</p>
+            </div>
+            {saveError && <div className="mb-3 text-sm text-red-600">{saveError}</div>}
+            {saveSuccess && (
+              <div className="mb-3 text-sm text-green-700 bg-green-50 border border-green-200 rounded p-2">
+                Saved! <a className="underline font-semibold" href={`/forecasts?run_id=${saveSuccess.runId}`} target="_blank">Open in Forecasts →</a>
+              </div>
+            )}
+            <div className="flex justify-end gap-3">
+              <button onClick={() => setShowSaveRun(false)} className="px-4 py-2 rounded-lg border border-gray-300">Cancel</button>
+              <button onClick={handleSaveRun} disabled={!canSaveRun || saveLoading} className="px-4 py-2 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 disabled:bg-gray-300">
+                {saveLoading ? 'Saving…' : 'Save Run'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
                         </div>
                       </div>
                     </div>

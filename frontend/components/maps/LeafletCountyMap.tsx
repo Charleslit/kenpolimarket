@@ -30,6 +30,10 @@ interface LeafletCountyMapProps {
   onCountyClick: (countyCode: string) => void;
   electionResults: ElectionResult[];
   colorBy?: ColorByMode;
+  // Optional forecast override data keyed by county code
+  forecastData?: Record<string, { winner: string | null; turnout: number | null }>;
+  // If true, counties not present in forecastData are greyed out
+  greyOutMissing?: boolean;
 }
 
 // Component to handle map updates
@@ -52,6 +56,8 @@ export default function LeafletCountyMap({
   onCountyClick,
   electionResults,
   colorBy = 'turnout',
+  forecastData,
+  greyOutMissing = false,
 }: LeafletCountyMapProps) {
   const [geoJsonData, setGeoJsonData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -76,12 +82,14 @@ export default function LeafletCountyMap({
     loadGeoJson();
   }, []);
 
-  // Create color scale based on turnout
+  // Create color scale based on turnout (supports forecast override)
   const getTurnoutColor = (countyCode: string): string => {
-    const result = electionResults.find(r => r.county_code === countyCode);
-    if (!result) return '#e5e7eb';
+    const forecastTurnout = forecastData?.[countyCode]?.turnout;
+    const turnout = typeof forecastTurnout === 'number'
+      ? forecastTurnout
+      : electionResults.find(r => r.county_code === countyCode)?.turnout_percentage;
 
-    const turnout = result.turnout_percentage;
+    if (turnout == null) return '#e5e7eb';
     if (turnout >= 80) return '#1e40af';
     if (turnout >= 70) return '#3b82f6';
     if (turnout >= 60) return '#60a5fa';
@@ -89,8 +97,10 @@ export default function LeafletCountyMap({
     return '#dbeafe';
   };
 
-  // Color helpers
+  // Color helpers (supports forecast override)
   const getWinnerKey = (countyCode: string): string | null => {
+    const forecastWinner = forecastData?.[countyCode]?.winner;
+    if (forecastWinner) return forecastWinner;
     const rows = electionResults.filter(r => r.county_code === countyCode);
     if (!rows.length) return null;
     const top = rows.reduce((max, r) => (r.vote_percentage > max.vote_percentage ? r : max), rows[0]);
@@ -120,10 +130,17 @@ export default function LeafletCountyMap({
     const isSelected = selectedCounty?.name.toLowerCase() === countyName?.toLowerCase();
 
     let fill = '#e5e7eb';
+    let fillOpacity = 0.7;
     if (county) {
-      if (colorBy === 'turnout') fill = getTurnoutColor(county.code);
-      else if (colorBy === 'registered') fill = getRegisteredColor(county.registered_voters_2022);
-      else if (colorBy === 'winner') fill = getWinnerColor(getWinnerKey(county.code));
+      const isMissing = !!forecastData && greyOutMissing && !forecastData[county.code];
+      if (isMissing) {
+        fill = '#f3f4f6';
+        fillOpacity = 0.4;
+      } else {
+        if (colorBy === 'turnout') fill = getTurnoutColor(county.code);
+        else if (colorBy === 'registered') fill = getRegisteredColor(county.registered_voters_2022);
+        else if (colorBy === 'winner') fill = getWinnerColor(getWinnerKey(county.code));
+      }
     }
 
     return {
@@ -131,7 +148,7 @@ export default function LeafletCountyMap({
       weight: isSelected ? 3 : 1,
       opacity: 1,
       color: isSelected ? '#1d4ed8' : '#9ca3af',
-      fillOpacity: 0.7,
+      fillOpacity,
     };
   };
 
@@ -147,6 +164,7 @@ export default function LeafletCountyMap({
     if (!county) return;
 
     const result = electionResults.find(r => r.county_code === county.code);
+    const forecast = forecastData?.[county.code];
 
     // Popup content
     const popupContent = `
@@ -155,7 +173,7 @@ export default function LeafletCountyMap({
         <p class="text-sm">Code: ${county.code}</p>
         <p class="text-sm">Population: ${county.population_2019.toLocaleString()}</p>
         <p class="text-sm">Registered Voters: ${county.registered_voters_2022.toLocaleString()}</p>
-        ${result ? `<p class="text-sm font-semibold mt-2">Turnout: ${result.turnout_percentage.toFixed(1)}%</p>` : ''}
+        ${forecast && typeof forecast.turnout === 'number' ? `<p class=\"text-sm font-semibold mt-2\">Forecast Turnout: ${forecast.turnout.toFixed(1)}%</p>` : result ? `<p class=\"text-sm font-semibold mt-2\">Turnout: ${result.turnout_percentage.toFixed(1)}%</p>` : ''}
       </div>
     `;
 

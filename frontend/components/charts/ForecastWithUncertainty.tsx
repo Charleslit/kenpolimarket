@@ -94,7 +94,7 @@ const ForecastWithUncertainty: React.FC<ForecastWithUncertaintyProps> = ({
     };
 
     fetchForecasts();
-  }, [countyCode, electionYear]);
+  }, [countyCode, electionYear, runId]);
 
   if (loading) {
     return (

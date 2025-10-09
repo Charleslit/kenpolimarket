@@ -6,6 +6,7 @@ import ElectionDataManager from '@/components/admin/ElectionDataManager';
 import DataImportManager from '@/components/admin/DataImportManager';
 import ScenarioCalculator from '@/components/scenarios/ScenarioCalculator';
 import CountyScenarioCalculator from '@/components/scenarios/CountyScenarioCalculator';
+import ForecastRunManager from '@/components/admin/ForecastRunManager';
 
 // Temporary password protection - will be replaced with proper auth later
 const ADMIN_PASSWORD = process.env.NEXT_PUBLIC_ADMIN_PASSWORD || 'ken2027';
@@ -227,6 +228,9 @@ export default function AdminPage() {
             </div>
             <div className="pt-4 border-t">
               <CountyScenarioCalculator />
+            </div>
+            <div className="pt-4 border-t">
+              <ForecastRunManager />
             </div>
           </div>
         )}

@@ -368,3 +368,137 @@ async def seed_county_scenario(
     }
 
 
+
+
+# ------------------------------
+# Multi-county scenario run endpoint
+# ------------------------------
+class MultiCountyCandidate(BaseModel):
+    name: str
+    party: str
+    votes: int
+
+class MultiCountyCountyPayload(BaseModel):
+    county_code: str = Field(..., description="County code, e.g., '45' for Kisii")
+    registered_voters: int = Field(..., description="Registered voters in county")
+    turnout: float = Field(..., description="Turnout percentage (0-100)")
+    candidates: List[MultiCountyCandidate]
+
+class MultiCountyRunRequest(BaseModel):
+    election_year: int = Field(2027, description="Election year")
+    election_type: str = Field("Governor", description="Election type, e.g., Governor, Presidential")
+    scenario_name: str = Field("Scenario Run", description="Scenario name to display in UI")
+    description: Optional[str] = Field(None, description="Optional description/assumptions JSON or text")
+    counties: List[MultiCountyCountyPayload]
+
+@router.post("/scenario/run")
+async def seed_multi_county_run(
+    payload: MultiCountyRunRequest,
+    db: Session = Depends(get_db)
+):
+    """
+    Create a forecast run that includes forecasts for multiple counties at once.
+    - Ensures election exists (by year + type)
+    - Ensures candidates exist (by name + election), creating if needed
+    - Creates a single ForecastRun and ForecastCounty rows per county/candidate
+    Returns the created run id and aggregate info.
+    """
+    # 1) Ensure election exists
+    election = db.query(Election).filter(
+        Election.year == payload.election_year,
+        Election.election_type == payload.election_type
+    ).first()
+    if not election:
+        election = Election(
+            year=payload.election_year,
+            election_type=payload.election_type,
+            description=f"{payload.election_type} Election {payload.election_year}"
+        )
+        db.add(election)
+        db.commit()
+        db.refresh(election)
+
+    # 2) Create forecast run metadata
+    parameters_obj = {
+        "scenario_name": payload.scenario_name,
+        "description": payload.description,
+        "counties": [c.county_code for c in payload.counties],
+    }
+    run = ForecastRun(
+        model_name=payload.scenario_name,
+        model_version="1.0",
+        election_id=election.id,
+        parameters=json.dumps(parameters_obj),
+        status="completed"
+    )
+    db.add(run)
+    db.commit()
+    db.refresh(run)
+
+    created_counties = 0
+    total_inserted_rows = 0
+
+    # 3) For each county payload, insert forecasts
+    position = payload.election_type.lower()
+    for county_payload in payload.counties:
+        county = db.query(County).filter(County.code == county_payload.county_code).first()
+        if not county:
+            # skip silently to allow partials, but you could also raise
+            continue
+
+        total_votes = max(0, int(round(county_payload.registered_voters * (county_payload.turnout / 100.0))))
+        provided_votes = sum(c.votes for c in county_payload.candidates)
+        if provided_votes <= 0 or total_votes <= 0:
+            continue
+        scale = (total_votes / provided_votes)
+
+        # ensure candidates exist for this election
+        candidate_map = {}
+        for c in county_payload.candidates:
+            cand = db.query(Candidate).filter(
+                Candidate.election_id == election.id,
+                Candidate.name == c.name
+            ).first()
+            if not cand:
+                cand = Candidate(
+                    election_id=election.id,
+                    name=c.name,
+                    party=c.party,
+                    position=position,
+                    county_id=county.id if position == 'governor' else None
+                )
+                db.add(cand)
+                db.commit()
+                db.refresh(cand)
+            candidate_map[c.name] = cand
+
+        # insert ForecastCounty rows per candidate
+        for c in county_payload.candidates:
+            scaled_votes = int(round(c.votes * scale))
+            share = (scaled_votes / total_votes * 100.0) if total_votes > 0 else 0.0
+            fc = ForecastCounty(
+                forecast_run_id=run.id,
+                county_id=county.id,
+                candidate_id=candidate_map[c.name].id,
+                predicted_vote_share=Decimal(str(round(share, 2))),
+                lower_bound_90=Decimal(str(round(max(0.0, share - 3.0), 2))),
+                upper_bound_90=Decimal(str(round(min(100.0, share + 3.0), 2))),
+                predicted_votes=scaled_votes,
+                predicted_turnout=Decimal(str(round(county_payload.turnout, 2)))
+            )
+            db.add(fc)
+            total_inserted_rows += 1
+
+        created_counties += 1
+
+    db.commit()
+
+    return {
+        "forecast_run_id": str(run.id),
+        "election_year": election.year,
+        "election_type": election.election_type,
+        "scenario_name": payload.scenario_name,
+        "description": payload.description,
+        "counties_included": created_counties,
+        "rows_created": total_inserted_rows,
+    }
