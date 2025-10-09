@@ -110,8 +110,8 @@ export default function CountyScenarioCalculator() {
       registered_voters: registered,
       turnout: turnoutPct,
       candidates: [
-        { name: "Ezekiel Machogu", party: "UDA", votes: scaled.machogu },
-        { name: "Simba Arati", party: "ODM", votes: scaled.arati },
+        { name: "Ezekiel Machogu", party: "UDA", votes: scaled.machogu, predicted_vote_share: shares.machogu },
+        { name: "Simba Arati", party: "ODM", votes: scaled.arati, predicted_vote_share: shares.arati },
       ],
     };
 

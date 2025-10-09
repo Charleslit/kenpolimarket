@@ -39,9 +39,39 @@ export default function ForecastRunManager() {
 
   const payloadPreview = useMemo(() => {
     try {
-      const counties: CountyInput[] = JSON.parse(countiesJson);
+      const parsed: any[] = JSON.parse(countiesJson);
+      if (!Array.isArray(parsed)) return null;
+
+      const counties = parsed.map((c: any) => {
+        const candArr: any[] = Array.isArray(c.candidates) ? c.candidates : [];
+        const hasShares = candArr.some((x: any) => typeof x.predicted_vote_share === 'number');
+        const hasVotes = candArr.some((x: any) => typeof x.votes === 'number');
+        let normalizedCandidates: any[] = [];
+        if (hasShares) {
+          normalizedCandidates = candArr.map((x: any) => ({
+            name: x.name,
+            predicted_vote_share: Number(x.predicted_vote_share),
+          }));
+        } else if (hasVotes) {
+          const totalVotes = candArr.reduce((s: number, x: any) => s + (Number(x.votes) || 0), 0) || 0;
+          normalizedCandidates = candArr.map((x: any) => ({
+            name: x.name,
+            predicted_vote_share: totalVotes > 0 ? (Number(x.votes) / totalVotes) * 100 : 0,
+          }));
+        } else {
+          // Neither shares nor votes present
+          normalizedCandidates = candArr;
+        }
+        return {
+          county_code: String(c.county_code),
+          registered_voters: c.registered_voters != null ? Number(c.registered_voters) : undefined,
+          turnout: c.turnout != null ? Number(c.turnout) : undefined,
+          candidates: normalizedCandidates,
+        };
+      });
+
       return {
-        election_year: electionYear,
+        election_year: Number(electionYear),
         election_type: electionType,
         scenario_name: scenarioName,
         description,
