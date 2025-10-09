@@ -106,6 +106,8 @@ class PollingStationBaseSchema(BaseModel):
     code: str
     name: str
     ward_id: int
+    # Production schema uses registration_center_id; legacy code/name kept optional for compatibility
+    registration_center_id: Optional[int] = None
     registration_center_code: Optional[str] = None
     registration_center_name: Optional[str] = None
     registered_voters_2022: Optional[int] = None

@@ -116,19 +116,34 @@ class PollingStation(Base):
     __tablename__ = "polling_stations"
 
     id = Column(Integer, primary_key=True, index=True)
-    ward_id = Column(Integer, ForeignKey('wards.id', ondelete='CASCADE'))
     code = Column(String(50), unique=True, nullable=False, index=True)
     name = Column(String(200), nullable=False)
-    registration_center_code = Column(String(50))
-    registration_center_name = Column(String(200))
+
+    # Foreign keys present in production schema
+    ward_id = Column(Integer, ForeignKey('wards.id', ondelete='CASCADE'))
+    constituency_id = Column(Integer)  # denormalized convenience column in prod
+    county_id = Column(Integer)        # denormalized convenience column in prod
+
+    # Registration center linkage (prod uses ID, not code/name)
+    registration_center_id = Column(Integer)
+
+    # Voter counts
+    registered_voters_2017 = Column(Integer)
     registered_voters_2022 = Column(Integer, default=0)
+
+    # Spatial
     geometry = Column(Geometry('POINT', srid=4326))
+
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     # Relationships
     ward = relationship("Ward", back_populates="polling_stations")
-    demographics = relationship("PollingStationVoterDemographics", back_populates="polling_station", cascade="all, delete-orphan")
+    demographics = relationship(
+        "PollingStationVoterDemographics",
+        back_populates="polling_station",
+        cascade="all, delete-orphan"
+    )
 
     def __repr__(self):
         return f"<PollingStation(code='{self.code}', name='{self.name}')>"
