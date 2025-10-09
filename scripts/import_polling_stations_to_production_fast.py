@@ -25,6 +25,9 @@ PROD_DB_CONFIG = {
 
 CSV_PATH = Path('data/rov_per_polling_station.csv')
 
+# Optional: restrict import to certain county codes (3-digit, e.g., '047' for Nairobi)
+COUNTY_CODE_FILTERS = ['047']
+
 
 def parse_iebc_line(line: str):
     """Parse a line from the IEBC CSV-like file into fields we need.
@@ -131,6 +134,10 @@ def main():
         if not rec:
             skipped += 1
             continue
+        # Apply optional county code filter
+        c_code = rec[0]
+        if COUNTY_CODE_FILTERS and (str(c_code).zfill(3) not in COUNTY_CODE_FILTERS):
+            continue
         rows.append(rec)
         if len(rows) >= batch_size:
             execute_values(cur,
@@ -167,8 +174,8 @@ def main():
              c.id  AS constituency_id,
              w.id  AS ward_id
       FROM norm n
-      JOIN counties co ON co.code = n.county_code3
-      JOIN constituencies c ON c.code = n.const_code3
+      JOIN counties co ON (co.code = n.county_code3 OR lpad(co.code, 3, '0') = n.county_code3)
+      JOIN constituencies c ON (c.code = n.const_code3 OR lpad(c.code, 3, '0') = n.const_code3)
       JOIN wards w ON w.code = n.ward_code_norm
     )
     INSERT INTO polling_stations (code, name, ward_id, constituency_id, county_id, registered_voters_2022)

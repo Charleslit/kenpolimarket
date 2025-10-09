@@ -18,7 +18,14 @@ PROD_DB = {
     'sslmode': 'require', 'connect_timeout': 30
 }
 
-FETCH_SQL = """
+# Optional: limit copy to specific ward names within Nairobi
+WARDS_TO_COPY = [
+    'KILELESHWA',
+    'MOUNTAIN',
+    'WOODLEY/KENYATTA GOLF'
+]
+
+FETCH_ALL_SQL = """
 SELECT ps.code, ps.name, ps.registered_voters_2022,
        w.code AS ward_code, c.code AS const_code, co.code AS county_code
 FROM polling_stations ps
@@ -26,6 +33,18 @@ JOIN wards w ON ps.ward_id = w.id
 JOIN constituencies c ON w.constituency_id = c.id
 JOIN counties co ON c.county_id = co.id
 WHERE ps.registered_voters_2022 IS NOT NULL AND ps.registered_voters_2022 > 0
+ORDER BY ps.code
+"""
+
+FETCH_BY_WARD_IDS_SQL = """
+SELECT ps.code, ps.name, ps.registered_voters_2022,
+       w.code AS ward_code, c.code AS const_code, co.code AS county_code
+FROM polling_stations ps
+JOIN wards w ON ps.ward_id = w.id
+JOIN constituencies c ON w.constituency_id = c.id
+JOIN counties co ON c.county_id = co.id
+WHERE ps.registered_voters_2022 IS NOT NULL AND ps.registered_voters_2022 > 0
+  AND ps.ward_id = ANY(%s)
 ORDER BY ps.code
 """
 
@@ -68,7 +87,26 @@ def main():
     try:
         lconn = psycopg2.connect(**LOCAL_DB)
         lcur = lconn.cursor()
-        lcur.execute(FETCH_SQL)
+        if WARDS_TO_COPY:
+            # Find ward ids for given names in Nairobi
+            lcur.execute(
+                """
+                SELECT w.id, w.name
+                FROM wards w
+                JOIN constituencies c ON w.constituency_id=c.id
+                WHERE c.county_id = 188 AND UPPER(w.name) = ANY(%s)
+                """,
+                (list(map(str.upper, WARDS_TO_COPY)),)
+            )
+            ward_rows = lcur.fetchall()
+            ward_ids = [r[0] for r in ward_rows]
+            print(f"🎯 Local target wards: {[r[1] for r in ward_rows]} (ids: {ward_ids})")
+            if not ward_ids:
+                print("⚠️  No matching wards found locally. Aborting targeted copy.")
+                return
+            lcur.execute(FETCH_BY_WARD_IDS_SQL, (ward_ids,))
+        else:
+            lcur.execute(FETCH_ALL_SQL)
         rows = lcur.fetchall()
         print(f"📥 Local rows fetched: {len(rows):,}")
     except Exception as e:

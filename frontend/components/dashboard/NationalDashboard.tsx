@@ -287,7 +287,7 @@ export default function NationalDashboard() {
         </div>
         <div className="mt-3 pt-3 border-t border-gray-300">
           <p className="text-xs text-gray-500 italic text-center">
-            Forecast by Ongoro based on official IEBC data from 2022
+            KenPoliMarket | Electoral Forecasting & Political Analysis
           </p>
         </div>
       </div>

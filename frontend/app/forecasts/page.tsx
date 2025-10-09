@@ -189,13 +189,12 @@ export default function ForecastsPage() {
                   2027
                 </span>
               </h1>
-              <p className="mt-2 text-blue-100 text-xs sm:text-sm">
-                Forecast by Ongoro • Powered by Bayesian AI • Based on official IEBC data from 2022
-              </p>
-              <p className="mt-1 text-blue-200 text-xs">
-                {counties.length} Counties • {elections.length} Elections • Privacy-first & Data Protection Act 2019 Compliant
-              </p>
-            </div>
+                                <p className="mt-2 text-blue-100 text-base">
+                                  Electoral Forecasting & Political Analysis
+                                </p>
+                                <p className="mt-1 text-blue-200 text-sm">
+                                  Kenya's most comprehensive political forecasting platform. Advanced Bayesian AI models, official IEBC data, and probabilistic predictions for the 2027 elections.
+                                </p>            </div>
             <div className="hidden lg:flex items-center space-x-4">
               <ShareButton
                 title={`KenPoliMarket - ${selectedCounty ? selectedCounty.name : 'National'} Forecast`}
