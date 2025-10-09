@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import {
   AreaChart,
   Area,
@@ -52,6 +53,8 @@ const ForecastWithUncertainty: React.FC<ForecastWithUncertaintyProps> = ({
   const [forecasts, setForecasts] = useState<ForecastData[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const searchParams = useSearchParams();
+  const runId = searchParams?.get('run_id');
 
   useEffect(() => {
     const fetchForecasts = async () => {
@@ -64,9 +67,11 @@ const ForecastWithUncertainty: React.FC<ForecastWithUncertaintyProps> = ({
       setError(null);
 
       try {
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/forecasts/county/${countyCode}/latest?election_year=${electionYear}`
-        );
+        const base = process.env.NEXT_PUBLIC_API_URL;
+        const url = runId
+          ? `${base}/forecasts/${runId}/counties?county_code=${countyCode}`
+          : `${base}/forecasts/county/${countyCode}/latest?election_year=${electionYear}`;
+        const response = await fetch(url);
 
         if (!response.ok) {
           if (response.status === 404) {

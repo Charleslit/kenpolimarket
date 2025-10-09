@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import Link from "next/link";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8001";
 
@@ -19,6 +20,8 @@ export default function CountyScenarioCalculator() {
   // Defaults based on your inputs
   const [registered, setRegistered] = useState<number>(637_000);
   const [turnoutPct, setTurnoutPct] = useState<number>(60);
+
+  const [lastRunId, setLastRunId] = useState<string | null>(null);
 
   // Machogu coalition bloc inputs (votes before normalization)
   const [machogu, setMachogu] = useState<Record<BlocKey, number>>({
@@ -70,6 +73,33 @@ export default function CountyScenarioCalculator() {
     else setArati((prev) => ({ ...prev, [key]: value }));
   };
 
+  // Load preset projection based on provided Kisii breakdown (2027)
+  const loadKisiiProjection = () => {
+    // From user's projection: Registered 850,000, Turnout 73%
+    setRegistered(850000);
+    setTurnoutPct(73);
+
+    // Aggregate constituency pairs into our combined blocs
+    // Nyaribari: Chache + Masaba, Kitutu: South + North, Bomachoge: Borabu + Chache
+    setMachogu({
+      nyaribari: 122_353,
+      kitutu: 105_055,
+      bonchari: 25_192,
+      bomachoge: 36_222,
+      south_mugirango: 53_903,
+      bobasi: 10_313,
+    });
+
+    setArati({
+      nyaribari: 30_588,
+      kitutu: 15_697,
+      bonchari: 37_789,
+      bomachoge: 67_268,
+      south_mugirango: 23_101,
+      bobasi: 93_000,
+    });
+  };
+
   const applyToForecasts = async () => {
     // POST to backend to seed a new forecast run for Kisii only
     const payload = {
@@ -101,7 +131,10 @@ export default function CountyScenarioCalculator() {
 
   const handleApply = async () => {
     try {
-      await applyToForecasts();
+      const out = await applyToForecasts();
+      // Try to extract a run id for deep-linking
+      const runId = out?.run?.id || out?.forecast_run?.id || out?.run_id || (Array.isArray(out?.forecasts) && out.forecasts[0]?.forecast_run_id) || null;
+      if (runId) setLastRunId(runId);
       alert("Scenario applied. Open the Forecasts page and select Kisii to see the update.");
     } catch (e: any) {
       alert(e.message || "Failed to apply scenario");
@@ -113,6 +146,18 @@ export default function CountyScenarioCalculator() {
       <div>
         <h3 className="text-lg font-semibold text-gray-900">County Scenario (Kisii Governor)</h3>
         <p className="text-sm text-gray-500 mt-1">Enter bloc-level votes for two candidates, set turnout, and push to forecasts.</p>
+      </div>
+
+      {/* Quick preset */}
+      <div className="flex items-center justify-between bg-blue-50 border border-blue-100 text-blue-800 p-3 rounded-lg">
+        <div className="text-sm">Preset: Kisii 2027 – Arati vs Machogu (from your brief)</div>
+        <button
+          type="button"
+          onClick={loadKisiiProjection}
+          className="px-3 py-1.5 bg-blue-600 text-white rounded-md hover:bg-blue-700 text-sm font-semibold"
+        >
+          Load Projection
+        </button>
       </div>
 
       {/* Turnout + Registered */}
@@ -201,7 +246,7 @@ export default function CountyScenarioCalculator() {
         </div>
       </div>
 
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-3 flex-wrap">
         <button
           onClick={handleApply}
           className="px-4 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-semibold"
@@ -209,11 +254,19 @@ export default function CountyScenarioCalculator() {
           Apply to Forecasts (Kisii)
         </button>
         <a
-          href="/forecasts"
+          href="/forecasts?county=45"
           className="px-4 py-3 bg-white border rounded-lg hover:bg-gray-50 transition-colors"
         >
           Open Forecasts
         </a>
+        {lastRunId && (
+          <a
+            href={`/forecasts?county=45&run_id=${lastRunId}`}
+            className="px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            Open This Projection
+          </a>
+        )}
       </div>
     </div>
   );
