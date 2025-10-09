@@ -295,45 +295,58 @@ export default function ForecastsPage() {
                 </p>
               </div>
 
-              {/* Election Selector */}
-              <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-6">
-                <label htmlFor="election-select" className="block text-sm font-medium text-gray-700 mb-3">
-                  Select Election Year
-                </label>
-                <select
-                  id="election-select"
-                  className="block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm"
-                  value={selectedElection?.id || ''}
-                  onChange={(e) => {
-                    const election = elections.find(el => el.id === parseInt(e.target.value));
-                    setSelectedElection(election || null);
-                  }}
-                >
-                  {elections.map((election) => (
-                    <option key={election.id} value={election.id}>
-                      {election.year} {election.election_type} - {election.description}
-                    </option>
-                  ))}
-                </select>
-              </div>
+              {/* Filters Toolbar */}
+              <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-4 sm:p-6">
+                <div className="flex flex-col lg:flex-row lg:items-end gap-4">
+                  <div className="flex-1">
+                    <label htmlFor="election-select" className="block text-sm font-medium text-gray-700 mb-2">
+                      Election
+                    </label>
+                    <select
+                      id="election-select"
+                      className="block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm"
+                      value={selectedElection?.id || ''}
+                      onChange={(e) => {
+                        const election = elections.find(el => el.id === parseInt(e.target.value));
+                        setSelectedElection(election || null);
+                      }}
+                    >
+                      {elections.map((election) => (
+                        <option key={election.id} value={election.id}>
+                          {election.year} {election.election_type} - {election.description}
+                        </option>
+                      ))}
+                    </select>
+                    <p className="mt-1 text-xs text-gray-500">Tip: Switch years to compare historical vs current forecasts.</p>
+                  </div>
 
-              {/* County Search */}
-              <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-6">
-                <label className="block text-sm font-medium text-gray-700 mb-3">
-                  Search Counties
-                </label>
-                <CountySearch
-                  counties={counties}
-                  onSelect={(county) => setSelectedCounty(county)}
-                  selectedCounty={selectedCounty}
-                  placeholder="Search by county name, code, or region..."
-                />
+                  <div className="flex-1">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Find a county
+                    </label>
+                    <CountySearch
+                      counties={counties}
+                      onSelect={(county) => setSelectedCounty(county)}
+                      selectedCounty={selectedCounty}
+                      placeholder="Type county name or code..."
+                    />
+                  </div>
+
+                  {selectedCounty && (
+                    <button
+                      onClick={() => setSelectedCounty(null)}
+                      className="self-start lg:self-auto inline-flex items-center px-3 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50 text-sm"
+                    >
+                      Reset selection
+                    </button>
+                  )}
+                </div>
               </div>
 
               {/* Two Column Layout */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
                 {/* County Map */}
-                <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-6">
+                <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-6 lg:col-span-7">
                   <h2 className="text-xl font-semibold text-gray-900 mb-4 flex items-center">
                     <span className="mr-2">🗺️</span>
                     Interactive County Map
@@ -347,7 +360,7 @@ export default function ForecastsPage() {
                 </div>
 
                 {/* Forecast Chart with Tabs */}
-                <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-6">
+                <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-6 lg:col-span-5">
                   <h2 className="text-xl font-semibold text-gray-900 mb-4">
                     {selectedCounty ? `${selectedCounty.name} County` : 'Select a County'}
                   </h2>
@@ -355,25 +368,25 @@ export default function ForecastsPage() {
                   {selectedCounty ? (
                     <div>
                       {/* Tab Navigation */}
-                      <div className="border-b border-gray-200 mb-6">
-                        <nav className="-mb-px flex space-x-8" aria-label="Tabs">
+                      <div className="mb-6">
+                        <nav className="flex items-center gap-2" aria-label="Tabs">
                           <button
                             onClick={() => setActiveTab('historical')}
                             className={`${
                               activeTab === 'historical'
-                                ? 'border-blue-500 text-blue-600'
-                                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                            } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors`}
+                                ? 'bg-blue-100 text-blue-700'
+                                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                            } inline-flex items-center rounded-full px-3 py-1.5 text-sm font-medium transition-colors`}
                           >
-                            📊 Historical Data
+                            📊 Historical
                           </button>
                           <button
                             onClick={() => setActiveTab('forecast')}
                             className={`${
                               activeTab === 'forecast'
-                                ? 'border-blue-500 text-blue-600'
-                                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                            } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors`}
+                                ? 'bg-blue-100 text-blue-700'
+                                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                            } inline-flex items-center rounded-full px-3 py-1.5 text-sm font-medium transition-colors`}
                           >
                             🔮 2027 Forecast
                           </button>
