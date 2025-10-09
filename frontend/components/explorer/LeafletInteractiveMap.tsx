@@ -44,18 +44,22 @@ function MapUpdater({
     if (geoJsonBounds) {
       map.fitBounds(geoJsonBounds, {
         padding: [50, 50],
-        maxZoom: level === 'national' ? 7 : level === 'county' ? 10 : level === 'constituency' ? 12 : 14
+        maxZoom: level === 'national' ? 7 : level === 'county' ? 10 : level === 'constituency' ? 12 : 14,
+        animate: true,
+        duration: 0.5
       });
     } else if (markers.length > 0) {
       // Fallback to marker bounds
       const bounds = L.latLngBounds(markers.map(m => [m.lat, m.lng]));
       map.fitBounds(bounds, {
         padding: [50, 50],
-        maxZoom: level === 'national' ? 7 : level === 'county' ? 10 : level === 'constituency' ? 12 : 14
+        maxZoom: level === 'national' ? 7 : level === 'county' ? 10 : level === 'constituency' ? 12 : 14,
+        animate: true,
+        duration: 0.5
       });
     } else {
       // Default to Kenya center
-      map.setView([-0.0236, 37.9062], 6);
+      map.setView([-0.0236, 37.9062], 6, { animate: true });
     }
   }, [markers, level, geoJsonBounds, map]);
 
@@ -450,6 +454,8 @@ export default function LeafletInteractiveMap({
   const minVal = values.length ? Math.min(...values) : 0;
   const maxVal = values.length ? Math.max(...values) : 1;
 
+  const KENYA_BOUNDS = L.latLngBounds(L.latLng(-5.5, 33.5), L.latLng(5.5, 42.5));
+
   return (
     <div className="relative">
       <MapContainer
@@ -457,6 +463,8 @@ export default function LeafletInteractiveMap({
         zoom={6}
         style={{ height: '500px', width: '100%' }}
         className="rounded-lg border border-gray-200"
+        maxBounds={KENYA_BOUNDS}
+        minZoom={6}
       >
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -479,7 +487,9 @@ export default function LeafletInteractiveMap({
           <GeoJSON
             data={{
               type: 'FeatureCollection',
-              features: constituenciesGeoJSON.features.filter((f: any) => true)
+              features: constituenciesGeoJSON.features.filter((f: any) => 
+                (f.properties.COUNTY_NAM || '').toLowerCase() === selectedCountyName.toLowerCase()
+              )
             } as any}
             style={(feature: any) => {
               const name = (feature.properties.name || feature.properties.CONSTITUEN || '').toLowerCase();

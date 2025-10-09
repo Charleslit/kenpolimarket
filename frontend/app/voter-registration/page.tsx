@@ -53,6 +53,31 @@ export default function VoterRegistrationPage() {
       if (countyRes.ok) {
         const countyData = await countyRes.json();
         setCountyData(countyData);
+      } else {
+        // Fallback: compute by county client-side if backend endpoint not available
+        const countiesRes = await fetch(`${API_BASE_URL}/counties/`);
+        if (countiesRes.ok) {
+          const counties = await countiesRes.json();
+          const out = await Promise.all(
+            counties.map(async (c: any) => {
+              const r = await fetch(`${API_BASE_URL}/polling_stations/stats/summary?county_id=${c.id}`);
+              if (r.ok) {
+                const s = await r.json();
+                return {
+                  id: c.id,
+                  code: c.code,
+                  name: c.name,
+                  polling_stations: s.total_polling_stations || 0,
+                  registration_centers: 0,
+                  total_voters: s.total_registered_voters || 0,
+                  avg_voters_per_station: s.average_voters_per_station || 0,
+                } as CountyData;
+              }
+              return null;
+            })
+          );
+          setCountyData(out.filter(Boolean) as CountyData[]);
+        }
       }
     } catch (error) {
       console.error('Failed to fetch data:', error);
