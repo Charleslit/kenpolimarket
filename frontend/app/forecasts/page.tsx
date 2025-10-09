@@ -5,7 +5,7 @@ import dynamic from 'next/dynamic';
 import ForecastChart from '@/components/charts/ForecastChart';
 import ForecastWithUncertainty from '@/components/charts/ForecastWithUncertainty';
 import NationalDashboard from '@/components/dashboard/NationalDashboard';
-import RegionalBreakdown from '@/components/dashboard/RegionalBreakdown';
+
 import CandidateComparison from '@/components/dashboard/CandidateComparison';
 import LiveTicker from '@/components/dashboard/LiveTicker';
 import Breadcrumbs from '@/components/layout/Breadcrumbs';
@@ -38,6 +38,7 @@ interface County {
   name: string;
   population_2019: number;
   registered_voters_2022: number;
+  region?: string;
 }
 
 interface Election {
@@ -74,7 +75,7 @@ export default function ForecastsPage() {
   const [chartType, setChartType] = useState<ChartType>('bar');
   const [countySearchQuery, setCountySearchQuery] = useState<string>('');
   const [pinnedCounty, setPinnedCounty] = useState<County | null>(null);
-
+  const [selectedRegion, setSelectedRegion] = useState<string | null>(null);
 
   // Fetch counties on mount
   useEffect(() => {
@@ -135,11 +136,15 @@ export default function ForecastsPage() {
     }
   };
 
-  // Filter counties based on search query
-  const filteredCounties = counties.filter(county =>
-    county.name.toLowerCase().includes(countySearchQuery.toLowerCase()) ||
-    county.code.toLowerCase().includes(countySearchQuery.toLowerCase())
-  );
+  // Regions list and filtered counties
+  const regions = Array.from(new Set(counties.map(c => c.region).filter(Boolean))) as string[];
+
+  const filteredCounties = counties
+    .filter(county => !selectedRegion || county.region === selectedRegion)
+    .filter(county =>
+      county.name.toLowerCase().includes(countySearchQuery.toLowerCase()) ||
+      county.code.toLowerCase().includes(countySearchQuery.toLowerCase())
+    );
 
   if (loading) {
     return (
@@ -281,7 +286,7 @@ export default function ForecastsPage() {
         {/* Geographic Analysis */}
         {viewMode === 'regional' && (
           <div className="space-y-8">
-            <RegionalBreakdown />
+
             <div className="space-y-6">
               {/* Header */}
               <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl shadow-lg p-6 text-white">
@@ -343,6 +348,41 @@ export default function ForecastsPage() {
                     </button>
                   )}
                 </div>
+
+                  {/* Region Filter */}
+                  <div className="mt-2 w-full">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Regions</label>
+                    {regions.length > 0 ? (
+                      <div className="flex flex-wrap gap-2">
+                        <button
+                          onClick={() => setSelectedRegion(null)}
+                          className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
+                            !selectedRegion
+                              ? 'bg-blue-600 text-white'
+                              : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                          }`}
+                        >
+                          All
+                        </button>
+                        {regions.map((region) => (
+                          <button
+                            key={region}
+                            onClick={() => setSelectedRegion(region)}
+                            className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
+                              selectedRegion === region
+                                ? 'bg-blue-600 text-white'
+                                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                            }`}
+                          >
+                            {region}
+                          </button>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-xs text-gray-500">No region metadata available.</p>
+                    )}
+                  </div>
+
               </div>
 
               {/* Two Column Layout */}
@@ -464,11 +504,11 @@ export default function ForecastsPage() {
 
 
               {/* County List */}
-              {countySearchQuery && filteredCounties.length > 0 && (
+              {( (countySearchQuery || selectedRegion) && filteredCounties.length > 0 ) && (
                 <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-6">
                   <h2 className="text-xl font-semibold text-gray-900 mb-4 flex items-center">
                     <span className="mr-2">📋</span>
-                    Search Results ({filteredCounties.length})
+                    Filtered Counties ({filteredCounties.length})
                   </h2>
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 max-h-96 overflow-y-auto">
                     {filteredCounties.map((county) => (
