@@ -69,6 +69,8 @@ app.include_router(markets.router, prefix="/api")
 app.include_router(candidates.router, prefix="/api")
 app.include_router(scenarios.router, prefix="/api")
 app.include_router(polling_stations.router, prefix="/api/polling_stations", tags=["polling_stations"])
+# Backwards-compatible routes using hyphenated path
+app.include_router(polling_stations.router, prefix="/api/polling-stations", tags=["polling_stations_compat"])
 app.include_router(voter_demographics.router, prefix="/api/voter-demographics", tags=["voter_demographics"])
 
 

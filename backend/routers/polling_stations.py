@@ -167,3 +167,42 @@ async def get_polling_station_stats(
         "min_voters_per_station": result.min_voters or 0,
         "max_voters_per_station": result.max_voters or 0
     }
+
+# Backwards-compatible alias: /stats
+@router.get("/stats")
+async def get_polling_station_stats_alias(
+    ward_id: Optional[int] = Query(None, description="Filter by ward ID"),
+    constituency_id: Optional[int] = Query(None, description="Filter by constituency ID"),
+    county_id: Optional[int] = Query(None, description="Filter by county ID"),
+    db: Session = Depends(get_db)
+):
+    return await get_polling_station_stats(ward_id, constituency_id, county_id, db)
+
+# Aggregation by county for UI
+@router.get("/by-county")
+async def get_polling_stations_by_county(
+    db: Session = Depends(get_db)
+):
+    rows = (
+        db.query(
+            County.id.label('county_id'),
+            County.name.label('county_name'),
+            func.count(PollingStation.id).label('total_stations'),
+            func.coalesce(func.sum(PollingStation.registered_voters_2022), 0).label('total_voters')
+        )
+        .join(Ward, Ward.id == PollingStation.ward_id)
+        .join(Constituency, Constituency.id == Ward.constituency_id)
+        .join(County, County.id == Constituency.county_id)
+        .group_by(County.id, County.name)
+        .order_by(County.name)
+        .all()
+    )
+    return [
+        {
+            "county_id": r.county_id,
+            "county_name": r.county_name,
+            "total_polling_stations": int(r.total_stations or 0),
+            "total_registered_voters": int(r.total_voters or 0),
+        }
+        for r in rows
+    ]

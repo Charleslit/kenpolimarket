@@ -94,6 +94,8 @@ export default function CountyExplorerEnhanced() {
   // Voter demographics state
   const [voterStatistics, setVoterStatistics] = useState<VoterStatistics | null>(null);
   const [statisticsLoading, setStatisticsLoading] = useState(false);
+  const [compareId, setCompareId] = useState<number | null>(null);
+  const [compareStats, setCompareStats] = useState<VoterStatistics | null>(null);
 
   // Navigation state
   const [breadcrumbs, setBreadcrumbs] = useState<Breadcrumb[]>([
@@ -110,6 +112,10 @@ export default function CountyExplorerEnhanced() {
 
   // Map view toggle
   const [showMap, setShowMap] = useState(true);
+
+  // Choropleth metric
+  const [colorMetric, setColorMetric] = useState<'none'|'total'|'male_pct'|'female_pct'|'pwd_pct'>('none');
+  const [choroplethData, setChoroplethData] = useState<Record<string, number> | undefined>(undefined);
 
   // Year selection
   const [selectedYear, setSelectedYear] = useState<number | 'all'>(2022);
@@ -169,6 +175,59 @@ export default function CountyExplorerEnhanced() {
       setLoading(false);
     }
   };
+
+  // Build choropleth data when metric or selection changes
+  useEffect(() => {
+    const build = async () => {
+      if (colorMetric === 'none') { setChoroplethData(undefined); return; }
+      try {
+        if (currentLevel === 'national') {
+          // Use county registered voters for total; percentages require API by county (optional later)
+          if (colorMetric === 'total') {
+            const map: Record<string, number> = {};
+            counties.forEach(c => { if (c.registered_voters_2022) map[c.name.toLowerCase()] = c.registered_voters_2022; });
+            setChoroplethData(map);
+          } else {
+            setChoroplethData(undefined);
+          }
+        } else if (currentLevel === 'county' && selectedCounty) {
+          const map: Record<string, number> = {};
+          await Promise.all(constituencies.map(async (c) => {
+            const res = await fetch(`${API_BASE_URL}/voter-demographics/constituencies/${c.id}?year=${selectedYear === 'all' ? 2022 : selectedYear}`);
+            if (res.ok) {
+              const d = await res.json();
+              const key = c.name.toLowerCase();
+              if (colorMetric === 'total') map[key] = d.total_registered_voters;
+              if (colorMetric === 'male_pct') map[key] = d.male_percentage;
+              if (colorMetric === 'female_pct') map[key] = d.female_percentage;
+              if (colorMetric === 'pwd_pct') map[key] = d.pwd_percentage;
+            }
+          }));
+          setChoroplethData(map);
+        } else if (currentLevel === 'constituency' && selectedConstituency) {
+          const map: Record<string, number> = {};
+          await Promise.all(wards.map(async (w) => {
+            const res = await fetch(`${API_BASE_URL}/voter-demographics/wards/${w.id}?year=${selectedYear === 'all' ? 2022 : selectedYear}`);
+            if (res.ok) {
+              const d = await res.json();
+              const key = w.name.toLowerCase();
+              if (colorMetric === 'total') map[key] = d.total_registered_voters;
+              if (colorMetric === 'male_pct') map[key] = d.male_percentage;
+              if (colorMetric === 'female_pct') map[key] = d.female_percentage;
+              if (colorMetric === 'pwd_pct') map[key] = d.pwd_percentage;
+            }
+          }));
+          setChoroplethData(map);
+        } else {
+          setChoroplethData(undefined);
+        }
+      } catch (e) {
+        console.error('Failed building choropleth data', e);
+        setChoroplethData(undefined);
+      }
+    };
+    build();
+  }, [colorMetric, currentLevel, counties, constituencies, wards, selectedCounty, selectedConstituency, selectedYear]);
 
   // Fetch voter demographics
   const fetchVoterDemographics = async (level: string, id: number) => {
@@ -479,6 +538,20 @@ export default function CountyExplorerEnhanced() {
             onChange={(e) => setSearchTerm(e.target.value)}
             className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           />
+          <div className="flex items-center gap-2">
+            <label className="text-sm text-gray-600">Color by</label>
+            <select
+              value={colorMetric}
+              onChange={(e) => setColorMetric(e.target.value as any)}
+              className="px-2 py-2 border border-gray-300 rounded-lg text-sm"
+            >
+              <option value="none">None</option>
+              <option value="total">Total voters</option>
+              <option value="male_pct">Male %</option>
+              <option value="female_pct">Female %</option>
+              <option value="pwd_pct">PWD %</option>
+            </select>
+          </div>
           <button
             onClick={() => setShowMap(!showMap)}
             className={`px-4 py-2 rounded-lg flex items-center gap-2 transition-colors ${
@@ -513,6 +586,7 @@ export default function CountyExplorerEnhanced() {
               constituencyId={selectedConstituency?.id}
               wardId={selectedWard?.id}
               selectedYear={selectedYear}
+              choroplethData={colorMetric==='none' ? undefined : choroplethData}
               onMarkerClick={(marker) => {
                 if (marker.type === 'county') {
                   handleCountyClick(marker.data);
@@ -532,6 +606,37 @@ export default function CountyExplorerEnhanced() {
             statistics={voterStatistics}
             loading={statisticsLoading}
           />
+          {/* Compare selector */}
+          {(currentLevel==='county' || currentLevel==='constituency') && (
+            <div className="mt-4 bg-white rounded-lg border p-3">
+              <label className="text-sm text-gray-700 mr-2">Compare with:</label>
+              <select
+                className="text-sm border rounded px-2 py-1"
+                value={compareId ?? ''}
+                onChange={async (e)=>{
+                  const val = e.target.value ? Number(e.target.value) : null;
+                  setCompareId(val);
+                  if (!val) { setCompareStats(null); return; }
+                  const endpoint = currentLevel==='county' ? 'constituencies' : 'wards';
+                  const res = await fetch(`${API_BASE_URL}/voter-demographics/${endpoint}/${val}?year=${selectedYear === 'all' ? 2022 : selectedYear}`);
+                  if (res.ok) setCompareStats(await res.json());
+                }}
+              >
+                <option value="">Select...</option>
+                {currentLevel==='county' && constituencies.map(c=> (
+                  <option key={c.id} value={c.id}>{c.name}</option>
+                ))}
+                {currentLevel==='constituency' && wards.map(w=> (
+                  <option key={w.id} value={w.id}>{w.name}</option>
+                ))}
+              </select>
+            </div>
+          )}
+          {compareStats && (
+            <div className="mt-4">
+              <VoterStatisticsPanel statistics={compareStats} loading={false} />
+            </div>
+          )}
         </div>
       </div>
 

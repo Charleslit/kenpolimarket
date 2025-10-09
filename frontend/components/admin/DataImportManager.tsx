@@ -38,7 +38,7 @@ export default function DataImportManager() {
     formData.append('election_year', selectedYear.toString());
 
     try {
-      const response = await fetch(`${API_BASE_URL}/polling-stations/import-csv`, {
+      const response = await fetch(`${API_BASE_URL}/polling_stations/import-csv`, {
         method: 'POST',
         body: formData
       });

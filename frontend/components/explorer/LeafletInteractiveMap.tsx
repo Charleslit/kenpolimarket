@@ -24,6 +24,7 @@ interface LeafletInteractiveMapProps {
   wardId?: number;
   selectedYear?: number | 'all';
   onMarkerClick?: (marker: MapMarker) => void;
+  choroplethData?: Record<string, number>; // key by lowercased feature name -> value
 }
 
 // Component to handle map updates and bounds
@@ -101,7 +102,8 @@ export default function LeafletInteractiveMap({
   constituencyId,
   wardId,
   selectedYear = 2022,
-  onMarkerClick
+  onMarkerClick,
+  choroplethData
 }: LeafletInteractiveMapProps) {
   const [markers, setMarkers] = useState<MapMarker[]>([]);
   const [loading, setLoading] = useState(true);
@@ -379,7 +381,7 @@ export default function LeafletInteractiveMap({
 
         // Fetch polling stations in ward
         const yearParam = selectedYear !== 'all' ? `&year=${selectedYear}` : '';
-        const response = await fetch(`${API_BASE_URL}/polling-stations/?ward_id=${wardId}&limit=100${yearParam}`);
+        const response = await fetch(`${API_BASE_URL}/polling_stations/?ward_id=${wardId}&limit=100${yearParam}`);
         if (!response.ok) throw new Error('Failed to fetch polling stations');
         const stations = await response.json();
         
@@ -430,6 +432,24 @@ export default function LeafletInteractiveMap({
     );
   }
 
+  // Compute color scale for choropleth (simple quintiles)
+  const getColor = (value: number, min: number, max: number) => {
+    if (max <= min) return '#edf2f7';
+    const t = (value - min) / (max - min);
+    // interpolate from light blue to dark blue
+    const c0 = [237, 242, 247];
+    const c1 = [30, 64, 175];
+    const r = Math.round(c0[0] + t * (c1[0] - c0[0]));
+    const g = Math.round(c0[1] + t * (c1[1] - c0[1]));
+    const b = Math.round(c0[2] + t * (c1[2] - c0[2]));
+    return `rgb(${r}, ${g}, ${b})`;
+  };
+
+  // Determine min/max from choropleth data
+  const values = choroplethData ? Object.values(choroplethData) : [];
+  const minVal = values.length ? Math.min(...values) : 0;
+  const maxVal = values.length ? Math.max(...values) : 1;
+
   return (
     <div className="relative">
       <MapContainer
@@ -442,6 +462,50 @@ export default function LeafletInteractiveMap({
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
+
+        {/* Optional Choropleth polygons */}
+        {choroplethData && level === 'national' && countiesGeoJSON && (
+          <GeoJSON
+            data={countiesGeoJSON}
+            style={(feature: any) => {
+              const name = (feature.properties.COUNTY_NAM || feature.properties.name || '').toLowerCase();
+              const val = choroplethData[name];
+              const fill = typeof val === 'number' ? getColor(val, minVal, maxVal) : '#f3f4f6';
+              return { color: '#ffffff', weight: 1, fillColor: fill, fillOpacity: 0.8 };
+            }}
+          />
+        )}
+        {choroplethData && level === 'county' && constituenciesGeoJSON && selectedCountyName && (
+          <GeoJSON
+            data={{
+              type: 'FeatureCollection',
+              features: constituenciesGeoJSON.features.filter((f: any) => true)
+            } as any}
+            style={(feature: any) => {
+              const name = (feature.properties.name || feature.properties.CONSTITUEN || '').toLowerCase();
+              const val = choroplethData[name];
+              const fill = typeof val === 'number' ? getColor(val, minVal, maxVal) : '#f3f4f6';
+              return { color: '#ffffff', weight: 1, fillColor: fill, fillOpacity: 0.8 };
+            }}
+          />
+        )}
+        {choroplethData && level === 'constituency' && wardsGeoJSON && selectedConstituencyName && (
+          <GeoJSON
+            data={{
+              type: 'FeatureCollection',
+              features: wardsGeoJSON.features.filter((f: any) => {
+                const cname = (f.properties.CONSTITUEN || f.properties.name || '').toLowerCase();
+                return cname === selectedConstituencyName?.toLowerCase();
+              })
+            } as any}
+            style={(feature: any) => {
+              const name = (feature.properties.WARD_NAME || feature.properties.name || '').toLowerCase();
+              const val = choroplethData[name];
+              const fill = typeof val === 'number' ? getColor(val, minVal, maxVal) : '#f3f4f6';
+              return { color: '#ffffff', weight: 1, fillColor: fill, fillOpacity: 0.8 };
+            }}
+          />
+        )}
 
         {/* Render markers */}
         {markers.map((marker) => (
@@ -482,29 +546,39 @@ export default function LeafletInteractiveMap({
           <span className="text-sm font-semibold text-gray-700">Legend</span>
         </div>
         <div className="space-y-1 text-xs">
-          {level === 'national' && (
-            <div className="flex items-center gap-2">
-              <div className="w-3 h-3 bg-blue-600 rounded-full border-2 border-white"></div>
-              <span>Counties ({markers.length})</span>
+          {choroplethData ? (
+            <div className="space-y-1">
+              <div className="flex items-center gap-2"><span className="w-3 h-3 rounded" style={{background:getColor(minVal,minVal,maxVal)}}></span><span>Low</span></div>
+              <div className="flex items-center gap-2"><span className="w-3 h-3 rounded" style={{background:getColor((minVal+maxVal)/2,minVal,maxVal)}}></span><span>Medium</span></div>
+              <div className="flex items-center gap-2"><span className="w-3 h-3 rounded" style={{background:getColor(maxVal,minVal,maxVal)}}></span><span>High</span></div>
             </div>
-          )}
-          {level === 'county' && (
-            <div className="flex items-center gap-2">
-              <div className="w-3 h-3 bg-green-600 rounded-full border-2 border-white"></div>
-              <span>Constituencies ({markers.length})</span>
-            </div>
-          )}
-          {level === 'constituency' && (
-            <div className="flex items-center gap-2">
-              <div className="w-3 h-3 bg-yellow-600 rounded-full border-2 border-white"></div>
-              <span>Wards ({markers.length})</span>
-            </div>
-          )}
-          {level === 'ward' && (
-            <div className="flex items-center gap-2">
-              <div className="w-2 h-2 bg-red-600 rounded-full border-2 border-white"></div>
-              <span>Polling Stations ({markers.length})</span>
-            </div>
+          ) : (
+            <>
+              {level === 'national' && (
+                <div className="flex items-center gap-2">
+                  <div className="w-3 h-3 bg-blue-600 rounded-full border-2 border-white"></div>
+                  <span>Counties ({markers.length})</span>
+                </div>
+              )}
+              {level === 'county' && (
+                <div className="flex items-center gap-2">
+                  <div className="w-3 h-3 bg-green-600 rounded-full border-2 border-white"></div>
+                  <span>Constituencies ({markers.length})</span>
+                </div>
+              )}
+              {level === 'constituency' && (
+                <div className="flex items-center gap-2">
+                  <div className="w-3 h-3 bg-yellow-600 rounded-full border-2 border-white"></div>
+                  <span>Wards ({markers.length})</span>
+                </div>
+              )}
+              {level === 'ward' && (
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 bg-red-600 rounded-full border-2 border-white"></div>
+                  <span>Polling Stations ({markers.length})</span>
+                </div>
+              )}
+            </>
           )}
         </div>
       </div>

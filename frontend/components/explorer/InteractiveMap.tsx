@@ -158,7 +158,7 @@ export default function InteractiveMap({
       } else if (level === 'ward' && wardId) {
         // Fetch polling stations in ward
         const yearParam = selectedYear !== 'all' ? `&year=${selectedYear}` : '';
-        const response = await fetch(`${API_BASE_URL}/polling-stations/?ward_id=${wardId}&limit=100${yearParam}`);
+        const response = await fetch(`${API_BASE_URL}/polling_stations/?ward_id=${wardId}&limit=100${yearParam}`);
         const stations = await response.json();
         
         const stationMarkers: MapMarker[] = stations.map((station: any, index: number) => ({
