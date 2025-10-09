@@ -24,6 +24,7 @@ async def get_polling_stations(
     ward_id: Optional[int] = Query(None, description="Filter by ward ID"),
     constituency_id: Optional[int] = Query(None, description="Filter by constituency ID"),
     county_id: Optional[int] = Query(None, description="Filter by county ID"),
+    year: Optional[int] = Query(None, ge=1900, le=2100, description="Election year (e.g., 2017, 2022). Accepted for forward compatibility; not used yet."),
     skip: int = Query(0, ge=0, description="Number of records to skip"),
     limit: int = Query(100, ge=1, le=1000, description="Maximum number of records to return"),
     db: Session = Depends(get_db)
@@ -108,6 +109,7 @@ async def get_polling_station_stats(
     ward_id: Optional[int] = Query(None, description="Filter by ward ID"),
     constituency_id: Optional[int] = Query(None, description="Filter by constituency ID"),
     county_id: Optional[int] = Query(None, description="Filter by county ID"),
+    year: Optional[int] = Query(None, ge=1900, le=2100, description="Election year (e.g., 2017, 2022). Accepted for forward compatibility; not used yet."),
     db: Session = Depends(get_db)
 ):
     """
@@ -153,13 +155,15 @@ async def get_polling_station_stats_alias(
     ward_id: Optional[int] = Query(None, description="Filter by ward ID"),
     constituency_id: Optional[int] = Query(None, description="Filter by constituency ID"),
     county_id: Optional[int] = Query(None, description="Filter by county ID"),
+    year: Optional[int] = Query(None, ge=1900, le=2100, description="Election year (e.g., 2017, 2022). Accepted for forward compatibility; not used yet."),
     db: Session = Depends(get_db)
 ):
-    return await get_polling_station_stats(ward_id, constituency_id, county_id, db)
+    return await get_polling_station_stats(ward_id, constituency_id, county_id, year, db)
 
 # Aggregation by county for UI
 @router.get("/by-county")
 async def get_polling_stations_by_county(
+    year: Optional[int] = Query(None, ge=1900, le=2100, description="Election year (e.g., 2017, 2022). Accepted for forward compatibility; not used yet."),
     db: Session = Depends(get_db)
 ):
     rows = (
