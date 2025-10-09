@@ -24,6 +24,7 @@ export default function CountySearch({
   placeholder = "Search counties by name, code, or region..." 
 }: CountySearchProps) {
   const [query, setQuery] = useState('');
+  const [debouncedQuery, setDebouncedQuery] = useState('');
   const [isOpen, setIsOpen] = useState(false);
   const [highlightedIndex, setHighlightedIndex] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -47,13 +48,19 @@ export default function CountySearch({
     return patternIdx === lowerPattern.length;
   };
 
+  // Debounce query for smoother UX on mobile
+  useEffect(() => {
+    const t = setTimeout(() => setDebouncedQuery(query), 200);
+    return () => clearTimeout(t);
+  }, [query]);
+
   // Filter counties
-  const filteredCounties = query.trim() === '' 
-    ? counties 
-    : counties.filter(county => 
-        fuzzyMatch(county.name, query) ||
-        fuzzyMatch(county.code, query) ||
-        (county.region && fuzzyMatch(county.region, query))
+  const filteredCounties = debouncedQuery.trim() === ''
+    ? counties
+    : counties.filter(county =>
+        fuzzyMatch(county.name, debouncedQuery) ||
+        fuzzyMatch(county.code, debouncedQuery) ||
+        (county.region && fuzzyMatch(county.region, debouncedQuery))
       );
 
   // Handle keyboard navigation
@@ -153,7 +160,7 @@ export default function CountySearch({
           }}
           onFocus={() => setIsOpen(true)}
           placeholder={placeholder}
-          className="w-full pl-10 pr-10 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className="w-full pl-10 pr-10 py-2 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           aria-label="Search counties"
           aria-autocomplete="list"
           aria-controls="county-dropdown"
@@ -207,7 +214,7 @@ export default function CountySearch({
               <button
                 key={county.code}
                 onClick={() => handleSelect(county)}
-                className={`w-full text-left px-4 py-3 hover:bg-blue-50 transition-colors border-b border-gray-100 last:border-b-0 ${
+                className={`w-full text-left px-4 py-2.5 sm:py-3 hover:bg-blue-50 transition-colors border-b border-gray-100 last:border-b-0 ${
                   index === highlightedIndex ? 'bg-blue-100' : ''
                 }`}
                 role="option"

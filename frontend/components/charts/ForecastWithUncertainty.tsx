@@ -188,10 +188,10 @@ const ForecastWithUncertainty: React.FC<ForecastWithUncertaintyProps> = ({
   return (
     <div className="space-y-6" id="county-forecast-view">
       {/* Header with Export Button */}
-      <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-6">
-        <div className="flex items-start justify-between">
+      <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-4 sm:p-6">
+        <div className="flex items-start justify-between gap-4">
           <div>
-            <h3 className="text-xl font-bold text-gray-900 mb-2">
+            <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-1 sm:mb-2">
               🔮 {electionYear} Election Forecast
             </h3>
             <p className="text-sm text-gray-600">
@@ -206,6 +206,39 @@ const ForecastWithUncertainty: React.FC<ForecastWithUncertaintyProps> = ({
           />
         </div>
       </div>
+
+      {/* Mini Summary Chips */}
+      {(() => {
+        const sorted = [...forecasts].sort((a, b) => (b.predicted_vote_share as number) - (a.predicted_vote_share as number));
+        const winner = sorted[0];
+        const runnerUp = sorted[1];
+        const leadMargin = winner && runnerUp ? Number(winner.predicted_vote_share) - Number(runnerUp.predicted_vote_share) : undefined;
+        const turnoutPct = winner ? Number(winner.predicted_turnout) : undefined;
+        const uncWidth = winner ? Number(winner.upper_bound_90) - Number(winner.lower_bound_90) : undefined;
+        const uncPlusMinus = uncWidth !== undefined ? uncWidth / 2 : undefined;
+        return (
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div className="rounded-lg border border-gray-200 bg-white p-3 sm:p-4">
+              <p className="text-xs text-gray-500">Lead margin</p>
+              <p className="text-lg sm:text-xl font-semibold text-gray-900">
+                {leadMargin !== undefined ? `${leadMargin.toFixed(1)}%` : '—'}
+              </p>
+            </div>
+            <div className="rounded-lg border border-gray-200 bg-white p-3 sm:p-4">
+              <p className="text-xs text-gray-500">Turnout (pred.)</p>
+              <p className="text-lg sm:text-xl font-semibold text-gray-900">
+                {turnoutPct !== undefined ? `${turnoutPct.toFixed(1)}%` : '—'}
+              </p>
+            </div>
+            <div className="rounded-lg border border-gray-200 bg-white p-3 sm:p-4">
+              <p className="text-xs text-gray-500">Uncertainty (±)</p>
+              <p className="text-lg sm:text-xl font-semibold text-gray-900">
+                {uncPlusMinus !== undefined ? `±${uncPlusMinus.toFixed(1)}%` : '—'}
+              </p>
+            </div>
+          </div>
+        );
+      })()}
 
       {/* Forecast Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

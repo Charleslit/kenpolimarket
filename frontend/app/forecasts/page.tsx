@@ -73,6 +73,8 @@ export default function ForecastsPage() {
   const [viewMode, setViewMode] = useState<ViewMode>('national');
   const [chartType, setChartType] = useState<ChartType>('bar');
   const [countySearchQuery, setCountySearchQuery] = useState<string>('');
+  const [pinnedCounty, setPinnedCounty] = useState<County | null>(null);
+
 
   // Fetch counties on mount
   useEffect(() => {
@@ -361,9 +363,30 @@ export default function ForecastsPage() {
 
                 {/* Forecast Chart with Tabs */}
                 <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-6 lg:col-span-5">
-                  <h2 className="text-xl font-semibold text-gray-900 mb-4">
-                    {selectedCounty ? `${selectedCounty.name} County` : 'Select a County'}
-                  </h2>
+                  <div className="mb-4 flex items-center justify-between gap-3">
+                    <h2 className="text-xl font-semibold text-gray-900">
+                      {selectedCounty ? `${selectedCounty.name} County` : 'Select a County'}
+                    </h2>
+                    {selectedCounty && (
+                      <div className="flex items-center gap-2">
+                        {pinnedCounty?.code === selectedCounty.code ? (
+                          <button
+                            onClick={() => setPinnedCounty(null)}
+                            className="inline-flex items-center px-3 py-1.5 rounded-md border text-sm border-red-200 text-red-700 hover:bg-red-50"
+                          >
+                            Unpin
+                          </button>
+                        ) : (
+                          <button
+                            onClick={() => setPinnedCounty(selectedCounty)}
+                            className="inline-flex items-center px-3 py-1.5 rounded-md border text-sm border-blue-200 text-blue-700 hover:bg-blue-50"
+                          >
+                            Pin this county
+                          </button>
+                        )}
+                      </div>
+                    )}
+                  </div>
 
                   {selectedCounty ? (
                     <div>
@@ -420,6 +443,25 @@ export default function ForecastsPage() {
                   )}
                 </div>
               </div>
+
+              {/* Pinned County (Comparison) */}
+              {pinnedCounty && (
+                <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-4 sm:p-6">
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-lg font-semibold text-gray-900">
+                      📌 Pinned: {pinnedCounty.name} County
+                    </h3>
+                    <button
+                      onClick={() => setPinnedCounty(null)}
+                      className="text-sm text-red-600 hover:text-red-700 underline"
+                    >
+                      Unpin
+                    </button>
+                  </div>
+                  <ForecastWithUncertainty countyCode={pinnedCounty.code} electionYear={2027} />
+                </div>
+              )}
+
 
               {/* County List */}
               {countySearchQuery && filteredCounties.length > 0 && (
