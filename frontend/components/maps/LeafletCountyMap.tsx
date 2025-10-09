@@ -12,6 +12,8 @@ interface County {
   registered_voters_2022: number;
 }
 
+type ColorByMode = 'turnout' | 'winner' | 'registered';
+
 interface ElectionResult {
   county_code: string;
   county_name: string;
@@ -27,19 +29,20 @@ interface LeafletCountyMapProps {
   selectedCounty: County | null;
   onCountyClick: (countyCode: string) => void;
   electionResults: ElectionResult[];
+  colorBy?: ColorByMode;
 }
 
 // Component to handle map updates
 function MapUpdater({ selectedCounty }: { selectedCounty: County | null }) {
   const map = useMap();
-  
+
   useEffect(() => {
     if (selectedCounty) {
       // You can add logic to zoom to selected county here
       map.setView([0.0236, 37.9062], 7); // Kenya center
     }
   }, [selectedCounty, map]);
-  
+
   return null;
 }
 
@@ -48,6 +51,7 @@ export default function LeafletCountyMap({
   selectedCounty,
   onCountyClick,
   electionResults,
+  colorBy = 'turnout',
 }: LeafletCountyMapProps) {
   const [geoJsonData, setGeoJsonData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -76,7 +80,7 @@ export default function LeafletCountyMap({
   const getTurnoutColor = (countyCode: string): string => {
     const result = electionResults.find(r => r.county_code === countyCode);
     if (!result) return '#e5e7eb';
-    
+
     const turnout = result.turnout_percentage;
     if (turnout >= 80) return '#1e40af';
     if (turnout >= 70) return '#3b82f6';
@@ -85,19 +89,45 @@ export default function LeafletCountyMap({
     return '#dbeafe';
   };
 
+  // Color helpers
+  const getWinnerKey = (countyCode: string): string | null => {
+    const rows = electionResults.filter(r => r.county_code === countyCode);
+    if (!rows.length) return null;
+    const top = rows.reduce((max, r) => (r.vote_percentage > max.vote_percentage ? r : max), rows[0]);
+    return top.party || top.candidate_name || null;
+  };
+  const hashToIndex = (key: string, size: number) => {
+    let h = 0;
+    for (let i = 0; i < key.length; i++) h = (h * 31 + key.charCodeAt(i)) >>> 0;
+    return h % size;
+  };
+  const categoricalPalette = ['#2563eb', '#16a34a', '#dc2626', '#7c3aed', '#ea580c', '#0891b2', '#ca8a04', '#9333ea'];
+  const getWinnerColor = (key: string | null): string => !key ? '#e5e7eb' : categoricalPalette[hashToIndex(key, categoricalPalette.length)];
+  const regValues = counties.map(c => c.registered_voters_2022).filter(v => typeof v === 'number');
+  const regMin = regValues.length ? Math.min(...regValues) : 0;
+  const regMax = regValues.length ? Math.max(...regValues) : 1;
+  const getRegisteredColor = (value: number | undefined): string => {
+    if (!value || regMax === regMin) return '#ecfdf5';
+    const t = (value - regMin) / (regMax - regMin);
+    const stops = ['#ecfdf5', '#a7f3d0', '#6ee7b7', '#34d399', '#059669'];
+    return stops[Math.max(0, Math.min(4, Math.floor(t * 5)))]
+  };
+
   // Style function for GeoJSON features
   const style = (feature: any) => {
-    const countyName = feature.properties.COUNTY_NAM ||
-                       feature.properties.name ||
-                       feature.properties.NAME;
-    const county = counties.find(c =>
-      c.name.toLowerCase() === countyName?.toLowerCase()
-    );
-
+    const countyName = feature.properties.COUNTY_NAM || feature.properties.name || feature.properties.NAME;
+    const county = counties.find(c => c.name.toLowerCase() === countyName?.toLowerCase());
     const isSelected = selectedCounty?.name.toLowerCase() === countyName?.toLowerCase();
-    
+
+    let fill = '#e5e7eb';
+    if (county) {
+      if (colorBy === 'turnout') fill = getTurnoutColor(county.code);
+      else if (colorBy === 'registered') fill = getRegisteredColor(county.registered_voters_2022);
+      else if (colorBy === 'winner') fill = getWinnerColor(getWinnerKey(county.code));
+    }
+
     return {
-      fillColor: county ? getTurnoutColor(county.code) : '#e5e7eb',
+      fillColor: fill,
       weight: isSelected ? 3 : 1,
       opacity: 1,
       color: isSelected ? '#1d4ed8' : '#9ca3af',
@@ -117,7 +147,7 @@ export default function LeafletCountyMap({
     if (!county) return;
 
     const result = electionResults.find(r => r.county_code === county.code);
-    
+
     // Popup content
     const popupContent = `
       <div class="p-2">
@@ -220,38 +250,51 @@ export default function LeafletCountyMap({
 
       {/* Legend */}
       <div className="mt-4 p-4 bg-white border border-gray-200 rounded-lg">
-        <h4 className="font-semibold text-sm mb-2">Voter Turnout %</h4>
-        <div className="flex items-center space-x-4 text-xs">
-          <div className="flex items-center">
-            <div className="w-4 h-4 bg-[#dbeafe] border border-gray-300 mr-1"></div>
-            <span>&lt;50%</span>
-          </div>
-          <div className="flex items-center">
-            <div className="w-4 h-4 bg-[#93c5fd] border border-gray-300 mr-1"></div>
-            <span>50-60%</span>
-          </div>
-          <div className="flex items-center">
-            <div className="w-4 h-4 bg-[#60a5fa] border border-gray-300 mr-1"></div>
-            <span>60-70%</span>
-          </div>
-          <div className="flex items-center">
-            <div className="w-4 h-4 bg-[#3b82f6] border border-gray-300 mr-1"></div>
-            <span>70-80%</span>
-          </div>
-          <div className="flex items-center">
-            <div className="w-4 h-4 bg-[#1e40af] border border-gray-300 mr-1"></div>
-            <span>&gt;80%</span>
-          </div>
-        </div>
+        {colorBy === 'turnout' && (
+          <>
+            <h4 className="font-semibold text-sm mb-2">Voter Turnout %</h4>
+            <div className="flex items-center space-x-4 text-xs">
+              <div className="flex items-center"><div className="w-4 h-4 bg-[#dbeafe] border mr-1"></div><span>&lt;50%</span></div>
+              <div className="flex items-center"><div className="w-4 h-4 bg-[#93c5fd] border mr-1"></div><span>50-60%</span></div>
+              <div className="flex items-center"><div className="w-4 h-4 bg-[#60a5fa] border mr-1"></div><span>60-70%</span></div>
+              <div className="flex items-center"><div className="w-4 h-4 bg-[#3b82f6] border mr-1"></div><span>70-80%</span></div>
+              <div className="flex items-center"><div className="w-4 h-4 bg-[#1e40af] border mr-1"></div><span>&gt;80%</span></div>
+            </div>
+          </>
+        )}
+        {colorBy === 'registered' && (
+          <>
+            <h4 className="font-semibold text-sm mb-2">Registered Voters (relative)</h4>
+            <div className="flex items-center space-x-4 text-xs">
+              <div className="flex items-center"><div className="w-4 h-4 bg-[#ecfdf5] border mr-1"></div><span>Low</span></div>
+              <div className="flex items-center"><div className="w-4 h-4 bg-[#a7f3d0] border mr-1"></div><span> </span></div>
+              <div className="flex items-center"><div className="w-4 h-4 bg-[#6ee7b7] border mr-1"></div><span> </span></div>
+              <div className="flex items-center"><div className="w-4 h-4 bg-[#34d399] border mr-1"></div><span> </span></div>
+              <div className="flex items-center"><div className="w-4 h-4 bg-[#059669] border mr-1"></div><span>High</span></div>
+            </div>
+          </>
+        )}
+        {colorBy === 'winner' && (
+          <>
+            <h4 className="font-semibold text-sm mb-2">Projected Winner</h4>
+            <div className="flex flex-wrap gap-3 text-xs">
+              {Array.from(new Set(counties.map(c => getWinnerKey(c.code)).filter(Boolean) as string[])).slice(0, 6).map(key => (
+                <div key={key} className="flex items-center">
+                  <div className="w-4 h-4 mr-1" style={{ backgroundColor: getWinnerColor(key), border: '1px solid rgba(0,0,0,0.2)' }} />
+                  <span className="truncate max-w-[120px]" title={key}>{key}</span>
+                </div>
+              ))}
+            </div>
+          </>
+        )}
       </div>
 
       {/* Info Box */}
       <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-        <p className="text-sm text-blue-800">
-          <strong>📍 Interactive County Map of Kenya</strong>
-        </p>
+        <p className="text-sm text-blue-800"><strong>📍 Interactive County Map of Kenya</strong></p>
         <p className="text-xs text-blue-600 mt-1">
-          Click on any county to view detailed forecast data. Hover for quick info. Colors represent voter turnout percentage. Map is locked to Kenya's boundaries.
+          Click a county for details. Hover for quick info. Colors represent {colorBy === 'turnout' ? 'voter turnout percentage' : colorBy === 'registered' ? 'registered voters (relative scale)' : 'projected winner'}.
+          Map is locked to Kenya's boundaries.
         </p>
       </div>
     </div>

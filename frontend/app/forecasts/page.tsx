@@ -75,6 +75,7 @@ export default function ForecastsPage() {
   const [viewMode, setViewMode] = useState<ViewMode>('national');
   const [pinnedCounty, setPinnedCounty] = useState<County | null>(null);
   const [selectedRegion, setSelectedRegion] = useState<string | null>(null);
+  const [colorBy, setColorBy] = useState<'turnout' | 'winner' | 'registered'>('turnout');
 
   const router = useRouter();
   const pathname = usePathname();
@@ -114,6 +115,43 @@ export default function ForecastsPage() {
       // ignore
     }
   }, [selectedRegion, router, pathname]);
+
+  // Initialize selectedCounty from URL or localStorage when counties are loaded
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    if (!counties.length) return;
+    try {
+      const sp = new URLSearchParams(window.location.search);
+      const countyParam = sp.get('county') || localStorage.getItem('selectedCountyCode');
+      if (countyParam) {
+        const c = counties.find(x => x.code === countyParam);
+        if (c) setSelectedCounty(c);
+      }
+    } catch (e) {
+      // ignore
+    }
+  }, [counties]);
+
+  // Persist selectedCounty to URL and localStorage
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    try {
+      const sp = new URLSearchParams(window.location.search);
+      if (selectedCounty) {
+        sp.set('county', selectedCounty.code);
+        const q = sp.toString();
+        router.replace(`${pathname}?${q}`, { scroll: false });
+        localStorage.setItem('selectedCountyCode', selectedCounty.code);
+      } else {
+        sp.delete('county');
+        const q = sp.toString();
+        router.replace(q ? `${pathname}?${q}` : pathname, { scroll: false });
+        localStorage.removeItem('selectedCountyCode');
+      }
+    } catch (e) {
+      // ignore
+    }
+  }, [selectedCounty, router, pathname]);
 
   // Fetch counties on mount
   useEffect(() => {
@@ -435,7 +473,7 @@ export default function ForecastsPage() {
 
               {/* Region Summary Chips */}
               {selectedRegion && regionCounties.length > 0 && (
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                   <div className="rounded-lg border border-gray-200 bg-white p-3 sm:p-4">
                     <p className="text-xs text-gray-500">Total registered voters</p>
                     <p className="text-lg sm:text-xl font-semibold text-gray-900">
@@ -448,6 +486,12 @@ export default function ForecastsPage() {
                       {avgTurnoutInRegion !== null ? `${avgTurnoutInRegion.toFixed(1)}%` : '—'}
                     </p>
                   </div>
+                  <div className="rounded-lg border border-gray-200 bg-white p-3 sm:p-4">
+                    <p className="text-xs text-gray-500">Counties in region</p>
+                    <p className="text-lg sm:text-xl font-semibold text-gray-900">
+                      {regionCounties.length}
+                    </p>
+                  </div>
                 </div>
               )}
 
@@ -456,15 +500,30 @@ export default function ForecastsPage() {
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
                 {/* County Map */}
                 <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-6 lg:col-span-7">
-                  <h2 className="text-xl font-semibold text-gray-900 mb-4 flex items-center">
-                    <span className="mr-2">🗺️</span>
-                    Interactive County Map
-                  </h2>
+                  <div className="mb-4 flex items-center justify-between gap-3">
+                    <h2 className="text-xl font-semibold text-gray-900 flex items-center">
+                      <span className="mr-2">🗺️</span>
+                      Interactive County Map
+                    </h2>
+                    <div className="inline-flex bg-gray-100 rounded-md p-0.5 text-xs">
+                      {(['turnout','winner','registered'] as const).map(mode => (
+                        <button
+                          key={mode}
+                          onClick={() => setColorBy(mode)}
+                          className={`px-2.5 py-1 rounded ${colorBy === mode ? 'bg-white shadow text-gray-900' : 'text-gray-600 hover:text-gray-900'}`}
+                          aria-pressed={colorBy === mode}
+                        >
+                          {mode === 'turnout' ? 'Turnout' : mode === 'winner' ? 'Winner' : 'Registered'}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
                   <LeafletCountyMap
                     counties={filteredCounties}
                     selectedCounty={selectedCounty}
                     onCountyClick={handleCountyClick}
                     electionResults={electionResults}
+                    colorBy={colorBy}
                   />
                 </div>
 
