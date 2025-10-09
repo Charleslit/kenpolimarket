@@ -146,7 +146,7 @@ export default function TestExportsPage() {
           </div>
 
           <div className="mt-6 pt-4 border-t border-gray-200 text-center text-sm text-gray-500">
-            <p>🇰🇪 KenPoliMarket - Kenya Political Forecasting Platform</p>
+            <p>🇰🇪 BlockcertAfrica - Kenya Political Forecasting Platform</p>
             <p className="text-xs mt-1">Data Source: IEBC Official Results</p>
           </div>
         </div>

@@ -136,7 +136,7 @@ export default function AdminPage() {
             <div>
               <h1 className="text-4xl font-extrabold text-white flex items-center">
                 <span className="mr-3">🇰🇪</span>
-                KenPoliMarket
+                BlockcertAfrica
                 <span className="ml-3 px-3 py-1 bg-white bg-opacity-20 rounded-full text-sm font-medium">
                   Admin Tools
                 </span>

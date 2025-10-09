@@ -9,8 +9,8 @@ interface ShareButtonProps {
 }
 
 export default function ShareButton({ 
-  title = "KenPoliMarket Forecast",
-  text = "Check out this election forecast on KenPoliMarket",
+  title = "BlockcertAfrica Forecast",
+  text = "Check out this election forecast on BlockcertAfrica",
   url
 }: ShareButtonProps) {
   const [isOpen, setIsOpen] = useState(false);

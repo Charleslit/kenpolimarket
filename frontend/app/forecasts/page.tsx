@@ -184,7 +184,7 @@ export default function ForecastsPage() {
             <div>
               <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white flex items-center flex-wrap">
                 <span className="mr-2 sm:mr-3">🇰🇪</span>
-                KenPoliMarket
+                BlockcertAfrica
                 <span className="ml-2 sm:ml-3 px-2 sm:px-3 py-1 bg-white bg-opacity-20 rounded-full text-xs sm:text-sm font-medium">
                   2027
                 </span>
@@ -197,8 +197,8 @@ export default function ForecastsPage() {
                                 </p>            </div>
             <div className="hidden lg:flex items-center space-x-4">
               <ShareButton
-                title={`KenPoliMarket - ${selectedCounty ? selectedCounty.name : 'National'} Forecast`}
-                text={`Check out the ${selectedCounty ? selectedCounty.name : 'national'} election forecast on KenPoliMarket`}
+                title={`BlockcertAfrica - ${selectedCounty ? selectedCounty.name : 'National'} Forecast`}
+                text={`Check out the ${selectedCounty ? selectedCounty.name : 'national'} election forecast on BlockcertAfrica`}
               />
               <a
                 href="/admin"

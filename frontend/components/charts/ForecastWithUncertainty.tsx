@@ -411,7 +411,7 @@ const ForecastWithUncertainty: React.FC<ForecastWithUncertaintyProps> = ({
           <span className="font-semibold">Based on:</span> Official IEBC data from 2022
         </p>
         <p className="text-xs text-gray-500 mt-2 italic">
-          KenPoliMarket | Electoral Forecasting & Political Analysis
+          BlockcertAfrica | Electoral Forecasting & Political Analysis
         </p>
       </div>
     </div>

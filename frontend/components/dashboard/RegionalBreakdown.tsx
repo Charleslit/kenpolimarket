@@ -348,7 +348,7 @@ export default function RegionalBreakdown() {
         {/* Attribution */}
         <div className="mt-4 p-3 bg-gray-50 border border-gray-200 rounded-lg">
           <p className="text-xs text-gray-500 italic text-center">
-            KenPoliMarket | Electoral Forecasting & Political Analysis
+            BlockcertAfrica | Electoral Forecasting & Political Analysis
           </p>
         </div>
       </div>

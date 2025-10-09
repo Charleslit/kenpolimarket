@@ -108,7 +108,7 @@ export default function PWAInstallPrompt() {
           </div>
           
           <div className="flex-1 min-w-0">
-            <h3 className="font-bold text-lg mb-1">Install KenPoliMarket</h3>
+            <h3 className="font-bold text-lg mb-1">Install BlockcertAfrica</h3>
             <p className="text-sm text-blue-100 mb-3">
               Get instant access to election forecasts, even offline!
             </p>
