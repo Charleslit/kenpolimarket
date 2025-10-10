@@ -4,6 +4,7 @@ Endpoints for accessing election forecasts
 """
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session, joinedload
+from sqlalchemy import or_, and_
 from typing import List, Optional
 from datetime import datetime
 
@@ -27,6 +28,9 @@ async def list_forecast_runs(
     skip: int = 0,
     limit: int = 100,
     election_year: Optional[int] = None,
+    election_type: Optional[str] = None,
+    visibility: Optional[str] = Query(None, description="Comma-separated: draft,published,archived"),
+    official_only: Optional[bool] = Query(None, description="If true, only official runs"),
     db: Session = Depends(get_db)
 ):
     """
@@ -39,8 +43,23 @@ async def list_forecast_runs(
     """
     query = db.query(ForecastRun).options(joinedload(ForecastRun.election))
 
-    if election_year:
-        query = query.join(Election).filter(Election.year == election_year)
+    if election_year or election_type:
+        query = query.join(Election)
+        if election_year:
+            query = query.filter(Election.year == election_year)
+        if election_type:
+            query = query.filter(Election.election_type == election_type)
+
+    # Visibility / official filtering
+    if official_only:
+        query = query.filter(ForecastRun.is_official == True)
+    elif visibility:
+        vis_list = [v.strip() for v in visibility.split(',') if v.strip()]
+        if vis_list:
+            query = query.filter(ForecastRun.visibility.in_(vis_list))
+    else:
+        # Default public: published or official
+        query = query.filter(or_(ForecastRun.is_official == True, ForecastRun.visibility == 'published'))
 
     forecast_runs = query.order_by(ForecastRun.run_timestamp.desc()).offset(skip).limit(limit).all()
 
@@ -50,25 +69,34 @@ async def list_forecast_runs(
 @router.get("/latest", response_model=ForecastRunSchema)
 async def get_latest_forecast(
     election_year: Optional[int] = Query(2027, description="Election year to get forecast for"),
+    election_type: Optional[str] = Query(None, description="Election type filter, e.g., 'Governor'"),
+    official: bool = Query(True, description="Prefer official baseline if available"),
     db: Session = Depends(get_db)
 ):
     """
-    Get the most recent forecast run for a specific election year
+    Get the default forecast run for a specific election year/type.
+    Default behavior returns the official baseline if available; otherwise latest published;
+    otherwise falls back to any latest run.
     """
-    query = db.query(ForecastRun).options(joinedload(ForecastRun.election))
-
+    base_q = db.query(ForecastRun).options(joinedload(ForecastRun.election)).join(Election)
     if election_year:
-        query = query.join(Election).filter(Election.year == election_year)
+        base_q = base_q.filter(Election.year == election_year)
+    if election_type:
+        base_q = base_q.filter(Election.election_type == election_type)
 
-    forecast_run = query.order_by(ForecastRun.run_timestamp.desc()).first()
-
-    if not forecast_run:
-        raise HTTPException(
-            status_code=404,
-            detail=f"No forecast found for election year {election_year}"
-        )
-
-    return forecast_run
+    if official:
+        fr = base_q.filter(ForecastRun.is_official == True).order_by(ForecastRun.run_timestamp.desc()).first()
+        if fr:
+            return fr
+    # fallback to published
+    fr = base_q.filter(ForecastRun.visibility == 'published').order_by(ForecastRun.run_timestamp.desc()).first()
+    if fr:
+        return fr
+    # final fallback to any run
+    fr = base_q.order_by(ForecastRun.run_timestamp.desc()).first()
+    if not fr:
+        raise HTTPException(status_code=404, detail=f"No forecast found for election year {election_year}")
+    return fr
 
 
 @router.get("/{forecast_run_id}", response_model=ForecastRunDetailSchema)
@@ -129,16 +157,24 @@ async def get_county_latest_forecast(
     county_code: str,
     election_year: int = Query(2027, description="Election year"),
     election_type: str | None = Query(None, description="Election type filter, e.g., 'Governor'"),
+    official: bool = Query(True, description="Prefer official baseline if available"),
     db: Session = Depends(get_db)
 ):
     """
     Get the latest forecast for a specific county
     """
-    # First, get the latest forecast run for the election year (optionally filtered by type)
+    # First, get the default forecast run for the election year (optionally filtered by type)
     q = db.query(ForecastRun).join(Election).filter(Election.year == election_year)
     if election_type:
         q = q.filter(Election.election_type == election_type)
-    latest_run = q.order_by(ForecastRun.run_timestamp.desc()).first()
+    if official:
+        latest_run = q.filter(ForecastRun.is_official == True).order_by(ForecastRun.run_timestamp.desc()).first()
+        if not latest_run:
+            latest_run = q.filter(ForecastRun.visibility == 'published').order_by(ForecastRun.run_timestamp.desc()).first()
+    else:
+        latest_run = q.filter(ForecastRun.visibility == 'published').order_by(ForecastRun.run_timestamp.desc()).first()
+    if not latest_run:
+        latest_run = q.order_by(ForecastRun.run_timestamp.desc()).first()
 
     if not latest_run:
         raise HTTPException(
@@ -168,16 +204,24 @@ async def get_county_latest_forecast(
 async def get_national_forecast_summary(
     election_year: int = Query(2027, description="Election year"),
     election_type: str | None = Query(None, description="Election type filter, e.g., 'Governor'"),
+    official: bool = Query(True, description="Prefer official baseline if available"),
     db: Session = Depends(get_db)
 ):
     """
     Get national-level forecast summary (aggregated from county forecasts)
     """
-    # Get latest forecast run (optionally filtered by type)
+    # Get default forecast run (optionally filtered by type)
     q = db.query(ForecastRun).join(Election).filter(Election.year == election_year)
     if election_type:
         q = q.filter(Election.election_type == election_type)
-    latest_run = q.order_by(ForecastRun.run_timestamp.desc()).first()
+    if official:
+        latest_run = q.filter(ForecastRun.is_official == True).order_by(ForecastRun.run_timestamp.desc()).first()
+        if not latest_run:
+            latest_run = q.filter(ForecastRun.visibility == 'published').order_by(ForecastRun.run_timestamp.desc()).first()
+    else:
+        latest_run = q.filter(ForecastRun.visibility == 'published').order_by(ForecastRun.run_timestamp.desc()).first()
+    if not latest_run:
+        latest_run = q.order_by(ForecastRun.run_timestamp.desc()).first()
 
     if not latest_run:
         raise HTTPException(
@@ -336,7 +380,9 @@ async def seed_county_scenario(
             "registered_voters": payload.registered_voters,
             "candidates": [{"name": c.name, "party": c.party, "votes": c.votes, "predicted_vote_share": c.predicted_vote_share} for c in payload.candidates]
         }),
-        status="completed"
+        status="completed",
+        visibility="draft",
+        is_official=False
     )
     db.add(run)
     db.commit()
@@ -447,7 +493,9 @@ async def seed_multi_county_run(
         model_version="1.0",
         election_id=election.id,
         parameters=json.dumps(parameters_obj),
-        status="completed"
+        status="completed",
+        visibility="draft",
+        is_official=False
     )
     db.add(run)
     db.commit()
@@ -459,6 +507,8 @@ async def seed_multi_county_run(
     # 3) For each county payload, insert forecasts
     position = payload.election_type.lower()
     for county_payload in payload.counties:
+
+
         county = db.query(County).filter(County.code == county_payload.county_code).first()
         if not county:
             # skip silently to allow partials, but you could also raise
@@ -530,3 +580,62 @@ async def seed_multi_county_run(
         "counties_included": created_counties,
         "rows_created": total_inserted_rows,
     }
+
+
+# ------------------------------
+# Admin: publish/unpublish/official/archive
+# ------------------------------
+@router.patch("/{forecast_run_id}/publish")
+async def publish_run(forecast_run_id: str, db: Session = Depends(get_db)):
+    run = db.query(ForecastRun).filter(ForecastRun.id == forecast_run_id).first()
+    if not run:
+        raise HTTPException(status_code=404, detail="Run not found")
+    run.visibility = 'published'
+    run.published_at = datetime.utcnow()
+    db.commit()
+    db.refresh(run)
+    return {"id": str(run.id), "visibility": run.visibility, "published_at": run.published_at}
+
+@router.patch("/{forecast_run_id}/unpublish")
+async def unpublish_run(forecast_run_id: str, db: Session = Depends(get_db)):
+    run = db.query(ForecastRun).filter(ForecastRun.id == forecast_run_id).first()
+    if not run:
+        raise HTTPException(status_code=404, detail="Run not found")
+    run.visibility = 'draft'
+    run.published_at = None
+    if run.is_official:
+        run.is_official = False
+    db.commit()
+    db.refresh(run)
+    return {"id": str(run.id), "visibility": run.visibility, "is_official": run.is_official}
+
+@router.patch("/{forecast_run_id}/official")
+async def set_official_run(forecast_run_id: str, db: Session = Depends(get_db)):
+    run = db.query(ForecastRun).options(joinedload(ForecastRun.election)).filter(ForecastRun.id == forecast_run_id).first()
+    if not run:
+        raise HTTPException(status_code=404, detail="Run not found")
+    # Unset other officials for this election
+    db.query(ForecastRun).filter(
+        ForecastRun.election_id == run.election_id,
+        ForecastRun.is_official == True
+    ).update({ForecastRun.is_official: False})
+    # Ensure published visibility
+    run.is_official = True
+    run.visibility = 'published'
+    if not run.published_at:
+        run.published_at = datetime.utcnow()
+    db.commit()
+    db.refresh(run)
+    return {"id": str(run.id), "is_official": run.is_official, "visibility": run.visibility}
+
+@router.patch("/{forecast_run_id}/archive")
+async def archive_run(forecast_run_id: str, db: Session = Depends(get_db)):
+    run = db.query(ForecastRun).filter(ForecastRun.id == forecast_run_id).first()
+    if not run:
+        raise HTTPException(status_code=404, detail="Run not found")
+    run.visibility = 'archived'
+    if run.is_official:
+        run.is_official = False
+    db.commit()
+    db.refresh(run)
+    return {"id": str(run.id), "visibility": run.visibility, "is_official": run.is_official}

@@ -3,7 +3,7 @@ SQLAlchemy ORM Models for KenPoliMarket
 Maps to the PostgreSQL database schema
 """
 
-from sqlalchemy import Column, Integer, String, Float, DateTime, Date, ForeignKey, Text, Numeric, CheckConstraint
+from sqlalchemy import Column, Integer, String, Float, DateTime, Date, ForeignKey, Text, Numeric, CheckConstraint, Boolean
 from sqlalchemy.dialects.postgresql import UUID as PGUUID
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
@@ -392,6 +392,10 @@ class ForecastRun(Base):
     parameters = Column(Text)  # JSONB in PostgreSQL
     data_cutoff_date = Column(Date)
     status = Column(String(50), default='running')
+    # New: visibility and official flags
+    visibility = Column(String(20), nullable=False, default='draft')  # 'draft' | 'published' | 'archived'
+    is_official = Column(Boolean, nullable=False, default=False)
+    published_at = Column(DateTime, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
 
     # Relationships
@@ -399,7 +403,7 @@ class ForecastRun(Base):
     county_forecasts = relationship("ForecastCounty", back_populates="forecast_run")
 
     def __repr__(self):
-        return f"<ForecastRun(id='{self.id}', model='{self.model_name}')>"
+        return f"<ForecastRun(id='{self.id}', model='{self.model_name}', visibility='{self.visibility}', official={self.is_official})>"
 
 
 class ForecastCounty(Base):

@@ -105,13 +105,18 @@ export default function ForecastsPage() {
     }
   }, []);
 
-  // Initialize selected forecast run from URL (once on mount)
+  // Initialize selected forecast run from URL or localStorage (once on mount)
   useEffect(() => {
     if (typeof window === 'undefined') return;
     try {
       const sp = new URLSearchParams(window.location.search);
       const runParam = sp.get('run_id');
-      if (runParam) setSelectedRunId(runParam);
+      const stored = localStorage.getItem('selectedRunId');
+      if (runParam) {
+        setSelectedRunId(runParam);
+      } else if (stored) {
+        setSelectedRunId(stored);
+      }
     } catch {}
   }, []);
 
@@ -173,15 +178,17 @@ export default function ForecastsPage() {
     }
   }, [selectedCounty, router, pathname]);
 
-  // Persist selectedRunId in URL (deep-linkable)
+  // Persist selectedRunId in URL (deep-linkable) and localStorage
   useEffect(() => {
     if (typeof window === 'undefined') return;
     try {
       const sp = new URLSearchParams(window.location.search);
       if (selectedRunId) {
         sp.set('run_id', selectedRunId);
+        localStorage.setItem('selectedRunId', selectedRunId);
       } else {
         sp.delete('run_id');
+        localStorage.removeItem('selectedRunId');
       }
       const q = sp.toString();
       router.replace(q ? `${pathname}?${q}` : pathname, { scroll: false });
@@ -194,6 +201,7 @@ export default function ForecastsPage() {
       if (!selectedElection) return;
       try {
         const res = await fetch(`${API_BASE_URL}/forecasts/?election_year=${selectedElection.year}`);
+
         if (!res.ok) return;
         const items = await res.json();
         setRuns(items || []);
@@ -217,6 +225,8 @@ export default function ForecastsPage() {
         const byCounty: Record<string, { winner: string | null; turnout: number | null; maxShare: number }>= {};
         for (const r of rows) {
           const code = r.county?.code || r.county_code;
+
+
           const share = Number(r.predicted_vote_share ?? 0);
           const candName = r.candidate?.name || r.candidate_name || '';
           const turnout = r.predicted_turnout != null ? Number(r.predicted_turnout) : null;
@@ -258,7 +268,7 @@ export default function ForecastsPage() {
         return;
       }
       try {
-        const latestRes = await fetch(`${API_BASE_URL}/forecasts/latest?election_year=${selectedElection.year}`);
+        const latestRes = await fetch(`${API_BASE_URL}/forecasts/latest?election_year=${selectedElection.year}&official=true`);
         if (!latestRes.ok) return;
         const latestRun = await latestRes.json();
         if (!latestRun?.id) return;
@@ -619,7 +629,7 @@ export default function ForecastsPage() {
                       value={selectedRunId || ''}
                       onChange={(e) => setSelectedRunId(e.target.value || null)}
                     >
-                      <option value="">Latest (Default)</option>
+                      <option value="">Official baseline (Default)</option>
                       {runs.map((run: any) => (
                         <option key={run.id} value={run.id}>
                           {(run.model_name || run.name || 'Scenario')}

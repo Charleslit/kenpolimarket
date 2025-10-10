@@ -260,12 +260,44 @@ export default function CountyScenarioCalculator() {
           Open Forecasts
         </a>
         {lastRunId && (
-          <a
-            href={`/forecasts?county=45&run_id=${lastRunId}`}
-            className="px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-          >
-            Open This Projection
-          </a>
+          <>
+            <a
+              href={`/forecasts?county=45&run_id=${lastRunId}`}
+              className="px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              Open This Projection
+            </a>
+            <div className="w-full mt-2 text-sm">
+              <div className="text-gray-600 mb-2">This scenario was saved as a Draft run. You can publish or set it as Official:</div>
+              <div className="flex gap-2">
+                <button
+                  onClick={async () => {
+                    try {
+                      const r = await fetch(`${API_BASE_URL}/forecasts/${lastRunId}/publish`, { method: 'PATCH' });
+                      if (!r.ok) throw new Error('Failed to publish');
+                      alert('Published! Visible to all users in selector.');
+                    } catch (e) { alert((e as Error).message); }
+                  }}
+                  className="px-3 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                >
+                  Publish Scenario
+                </button>
+                <button
+                  onClick={async () => {
+                    if (!confirm('Set this run as the Official baseline for all users?')) return;
+                    try {
+                      const r = await fetch(`${API_BASE_URL}/forecasts/${lastRunId}/official`, { method: 'PATCH' });
+                      if (!r.ok) throw new Error('Failed to set official');
+                      alert('Set as Official baseline!');
+                    } catch (e) { alert((e as Error).message); }
+                  }}
+                  className="px-3 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+                >
+                  Set as Official Baseline
+                </button>
+              </div>
+            </div>
+          </>
         )}
       </div>
     </div>

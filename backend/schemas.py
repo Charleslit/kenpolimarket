@@ -310,6 +310,10 @@ class ForecastRunSchema(BaseModel):
     run_timestamp: datetime
     data_cutoff_date: Optional[datetime] = None
     status: Optional[str] = None
+    visibility: str = 'draft'
+    is_official: bool = False
+    published_at: Optional[datetime] = None
+    parameters: Optional[str] = None
 
     # Nested relationships
     election: Optional[ElectionBaseSchema] = None
@@ -355,6 +359,10 @@ class ForecastRunDetailSchema(BaseModel):
     run_timestamp: datetime
     data_cutoff_date: Optional[datetime] = None
     status: Optional[str] = None
+    visibility: str = 'draft'
+    is_official: bool = False
+    published_at: Optional[datetime] = None
+    parameters: Optional[str] = None
 
     # Nested relationships
     election: Optional[ElectionBaseSchema] = None
