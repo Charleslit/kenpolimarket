@@ -239,8 +239,9 @@ async def get_national_forecast_summary(
 # ------------------------------
 class CountyScenarioCandidate(BaseModel):
     name: str
-    party: str
-    votes: int
+    party: Optional[str] = None
+    votes: Optional[int] = None
+    predicted_vote_share: Optional[float] = None
 
 class CountyScenarioRequest(BaseModel):
     county_code: str = Field(..., description="County code, e.g., '45' for Kisii")
@@ -272,6 +273,7 @@ async def seed_county_scenario(
         election = Election(
             year=payload.election_year,
             election_type=payload.election_type,
+            election_date=datetime(payload.election_year, 8, 8),
             description=f"{payload.election_type} Election {payload.election_year}"
         )
         db.add(election)
@@ -285,12 +287,22 @@ async def seed_county_scenario(
 
     # 3) Compute totals and shares
     total_votes = max(0, int(round(payload.registered_voters * (payload.turnout / 100.0))))
-    provided_votes = sum(c.votes for c in payload.candidates)
-    if provided_votes <= 0:
-        raise HTTPException(status_code=400, detail="Sum of candidate votes must be > 0")
 
-    # Normalize to turnout total to respect requested turnout
-    scale = (total_votes / provided_votes) if provided_votes > 0 else 0
+    # Determine if payload uses vote shares or raw votes
+    uses_shares = all((c.predicted_vote_share is not None) for c in payload.candidates)
+
+    if uses_shares:
+        # Validate shares are non-negative
+        if all((c.predicted_vote_share or 0) >= 0 for c in payload.candidates):
+            scale = 1.0
+        else:
+            raise HTTPException(status_code=400, detail="predicted_vote_share must be >= 0")
+    else:
+        provided_votes = sum((c.votes or 0) for c in payload.candidates)
+        if provided_votes <= 0:
+            raise HTTPException(status_code=400, detail="Sum of candidate votes must be > 0")
+        # Normalize to turnout total to respect requested turnout
+        scale = (total_votes / provided_votes) if provided_votes > 0 else 0
 
     # 4) Create or fetch candidates
     created_candidates = {}
@@ -322,7 +334,7 @@ async def seed_county_scenario(
             "county_code": payload.county_code,
             "turnout": payload.turnout,
             "registered_voters": payload.registered_voters,
-            "candidates": [{"name": c.name, "party": c.party, "votes": c.votes} for c in payload.candidates]
+            "candidates": [{"name": c.name, "party": c.party, "votes": c.votes, "predicted_vote_share": c.predicted_vote_share} for c in payload.candidates]
         }),
         status="completed"
     )
@@ -333,8 +345,12 @@ async def seed_county_scenario(
     # 6) Insert county forecasts
     created_forecasts = []
     for c in payload.candidates:
-        scaled_votes = int(round(c.votes * scale))
-        share = (scaled_votes / total_votes * 100.0) if total_votes > 0 else 0.0
+        if uses_shares and c.predicted_vote_share is not None:
+            share = float(c.predicted_vote_share)
+            scaled_votes = int(round(total_votes * (share / 100.0)))
+        else:
+            scaled_votes = int(round((c.votes or 0) * scale))
+            share = (scaled_votes / total_votes * 100.0) if total_votes > 0 else 0.0
         fc = ForecastCounty(
             forecast_run_id=run.id,
             county_id=county.id,
@@ -375,8 +391,9 @@ async def seed_county_scenario(
 # ------------------------------
 class MultiCountyCandidate(BaseModel):
     name: str
-    party: str
-    votes: int
+    party: Optional[str] = None
+    votes: Optional[int] = None
+    predicted_vote_share: Optional[float] = None
 
 class MultiCountyCountyPayload(BaseModel):
     county_code: str = Field(..., description="County code, e.g., '45' for Kisii")
@@ -412,6 +429,7 @@ async def seed_multi_county_run(
         election = Election(
             year=payload.election_year,
             election_type=payload.election_type,
+            election_date=datetime(payload.election_year, 8, 8),
             description=f"{payload.election_type} Election {payload.election_year}"
         )
         db.add(election)
@@ -447,10 +465,16 @@ async def seed_multi_county_run(
             continue
 
         total_votes = max(0, int(round(county_payload.registered_voters * (county_payload.turnout / 100.0))))
-        provided_votes = sum(c.votes for c in county_payload.candidates)
-        if provided_votes <= 0 or total_votes <= 0:
-            continue
-        scale = (total_votes / provided_votes)
+        uses_shares = all((c.predicted_vote_share is not None) for c in county_payload.candidates)
+        if not uses_shares:
+            provided_votes = sum((c.votes or 0) for c in county_payload.candidates)
+            if provided_votes <= 0 or total_votes <= 0:
+                continue
+            scale = (total_votes / provided_votes)
+        else:
+            if total_votes <= 0:
+                continue
+            scale = 1.0
 
         # ensure candidates exist for this election
         candidate_map = {}
@@ -474,8 +498,12 @@ async def seed_multi_county_run(
 
         # insert ForecastCounty rows per candidate
         for c in county_payload.candidates:
-            scaled_votes = int(round(c.votes * scale))
-            share = (scaled_votes / total_votes * 100.0) if total_votes > 0 else 0.0
+            if uses_shares and c.predicted_vote_share is not None:
+                share = float(c.predicted_vote_share)
+                scaled_votes = int(round(total_votes * (share / 100.0)))
+            else:
+                scaled_votes = int(round((c.votes or 0) * scale))
+                share = (scaled_votes / total_votes * 100.0) if total_votes > 0 else 0.0
             fc = ForecastCounty(
                 forecast_run_id=run.id,
                 county_id=county.id,
