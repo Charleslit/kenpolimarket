@@ -313,7 +313,7 @@ class ForecastRunSchema(BaseModel):
     visibility: str = 'draft'
     is_official: bool = False
     published_at: Optional[datetime] = None
-    parameters: Optional[str] = None
+    parameters: Optional[dict] = None
 
     # Nested relationships
     election: Optional[ElectionBaseSchema] = None
@@ -362,7 +362,7 @@ class ForecastRunDetailSchema(BaseModel):
     visibility: str = 'draft'
     is_official: bool = False
     published_at: Optional[datetime] = None
-    parameters: Optional[str] = None
+    parameters: Optional[dict] = None
 
     # Nested relationships
     election: Optional[ElectionBaseSchema] = None
