@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useForecastRun } from '@/contexts/ForecastRunContext';
 import { usePathname, useRouter } from 'next/navigation';
 import dynamic from 'next/dynamic';
 import ForecastChart from '@/components/charts/ForecastChart';
@@ -76,13 +77,11 @@ export default function ForecastsPage() {
   const [pinnedCounty, setPinnedCounty] = useState<County | null>(null);
   const [selectedRegion, setSelectedRegion] = useState<string | null>(null);
   const [colorBy, setColorBy] = useState<'turnout' | 'winner' | 'registered'>('turnout');
-  // Forecast run context
-  const [runs, setRuns] = useState<any[]>([]);
-  const [selectedRunId, setSelectedRunId] = useState<string | null>(null);
+  // Forecast run context (global)
+  const { selectedRunId, runDetails } = useForecastRun();
   const [runForecastByCounty, setRunForecastByCounty] = useState<Record<string, { winner: string | null; turnout: number | null }>>({});
   const [runIncludedCountyCodes, setRunIncludedCountyCodes] = useState<Set<string>>(new Set());
 
-  const [runDetails, setRunDetails] = useState<any | null>(null);
   const [fallbackMode, setFallbackMode] = useState<boolean>(false);
   const [fallbackLatestByCounty, setFallbackLatestByCounty] = useState<Record<string, { winner: string | null; turnout: number | null }>>({});
   const [fallbackUsedCountyCodes, setFallbackUsedCountyCodes] = useState<Set<string>>(new Set());
@@ -105,20 +104,6 @@ export default function ForecastsPage() {
     }
   }, []);
 
-  // Initialize selected forecast run from URL or localStorage (once on mount)
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-    try {
-      const sp = new URLSearchParams(window.location.search);
-      const runParam = sp.get('run_id');
-      const stored = localStorage.getItem('selectedRunId');
-      if (runParam) {
-        setSelectedRunId(runParam);
-      } else if (stored) {
-        setSelectedRunId(stored);
-      }
-    } catch {}
-  }, []);
 
   // Persist selectedRegion to URL and localStorage
   useEffect(() => {
@@ -178,37 +163,7 @@ export default function ForecastsPage() {
     }
   }, [selectedCounty, router, pathname]);
 
-  // Persist selectedRunId in URL (deep-linkable) and localStorage
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-    try {
-      const sp = new URLSearchParams(window.location.search);
-      if (selectedRunId) {
-        sp.set('run_id', selectedRunId);
-        localStorage.setItem('selectedRunId', selectedRunId);
-      } else {
-        sp.delete('run_id');
-        localStorage.removeItem('selectedRunId');
-      }
-      const q = sp.toString();
-      router.replace(q ? `${pathname}?${q}` : pathname, { scroll: false });
-    } catch {}
-  }, [selectedRunId, router, pathname]);
 
-  // Load available forecast runs for the selected election year
-  useEffect(() => {
-    const loadRuns = async () => {
-      if (!selectedElection) return;
-      try {
-        const res = await fetch(`${API_BASE_URL}/forecasts/?election_year=${selectedElection.year}`);
-
-        if (!res.ok) return;
-        const items = await res.json();
-        setRuns(items || []);
-      } catch {}
-    };
-    loadRuns();
-  }, [selectedElection]);
 
   // When a run is selected, fetch all county forecasts for that run
   useEffect(() => {
@@ -245,19 +200,6 @@ export default function ForecastsPage() {
         Object.entries(byCounty).forEach(([k, v]) => simple[k] = { winner: v.winner, turnout: v.turnout });
         setRunForecastByCounty(simple);
 
-  // Load selected run details (for notes/assumptions, meta)
-  useEffect(() => {
-    const loadRunDetails = async () => {
-      if (!selectedRunId) { setRunDetails(null); return; }
-      try {
-        const res = await fetch(`${API_BASE_URL}/forecasts/${selectedRunId}`);
-        if (!res.ok) return;
-        const d = await res.json();
-        setRunDetails(d);
-      } catch {}
-    };
-    loadRunDetails();
-  }, [selectedRunId]);
 
   // When fallbackMode is on, fetch latest run per election year and compute fallback map
   useEffect(() => {
@@ -555,8 +497,8 @@ export default function ForecastsPage() {
                         <div className="text-sm uppercase tracking-wide text-blue-100">Scenario</div>
                         <div className="text-lg font-semibold text-white">{runDetails.model_name}</div>
                         {(() => {
-                          const params = (() => { try { return runDetails.parameters ? JSON.parse(runDetails.parameters) : null; } catch { return null; }})();
-                          const desc = params?.description || runDetails.description;
+                          const params = runDetails?.parameters || null;
+                          const desc = params?.description;
                           return desc ? <p className="text-blue-100 text-sm mt-1 whitespace-pre-line">{desc}</p> : null;
                         })()}
                       </div>
@@ -604,45 +546,7 @@ export default function ForecastsPage() {
                   </div>
 
 
-                  <div className="flex-1">
-                    <div className="flex items-center justify-between mb-2">
-                      <label className="block text-sm font-medium text-gray-700">
-                        Forecast Run / Scenario
-                      </label>
-                      {selectedRunId && runDetails && (
-                        <div className="relative group">
-                          <button type="button" className="text-gray-500 hover:text-gray-700 text-sm" aria-label="Run details">ℹ️</button>
-                          <div className="hidden group-hover:block absolute right-0 z-10 mt-2 w-80 rounded-lg border border-gray-200 bg-white p-3 shadow-lg">
-                            <div className="text-sm font-semibold text-gray-900">{runDetails.model_name || 'Scenario'}</div>
-                            <div className="text-xs text-gray-500 mt-0.5">{runDetails?.election?.year} {runDetails?.election?.election_type}</div>
-                            {(() => { const p = (()=>{try{return runDetails.parameters?JSON.parse(runDetails.parameters):null}catch{return null}})(); const d = p?.description || runDetails.description; return d ? <p className="text-sm text-gray-700 mt-2 line-clamp-4">{d}</p> : null; })()}
-                            <div className="mt-2 flex items-center justify-between text-xs text-gray-500">
-                              <span>{runIncludedCountyCodes.size} counties</span>
-                              <span>{runDetails?.run_timestamp && new Date(runDetails.run_timestamp).toLocaleString()}</span>
-                            </div>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                    <select
-                      className="block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm"
-                      value={selectedRunId || ''}
-                      onChange={(e) => setSelectedRunId(e.target.value || null)}
-                    >
-                      <option value="">Official baseline (Default)</option>
-                      {runs.map((run: any) => (
-                        <option key={run.id} value={run.id}>
-                          {(run.model_name || run.name || 'Scenario')}
-                          - {run.run_timestamp ? new Date(run.run_timestamp).toLocaleString() : ''}
-                        </option>
-                      ))}
-                    </select>
-                    <p className="mt-1 text-xs text-gray-500">
-                      {selectedRunId
-                        ? `${runIncludedCountyCodes.size} counties included in selected run`
-                        : 'No run selected: showing latest available forecasts'}
-                    </p>
-                  </div>
+                  {/* Global run selector moved to header */}
 
                   <div className="flex items-center gap-3">
                     <input
@@ -811,8 +715,8 @@ export default function ForecastsPage() {
                         <div>
                           <div className="text-xs uppercase tracking-wide text-amber-700">Scenario Notes</div>
                           {(() => {
-                            const params = (() => { try { return runDetails.parameters ? JSON.parse(runDetails.parameters) : null; } catch { return null; }})();
-                            const desc = params?.description || runDetails.description;
+                            const params = runDetails?.parameters || null;
+                            const desc = params?.description;
                             return desc ? <p className="text-sm text-amber-800 mt-1 whitespace-pre-line">{desc}</p> : <p className="text-sm text-amber-800 mt-1">No notes provided.</p>;
                           })()}
                         </div>

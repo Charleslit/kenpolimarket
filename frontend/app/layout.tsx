@@ -8,6 +8,7 @@ import KeyboardShortcutsHelp from "@/components/ui/KeyboardShortcutsHelp";
 import { ToastProvider } from "@/components/ui/Toast";
 import PWAInstallPrompt, { OfflineIndicator } from "@/components/common/PWAInstallPrompt";
 import PWAInitializer from "@/components/common/PWAInitializer";
+import { ForecastRunProvider } from "@/contexts/ForecastRunContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -63,12 +64,14 @@ export default function RootLayout({
       >
         <PWAInitializer />
         <ToastProvider>
-          <OfflineIndicator />
-          <Navigation />
-          {children}
-          <MobileBottomNav />
-          <KeyboardShortcutsHelp />
-          <PWAInstallPrompt />
+          <ForecastRunProvider>
+            <OfflineIndicator />
+            <Navigation />
+            {children}
+            <MobileBottomNav />
+            <KeyboardShortcutsHelp />
+            <PWAInstallPrompt />
+          </ForecastRunProvider>
         </ToastProvider>
       </body>
     </html>

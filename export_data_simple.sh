@@ -9,8 +9,8 @@ echo "🚀 Export KenPoliMarket Data to Render"
 echo "======================================"
 echo ""
 
-# Render database URL
-RENDER_DB_URL="postgresql://kenpolimarket:bC41dQ7drjIr5Fa7iWfxNoPjHLmyEUzV@dpg-d3ginq7fte5s73c6j060-a.oregon-postgres.render.com/kenpolimarket"
+# Render database URL (set before running)
+: "${RENDER_DB_URL:?Set RENDER_DB_URL environment variable before running}"
 
 echo "📋 Step 1: Export from Docker PostgreSQL"
 echo "========================================="

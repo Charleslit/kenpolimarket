@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import RunSelector from "@/components/shared/RunSelector";
 
 export default function Navigation() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -158,6 +159,11 @@ export default function Navigation() {
             ))}
 
             <div className="w-px h-6 bg-gray-300 mx-2"></div>
+
+            {/* Global Forecast Run Selector */}
+            <div className="hidden md:flex items-center">
+              <RunSelector />
+            </div>
 
             {/* About & API */}
             <Link

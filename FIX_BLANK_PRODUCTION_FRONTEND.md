@@ -123,7 +123,7 @@ API_CORS_ORIGINS=https://kenpolimarket.vercel.app,https://kenpolimarket-backend.
 **Cause**: Backend can't connect to Render PostgreSQL  
 **Solution**: Verify `DATABASE_URL` in Render backend environment variables:
 ```
-postgresql://kenpolimarket:bC41dQ7drjIr5Fa7iWfxNoPjHLmyEUzV@dpg-d3ginq7fte5s73c6j060-a.oregon-postgres.render.com:5432/kenpolimarket?sslmode=require
+postgresql://<user>:<password>@<host>:5432/<db>?sslmode=require
 ```
 
 ### Issue 4: Build succeeds but pages are blank
